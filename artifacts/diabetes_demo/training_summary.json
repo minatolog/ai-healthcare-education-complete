@@ -1,0 +1,157 @@
+{
+  "algorithm": "RandomForestClassifier",
+  "best_tree_count": 60,
+  "best_validation_accuracy": 0.7,
+  "feature_names": [
+    "age_years",
+    "glucose_mmol_l",
+    "hba1c_percent",
+    "bmi",
+    "systolic_bp_mmhg",
+    "family_history"
+  ],
+  "training_history": [
+    {
+      "loss": null,
+      "step": 1,
+      "train_accuracy": 0.95,
+      "trees_built": 5,
+      "validation_accuracy": 0.6
+    },
+    {
+      "loss": null,
+      "step": 2,
+      "train_accuracy": 0.95,
+      "trees_built": 10,
+      "validation_accuracy": 0.6
+    },
+    {
+      "loss": null,
+      "step": 3,
+      "train_accuracy": 1.0,
+      "trees_built": 15,
+      "validation_accuracy": 0.6
+    },
+    {
+      "loss": null,
+      "step": 4,
+      "train_accuracy": 1.0,
+      "trees_built": 20,
+      "validation_accuracy": 0.6
+    },
+    {
+      "loss": null,
+      "step": 5,
+      "train_accuracy": 1.0,
+      "trees_built": 25,
+      "validation_accuracy": 0.6
+    },
+    {
+      "loss": null,
+      "step": 6,
+      "train_accuracy": 1.0,
+      "trees_built": 30,
+      "validation_accuracy": 0.6
+    },
+    {
+      "loss": null,
+      "step": 7,
+      "train_accuracy": 1.0,
+      "trees_built": 35,
+      "validation_accuracy": 0.6
+    },
+    {
+      "loss": null,
+      "step": 8,
+      "train_accuracy": 1.0,
+      "trees_built": 40,
+      "validation_accuracy": 0.6
+    },
+    {
+      "loss": null,
+      "step": 9,
+      "train_accuracy": 1.0,
+      "trees_built": 45,
+      "validation_accuracy": 0.6
+    },
+    {
+      "loss": null,
+      "step": 10,
+      "train_accuracy": 1.0,
+      "trees_built": 50,
+      "validation_accuracy": 0.6
+    },
+    {
+      "loss": null,
+      "step": 11,
+      "train_accuracy": 1.0,
+      "trees_built": 55,
+      "validation_accuracy": 0.6
+    },
+    {
+      "loss": null,
+      "step": 12,
+      "train_accuracy": 1.0,
+      "trees_built": 60,
+      "validation_accuracy": 0.7
+    },
+    {
+      "loss": null,
+      "step": 13,
+      "train_accuracy": 1.0,
+      "trees_built": 65,
+      "validation_accuracy": 0.6
+    },
+    {
+      "loss": null,
+      "step": 14,
+      "train_accuracy": 1.0,
+      "trees_built": 70,
+      "validation_accuracy": 0.6
+    },
+    {
+      "loss": null,
+      "step": 15,
+      "train_accuracy": 1.0,
+      "trees_built": 75,
+      "validation_accuracy": 0.6
+    },
+    {
+      "loss": null,
+      "step": 16,
+      "train_accuracy": 1.0,
+      "trees_built": 80,
+      "validation_accuracy": 0.7
+    },
+    {
+      "loss": null,
+      "step": 17,
+      "train_accuracy": 1.0,
+      "trees_built": 85,
+      "validation_accuracy": 0.7
+    },
+    {
+      "loss": null,
+      "step": 18,
+      "train_accuracy": 1.0,
+      "trees_built": 90,
+      "validation_accuracy": 0.7
+    },
+    {
+      "loss": null,
+      "step": 19,
+      "train_accuracy": 1.0,
+      "trees_built": 95,
+      "validation_accuracy": 0.7
+    },
+    {
+      "loss": null,
+      "step": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 100,
+      "validation_accuracy": 0.7
+    }
+  ],
+  "training_sample_count": 20,
+  "validation_sample_count": 10
+}

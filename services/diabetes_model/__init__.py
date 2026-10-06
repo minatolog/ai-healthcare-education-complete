@@ -10,6 +10,13 @@ from .features import (
     prepare_dataset,
     prepare_model_split,
 )
+from .evaluation import (
+    ClassificationMetrics,
+    FinalEvaluationResult,
+    ModelEvaluationError,
+    TestPrediction,
+    evaluate_test_set,
+)
 from .schema import (
     CSV_COLUMNS,
     FEATURE_COLUMNS,
@@ -37,6 +44,7 @@ from .training import (
     TrainingHistoryPoint,
     train_random_forest,
 )
+from .visualization import plot_training_history
 
 __all__ = [
     "FEATURE_DEFINITIONS",
@@ -47,6 +55,11 @@ __all__ = [
     "PreparedModelSplit",
     "prepare_dataset",
     "prepare_model_split",
+    "ClassificationMetrics",
+    "FinalEvaluationResult",
+    "ModelEvaluationError",
+    "TestPrediction",
+    "evaluate_test_set",
     "CSV_COLUMNS",
     "FEATURE_COLUMNS",
     "TARGET_COLUMN",
@@ -68,4 +81,5 @@ __all__ = [
     "RandomForestTrainingResult",
     "TrainingHistoryPoint",
     "train_random_forest",
+    "plot_training_history",
 ]

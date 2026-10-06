@@ -11,7 +11,7 @@ with fictional patient data and is not clinically validated.
 4. Convert each group independently into model-ready features and labels.
 5. Add Random Forest trees incrementally and record training/validation accuracy.
 6. Select the smallest tree count that achieves the best validation accuracy.
-7. Evaluate the selected model on the locked test group in a later stage.
+7. Evaluate the selected model once on the locked test group.
 
 ## Model input order
 
@@ -64,6 +64,24 @@ provide an epoch loss, so the graph-ready history returns `loss: null`.
 
 The training function accepts only training and validation datasets. It cannot
 receive the test dataset, which keeps the test patients out of model selection.
+
+## Final test evaluation and curve
+
+`evaluate_test_set()` checks that all ten test patient IDs are unseen during
+training and validation, then reports accuracy, balanced accuracy, precision,
+recall, F1, a confusion matrix, and one model-estimated probability per patient.
+The probability is an educational model score, not a calibrated clinical risk.
+
+The demo artifact command uses a deterministic balanced 20-patient selection:
+
+```bash
+.venv/bin/python -m services.diabetes_model.generate_demo_artifacts
+```
+
+It writes an English training curve, training history JSON, test evaluation
+JSON, and the exact demo split to `artifacts/diabetes_demo/`. These files are a
+reproducible example; a student's different 20-patient selection will produce
+different validation and test results.
 
 ## Install the ML dependency
 

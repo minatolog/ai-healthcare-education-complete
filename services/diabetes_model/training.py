@@ -69,6 +69,8 @@ class RandomForestTrainingResult:
     best_tree_count: int
     best_validation_accuracy: float
     config: RandomForestTrainingConfig
+    training_patient_ids: tuple[str, ...]
+    validation_patient_ids: tuple[str, ...]
 
     def history_as_dicts(self) -> list[dict[str, int | float | None]]:
         """Return JSON-ready points for the website's training curve."""
@@ -92,6 +94,8 @@ class RandomForestTrainingResult:
             "feature_names": list(MODEL_FEATURES),
             "best_tree_count": self.best_tree_count,
             "best_validation_accuracy": round(self.best_validation_accuracy, 4),
+            "training_sample_count": len(self.training_patient_ids),
+            "validation_sample_count": len(self.validation_patient_ids),
             "training_history": self.history_as_dicts(),
         }
 
@@ -160,6 +164,8 @@ def train_random_forest(
         best_tree_count=best_point.trees_built,
         best_validation_accuracy=best_point.validation_accuracy,
         config=training_config,
+        training_patient_ids=training.patient_ids,
+        validation_patient_ids=validation.patient_ids,
     )
 
 
