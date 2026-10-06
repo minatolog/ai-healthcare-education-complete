@@ -1,0 +1,10 @@
+# Exact direct dependencies used for the initial synthetic engineering verification.
+# This is not a lock of every transitive dependency or a GPU/CUDA environment.
+torch==2.8.0
+torchvision==0.23.0
+segmentation-models-pytorch==0.5.0
+opencv-python-headless==5.0.0.93
+numpy==2.0.2
+nibabel==5.3.3
+Pillow==11.3.0
+pytest==8.4.2
