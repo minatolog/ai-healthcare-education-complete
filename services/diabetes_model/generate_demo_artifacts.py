@@ -8,10 +8,17 @@ from pathlib import Path
 
 from .evaluation import evaluate_test_set
 from .features import prepare_model_split
+from .model_artifact import (
+    FEATURE_IMPORTANCE_NOTE,
+    export_model_bundle,
+    extract_feature_importance,
+    load_model_bundle,
+)
+from .prediction import PredictionInput, predict_patient
 from .schema import load_reference_cohort
 from .split import create_student_split
 from .training import train_random_forest
-from .visualization import plot_training_history
+from .visualization import plot_feature_importance, plot_training_history
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
@@ -44,16 +51,59 @@ def generate_demo_artifacts(
     training_path = output_path / "training_summary.json"
     evaluation_path = output_path / "test_evaluation.json"
     split_path = output_path / "patient_split.json"
+    model_paths = export_model_bundle(
+        training_result, output_path / "diabetes_random_forest.joblib"
+    )
+    importance = extract_feature_importance(training_result)
+    importance_path = output_path / "feature_importance.json"
+    importance_chart_path = plot_feature_importance(
+        importance, output_path / "feature_importance.png"
+    )
+
+    example_patient = patient_split.test[0]
+    example_input = PredictionInput(
+        patient_id=example_patient.patient_id,
+        age_years=float(example_patient.age_years),
+        glucose_mmol_l=float(example_patient.glucose_mmol_l),
+        hba1c_percent=float(example_patient.hba1c_percent),
+        bmi=float(example_patient.bmi),
+        systolic_bp_mmhg=float(example_patient.systolic_bp_mmhg),
+        family_history=example_patient.family_history,
+    )
+    loaded_bundle = load_model_bundle(model_paths.model)
+    example_prediction = predict_patient(loaded_bundle, example_input.as_dict())
+    prediction_example_path = output_path / "backend_prediction_example.json"
 
     _write_json(training_path, training_result.summary_as_dict())
     _write_json(evaluation_path, evaluation_result.as_dict())
     _write_json(split_path, patient_split.as_id_dict())
+    _write_json(
+        importance_path,
+        {
+            "model_type": "RandomForestClassifier",
+            "importance_type": "global_split_importance",
+            "features": [entry.as_dict() for entry in importance],
+            "note": FEATURE_IMPORTANCE_NOTE,
+        },
+    )
+    _write_json(
+        prediction_example_path,
+        {
+            "request": example_input.as_dict(),
+            "response": example_prediction.as_dict(),
+        },
+    )
 
     return {
         "curve": curve_path,
         "training_summary": training_path,
         "test_evaluation": evaluation_path,
         "patient_split": split_path,
+        "model": model_paths.model,
+        "model_metadata": model_paths.metadata,
+        "feature_importance": importance_path,
+        "feature_importance_chart": importance_chart_path,
+        "backend_prediction_example": prediction_example_path,
     }
 
 

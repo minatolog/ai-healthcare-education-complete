@@ -1,0 +1,43 @@
+{
+  "features": [
+    {
+      "display_name": "Fasting blood glucose",
+      "feature_name": "glucose_mmol_l",
+      "importance": 0.330003,
+      "rank": 1
+    },
+    {
+      "display_name": "HbA1c",
+      "feature_name": "hba1c_percent",
+      "importance": 0.272993,
+      "rank": 2
+    },
+    {
+      "display_name": "Body mass index",
+      "feature_name": "bmi",
+      "importance": 0.160553,
+      "rank": 3
+    },
+    {
+      "display_name": "Systolic blood pressure",
+      "feature_name": "systolic_bp_mmhg",
+      "importance": 0.131355,
+      "rank": 4
+    },
+    {
+      "display_name": "Age",
+      "feature_name": "age_years",
+      "importance": 0.094001,
+      "rank": 5
+    },
+    {
+      "display_name": "Family history of diabetes",
+      "feature_name": "family_history",
+      "importance": 0.011095,
+      "rank": 6
+    }
+  ],
+  "importance_type": "global_split_importance",
+  "model_type": "RandomForestClassifier",
+  "note": "Random Forest split importance; it does not prove causation or clinical importance."
+}

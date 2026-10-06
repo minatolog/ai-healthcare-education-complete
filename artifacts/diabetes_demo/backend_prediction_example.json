@@ -1,0 +1,19 @@
+{
+  "request": {
+    "age_years": 49.0,
+    "bmi": 22.2,
+    "family_history": 1,
+    "glucose_mmol_l": 8.3,
+    "hba1c_percent": 4.8,
+    "patient_id": "P021",
+    "systolic_bp_mmhg": 122.0
+  },
+  "response": {
+    "educational_only": true,
+    "estimated_diabetes_probability": 0.3981,
+    "patient_id": "P021",
+    "predicted_label": 0,
+    "prediction_threshold": 0.5,
+    "probability_note": "Model-estimated educational score; not a calibrated clinical risk."
+  }
+}

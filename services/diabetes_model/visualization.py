@@ -17,6 +17,7 @@ os.environ.setdefault("XDG_CACHE_HOME", str(_CACHE_ROOT))
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 
+from .model_artifact import FEATURE_IMPORTANCE_NOTE, FeatureImportanceEntry
 from .training import RandomForestTrainingResult
 
 
@@ -126,6 +127,78 @@ def plot_training_history(
         color="#64748b",
     )
     figure.tight_layout(rect=(0.04, 0.055, 0.98, 0.97))
+
+    path = Path(output_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    figure.savefig(path, format="png", facecolor=figure.get_facecolor())
+    return path
+
+
+def plot_feature_importance(
+    entries: tuple[FeatureImportanceEntry, ...],
+    output_path: str | Path,
+) -> Path:
+    """Render a client-ready global Random Forest importance chart."""
+
+    if not entries:
+        raise ValueError("Feature importance entries must not be empty.")
+
+    ordered = sorted(entries, key=lambda entry: entry.importance)
+    labels = [entry.display_name for entry in ordered]
+    percentages = [entry.importance * 100 for entry in ordered]
+
+    figure = Figure(figsize=(9.6, 5.8), dpi=160, facecolor="#f8fafc")
+    FigureCanvasAgg(figure)
+    axis = figure.add_subplot(1, 1, 1)
+    axis.set_facecolor("#ffffff")
+    bars = axis.barh(labels, percentages, color="#2563eb", height=0.62)
+
+    for bar, percentage in zip(bars, percentages):
+        axis.text(
+            bar.get_width() + 0.5,
+            bar.get_y() + bar.get_height() / 2,
+            f"{percentage:.1f}%",
+            va="center",
+            fontsize=9.5,
+            color="#334155",
+        )
+
+    axis.set_title(
+        "What Influenced the Random Forest?",
+        fontsize=17,
+        fontweight="bold",
+        color="#0f172a",
+        pad=15,
+    )
+    axis.text(
+        0.5,
+        1.01,
+        "Global split importance • synthetic educational model",
+        transform=axis.transAxes,
+        ha="center",
+        va="bottom",
+        fontsize=9.5,
+        color="#475569",
+    )
+    axis.set_xlabel("Relative feature importance (%)", fontsize=11, color="#334155")
+    axis.set_xlim(0, max(percentages) * 1.22)
+    axis.grid(axis="x", color="#cbd5e1", alpha=0.65, linewidth=0.8)
+    axis.set_axisbelow(True)
+    axis.tick_params(colors="#475569")
+    axis.spines["top"].set_visible(False)
+    axis.spines["right"].set_visible(False)
+    axis.spines["left"].set_color("#cbd5e1")
+    axis.spines["bottom"].set_color("#cbd5e1")
+
+    figure.text(
+        0.5,
+        0.015,
+        FEATURE_IMPORTANCE_NOTE,
+        ha="center",
+        fontsize=8.6,
+        color="#64748b",
+    )
+    figure.tight_layout(rect=(0.06, 0.06, 0.98, 0.97))
 
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)

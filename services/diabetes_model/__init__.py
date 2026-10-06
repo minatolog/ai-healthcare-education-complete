@@ -17,6 +17,26 @@ from .evaluation import (
     TestPrediction,
     evaluate_test_set,
 )
+from .model_artifact import (
+    ARTIFACT_VERSION,
+    FEATURE_IMPORTANCE_NOTE,
+    PREDICTION_THRESHOLD,
+    PROBABILITY_NOTE,
+    ExportedModelPaths,
+    FeatureImportanceEntry,
+    LoadedModelBundle,
+    ModelArtifactError,
+    export_model_bundle,
+    extract_feature_importance,
+    load_model_bundle,
+)
+from .prediction import (
+    PREDICTION_INPUT_FIELDS,
+    InferencePrediction,
+    PredictionInput,
+    PredictionInputError,
+    predict_patient,
+)
 from .schema import (
     CSV_COLUMNS,
     FEATURE_COLUMNS,
@@ -44,7 +64,7 @@ from .training import (
     TrainingHistoryPoint,
     train_random_forest,
 )
-from .visualization import plot_training_history
+from .visualization import plot_feature_importance, plot_training_history
 
 __all__ = [
     "FEATURE_DEFINITIONS",
@@ -60,6 +80,22 @@ __all__ = [
     "ModelEvaluationError",
     "TestPrediction",
     "evaluate_test_set",
+    "ARTIFACT_VERSION",
+    "FEATURE_IMPORTANCE_NOTE",
+    "PREDICTION_THRESHOLD",
+    "PROBABILITY_NOTE",
+    "ExportedModelPaths",
+    "FeatureImportanceEntry",
+    "LoadedModelBundle",
+    "ModelArtifactError",
+    "export_model_bundle",
+    "extract_feature_importance",
+    "load_model_bundle",
+    "PREDICTION_INPUT_FIELDS",
+    "InferencePrediction",
+    "PredictionInput",
+    "PredictionInputError",
+    "predict_patient",
     "CSV_COLUMNS",
     "FEATURE_COLUMNS",
     "TARGET_COLUMN",
@@ -81,5 +117,6 @@ __all__ = [
     "RandomForestTrainingResult",
     "TrainingHistoryPoint",
     "train_random_forest",
+    "plot_feature_importance",
     "plot_training_history",
 ]

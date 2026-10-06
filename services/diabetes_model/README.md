@@ -79,13 +79,64 @@ The demo artifact command uses a deterministic balanced 20-patient selection:
 ```
 
 It writes an English training curve, training history JSON, test evaluation
-JSON, and the exact demo split to `artifacts/diabetes_demo/`. These files are a
-reproducible example; a student's different 20-patient selection will produce
-different validation and test results.
+JSON, feature-importance JSON/PNG, the fitted `.joblib` model with metadata,
+the exact demo split, and a backend prediction example to
+`artifacts/diabetes_demo/`. These files are a reproducible example; a student's
+different 20-patient selection will produce different validation and test
+results.
+
+## Exported model and prediction contract
+
+`diabetes_random_forest.joblib` contains the fitted Random Forest and its fixed
+feature-order contract. `diabetes_random_forest.metadata.json` provides the
+same contract in a safe, human-readable format without serialising an
+estimator. The backend should load the model once when its service starts, not
+reload it for every request.
+
+Only load `.joblib` files produced and controlled by this project. Joblib model
+files use Python's pickle mechanism and must not be loaded from an untrusted
+source.
+
+The backend-facing request contains one fictional patient and no known label:
+
+```json
+{
+  "patient_id": "P021",
+  "age_years": 35,
+  "glucose_mmol_l": 6.9,
+  "hba1c_percent": 6.0,
+  "bmi": 26.4,
+  "systolic_bp_mmhg": 119,
+  "family_history": 1
+}
+```
+
+Load the artifact and make a prediction with:
+
+```python
+from services.diabetes_model import load_model_bundle, predict_patient
+
+bundle = load_model_bundle("artifacts/diabetes_demo/diabetes_random_forest.joblib")
+result = predict_patient(bundle, request_json).as_dict()
+```
+
+The response includes `predicted_label` and
+`estimated_diabetes_probability`. That probability is an educational model
+score, not a calibrated clinical risk. Input fields are validated against the
+fixed schema and broad synthetic-data ranges before prediction.
+
+## Feature importance
+
+The exported global feature importance is the Random Forest's mean decrease in
+impurity (split importance), normalised across all six input features. It shows
+which fields the fitted demo model used most when splitting its tiny synthetic
+training sample. It does **not** establish causation, medical importance, or a
+diagnostic threshold, and it should not be used as patient-specific reasoning.
 
 ## Install the ML dependency
 
-The project currently pins scikit-learn for reproducible model behaviour:
+The project pins scikit-learn, Matplotlib, and Joblib for reproducible model
+behaviour and artifacts:
 
 ```bash
 python3 -m venv .venv
