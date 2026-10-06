@@ -29,6 +29,14 @@ from .split import (
     create_student_split,
     validate_patient_split,
 )
+from .training import (
+    DEFAULT_TREE_COUNTS,
+    ModelTrainingError,
+    RandomForestTrainingConfig,
+    RandomForestTrainingResult,
+    TrainingHistoryPoint,
+    train_random_forest,
+)
 
 __all__ = [
     "FEATURE_DEFINITIONS",
@@ -54,4 +62,10 @@ __all__ = [
     "SplitValidationError",
     "create_student_split",
     "validate_patient_split",
+    "DEFAULT_TREE_COUNTS",
+    "ModelTrainingError",
+    "RandomForestTrainingConfig",
+    "RandomForestTrainingResult",
+    "TrainingHistoryPoint",
+    "train_random_forest",
 ]
