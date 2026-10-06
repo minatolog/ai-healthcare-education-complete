@@ -1,5 +1,15 @@
 """Educational diabetes model package."""
 
+from .features import (
+    FEATURE_DEFINITIONS,
+    MODEL_FEATURES,
+    FeatureDefinition,
+    FeaturePreparationError,
+    PreparedDataset,
+    PreparedModelSplit,
+    prepare_dataset,
+    prepare_model_split,
+)
 from .schema import (
     CSV_COLUMNS,
     FEATURE_COLUMNS,
@@ -21,6 +31,14 @@ from .split import (
 )
 
 __all__ = [
+    "FEATURE_DEFINITIONS",
+    "MODEL_FEATURES",
+    "FeatureDefinition",
+    "FeaturePreparationError",
+    "PreparedDataset",
+    "PreparedModelSplit",
+    "prepare_dataset",
+    "prepare_model_split",
     "CSV_COLUMNS",
     "FEATURE_COLUMNS",
     "TARGET_COLUMN",
