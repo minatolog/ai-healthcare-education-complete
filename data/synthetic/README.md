@@ -51,5 +51,18 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 The default random seed is `9900`. The committed CSV is the reference file used
 by the project and is checked against the generator by the automated tests.
 
-The split into 20 training, 10 validation, and 10 test patients will be added
-in a separate change. This CSV is currently the complete selection pool.
+## 20/10/10 split contract
+
+The CSV is the complete 40-patient selection pool. The website will provide
+exactly 20 student-selected patient IDs to `create_student_split()`:
+
+- The selected 20 become the training group.
+- The remaining 20 are reproducibly and approximately stratified into 10
+  validation patients and 10 test patients.
+- Every group must contain both synthetic class labels.
+- Validation data may be used to monitor or select the model.
+- Test data remains separate until the final evaluation.
+
+The default split seed is `9900`. Stratification uses labels only to maintain
+useful evaluation groups; the test patients and labels are not used to fit the
+model.
