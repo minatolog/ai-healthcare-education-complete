@@ -1,0 +1,3 @@
+# Step 2 PNG inspection only: no PyTorch, NIfTI reader, training or downloads.
+numpy==2.0.2
+Pillow==11.3.0

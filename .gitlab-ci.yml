@@ -1,0 +1,28 @@
+stages:
+  - test
+
+kidney_audit_tests:
+  image: python:3.11-slim
+  stage: test
+  script:
+    - python -m unittest discover -s backend/kidney/tests/audit -v
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH'
+
+kidney_engineering_tests:
+  image: python:3.11-slim
+  stage: test
+  variables:
+    OMP_NUM_THREADS: "2"
+    MKL_NUM_THREADS: "2"
+    HF_HUB_OFFLINE: "1"
+  before_script:
+    - python -m pip install torch==2.8.0 torchvision==0.23.0 --index-url https://download.pytorch.org/whl/cpu
+    - python -m pip install -r backend/kidney/requirements.txt
+  script:
+    - cd backend/kidney
+    - PYTHONPATH=. python -m pytest tests learning -q
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH'

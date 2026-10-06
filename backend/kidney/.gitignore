@@ -1,0 +1,20 @@
+# Local datasets, environments, previews and run artifacts.
+.venv/
+learning_outputs/
+step1_data_audit.json
+.learning_backups/
+learning_update_records/
+data/
+data2d/
+kits19/
+artifacts/
+outputs/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.nii
+*.nii.gz
+*.pt
+*.pth
+*.ckpt
+.DS_Store

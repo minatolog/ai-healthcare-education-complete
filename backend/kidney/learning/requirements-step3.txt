@@ -1,0 +1,4 @@
+# Pure 2D tensor inspection; no model weights are downloaded or training run.
+numpy==2.0.2
+Pillow==11.3.0
+torch==2.8.0
