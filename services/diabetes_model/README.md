@@ -217,6 +217,23 @@ which fields the fitted demo model used most when splitting its tiny synthetic
 training sample. It does **not** establish causation, medical importance, or a
 diagnostic threshold, and it should not be used as patient-specific reasoning.
 
+## Per-patient model sensitivity
+
+The training-session response also contains a local explanation for each of the
+10 test patients. For each feature, the service replaces that patient's value
+with the median value from the 20 training patients and measures the change in
+the model-estimated probability. Family history uses the training-set mode.
+
+Positive changes mean the patient's original value increased the score relative
+to that reference; negative changes mean it decreased the score. Features are
+ranked by the absolute size of this change. Only training data are used to
+calculate reference values, avoiding validation/test leakage.
+
+This is a simple one-feature-at-a-time sensitivity explanation. Effects do not
+sum to the prediction, correlated features can affect one another, and the
+result does not establish causation, medical importance, or a clinical reason
+for disease.
+
 ## Install the ML dependency
 
 The project pins scikit-learn, Matplotlib, and Joblib for reproducible model

@@ -21,6 +21,7 @@ from .split import assess_training_selection
 from .visualization import (
     plot_feature_importance,
     plot_model_benchmark,
+    plot_patient_explanation,
     plot_selection_robustness,
     plot_training_history,
 )
@@ -91,6 +92,11 @@ def generate_demo_artifacts(
         benchmark, output_path / "model_benchmark.png"
     )
     assessment_examples_path = output_path / "selection_assessment_examples.json"
+    explanation = session.test_explanations[0]
+    explanation_path = output_path / "patient_explanation_example.json"
+    explanation_chart_path = plot_patient_explanation(
+        explanation, output_path / "patient_explanation_example.png"
+    )
 
     _write_json(training_path, training_result.summary_as_dict())
     _write_json(evaluation_path, evaluation_result.as_dict())
@@ -136,6 +142,7 @@ def generate_demo_artifacts(
             ).as_dict(),
         },
     )
+    _write_json(explanation_path, explanation.as_dict())
 
     outputs = {
         "curve": curve_path,
@@ -153,6 +160,8 @@ def generate_demo_artifacts(
         "model_benchmark": benchmark_path,
         "model_benchmark_chart": benchmark_chart_path,
         "selection_assessment_examples": assessment_examples_path,
+        "patient_explanation_example": explanation_path,
+        "patient_explanation_chart": explanation_chart_path,
     }
     manifest_path = create_artifact_manifest(
         outputs, output_path / "artifact_manifest.json"

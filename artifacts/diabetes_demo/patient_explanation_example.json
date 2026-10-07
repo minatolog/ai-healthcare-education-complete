@@ -1,0 +1,63 @@
+{
+  "estimated_diabetes_probability": 0.3981,
+  "feature_effects": [
+    {
+      "direction": "decreased_score",
+      "display_name": "Body mass index",
+      "feature_name": "bmi",
+      "patient_value": 22.2,
+      "probability_change": -0.075,
+      "rank": 1,
+      "reference_value": 26.95
+    },
+    {
+      "direction": "increased_score",
+      "display_name": "Fasting blood glucose",
+      "feature_name": "glucose_mmol_l",
+      "patient_value": 8.3,
+      "probability_change": 0.072222,
+      "rank": 2,
+      "reference_value": 7.0
+    },
+    {
+      "direction": "decreased_score",
+      "display_name": "HbA1c",
+      "feature_name": "hba1c_percent",
+      "patient_value": 4.8,
+      "probability_change": -0.069444,
+      "rank": 3,
+      "reference_value": 6.2
+    },
+    {
+      "direction": "increased_score",
+      "display_name": "Systolic blood pressure",
+      "feature_name": "systolic_bp_mmhg",
+      "patient_value": 122.0,
+      "probability_change": 0.045556,
+      "rank": 4,
+      "reference_value": 130.0
+    },
+    {
+      "direction": "decreased_score",
+      "display_name": "Age",
+      "feature_name": "age_years",
+      "patient_value": 49.0,
+      "probability_change": -0.008889,
+      "rank": 5,
+      "reference_value": 55.5
+    },
+    {
+      "direction": "no_change",
+      "display_name": "Family history of diabetes",
+      "feature_name": "family_history",
+      "patient_value": 1.0,
+      "probability_change": 0.0,
+      "rank": 6,
+      "reference_value": 1.0
+    }
+  ],
+  "method": "one_feature_at_a_time_training_reference",
+  "note": "Model sensitivity relative to training-set reference values; effects are not additive and do not prove causation or clinical importance.",
+  "patient_id": "P021",
+  "predicted_label": 0
+}

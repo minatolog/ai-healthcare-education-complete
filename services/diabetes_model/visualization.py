@@ -19,6 +19,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 
 from .benchmark import MODEL_ORDER, ModelBenchmarkReport
+from .explanations import LOCAL_EXPLANATION_NOTE, PatientLocalExplanation
 from .model_artifact import FEATURE_IMPORTANCE_NOTE, FeatureImportanceEntry
 from .robustness import ROBUSTNESS_NOTE, SelectionRobustnessReport
 from .training import RandomForestTrainingResult
@@ -397,6 +398,92 @@ def plot_model_benchmark(
         color="#64748b",
     )
     figure.tight_layout(rect=(0.04, 0.06, 0.98, 0.97))
+
+    path = Path(output_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    figure.savefig(path, format="png", facecolor=figure.get_facecolor())
+    return path
+
+
+def plot_patient_explanation(
+    explanation: PatientLocalExplanation,
+    output_path: str | Path,
+) -> Path:
+    """Render one patient's local probability-sensitivity explanation."""
+
+    if not explanation.feature_effects:
+        raise ValueError("Patient explanation must contain feature effects.")
+
+    ordered = tuple(reversed(explanation.feature_effects))
+    labels = [effect.display_name for effect in ordered]
+    changes = [effect.probability_change * 100 for effect in ordered]
+    colors = [
+        "#f97316" if change > 0 else "#2563eb" if change < 0 else "#94a3b8"
+        for change in changes
+    ]
+    limit = max(max(abs(change) for change in changes) * 1.35, 1.0)
+
+    figure = Figure(figsize=(10.2, 5.9), dpi=160, facecolor="#f8fafc")
+    FigureCanvasAgg(figure)
+    axis = figure.add_subplot(1, 1, 1)
+    axis.set_facecolor("#ffffff")
+    bars = axis.barh(labels, changes, color=colors, height=0.62)
+    axis.axvline(0, color="#64748b", linewidth=1.0)
+
+    for bar, change in zip(bars, changes):
+        horizontal_alignment = "left" if change >= 0 else "right"
+        label_x = change + (limit * 0.025 if change >= 0 else -limit * 0.025)
+        axis.text(
+            label_x,
+            bar.get_y() + bar.get_height() / 2,
+            f"{change:+.1f} pp",
+            ha=horizontal_alignment,
+            va="center",
+            fontsize=9.2,
+            color="#334155",
+        )
+
+    axis.set_title(
+        f"Why Did the Model Score {explanation.patient_id} This Way?",
+        fontsize=17,
+        fontweight="bold",
+        color="#0f172a",
+        pad=15,
+    )
+    axis.text(
+        0.5,
+        1.01,
+        "One-feature-at-a-time sensitivity • "
+        f"model score {explanation.estimated_diabetes_probability * 100:.1f}%",
+        transform=axis.transAxes,
+        ha="center",
+        va="bottom",
+        fontsize=9.5,
+        color="#475569",
+    )
+    axis.set_xlabel(
+        "Change in estimated diabetes score (percentage points)",
+        fontsize=11,
+        color="#334155",
+    )
+    axis.set_xlim(-limit, limit)
+    axis.grid(axis="x", color="#cbd5e1", alpha=0.65, linewidth=0.8)
+    axis.set_axisbelow(True)
+    axis.tick_params(colors="#475569")
+    axis.spines["top"].set_visible(False)
+    axis.spines["right"].set_visible(False)
+    axis.spines["left"].set_color("#cbd5e1")
+    axis.spines["bottom"].set_color("#cbd5e1")
+
+    figure.text(
+        0.5,
+        0.015,
+        LOCAL_EXPLANATION_NOTE,
+        ha="center",
+        fontsize=8.2,
+        color="#64748b",
+    )
+    figure.tight_layout(rect=(0.05, 0.06, 0.98, 0.97))
 
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)

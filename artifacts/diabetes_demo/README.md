@@ -20,6 +20,7 @@ demonstrate the complete ML flow for the proposal and backend handoff:
 - `selection_robustness.json` and `.png`: variability across 30 valid selections
 - `model_benchmark.json` and `.png`: Random Forest versus two reference models
 - `selection_assessment_examples.json`: ready, warning, and error examples
+- `patient_explanation_example.json` and `.png`: one local sensitivity example
 - `artifact_manifest.json`: file sizes, SHA-256 checksums, and runtime versions
 - `patient_split.json`: exact patient IDs used in the demo split
 

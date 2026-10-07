@@ -28,6 +28,14 @@ from .evaluation import (
     TestPrediction,
     evaluate_test_set,
 )
+from .explanations import (
+    LOCAL_EXPLANATION_METHOD,
+    LOCAL_EXPLANATION_NOTE,
+    LocalExplanationError,
+    LocalFeatureEffect,
+    PatientLocalExplanation,
+    explain_dataset_predictions,
+)
 from .model_artifact import (
     ARTIFACT_VERSION,
     FEATURE_IMPORTANCE_NOTE,
@@ -90,6 +98,7 @@ from .training import (
 from .visualization import (
     plot_feature_importance,
     plot_model_benchmark,
+    plot_patient_explanation,
     plot_selection_robustness,
     plot_training_history,
 )
@@ -123,6 +132,12 @@ __all__ = [
     "ModelEvaluationError",
     "TestPrediction",
     "evaluate_test_set",
+    "LOCAL_EXPLANATION_METHOD",
+    "LOCAL_EXPLANATION_NOTE",
+    "LocalExplanationError",
+    "LocalFeatureEffect",
+    "PatientLocalExplanation",
+    "explain_dataset_predictions",
     "ARTIFACT_VERSION",
     "FEATURE_IMPORTANCE_NOTE",
     "PREDICTION_THRESHOLD",
@@ -172,6 +187,7 @@ __all__ = [
     "train_random_forest",
     "plot_feature_importance",
     "plot_model_benchmark",
+    "plot_patient_explanation",
     "plot_selection_robustness",
     "plot_training_history",
     "DEFAULT_COHORT_PATH",

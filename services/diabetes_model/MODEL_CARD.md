@@ -99,6 +99,13 @@ They do not establish causation, clinical importance, or patient-specific
 reasoning, and impurity-based importance can favour features with more possible
 split points.
 
+The project also provides a local one-feature-at-a-time sensitivity view for
+each test patient. It replaces one value with a training-set median (or mode for
+family history) and records how the estimated probability changes. This makes
+individual model behaviour easier to discuss, but the effects are not additive,
+are affected by correlated features, and must not be interpreted as medical or
+causal explanations.
+
 ## Limitations and risks
 
 - Forty synthetic records are far too few for clinical model development.

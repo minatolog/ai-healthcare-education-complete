@@ -49,6 +49,18 @@
       "sha256": "93070923dd84fb25f982443fcabe0ae4695339bee2ec684170ccaf8c825302a7"
     },
     {
+      "bytes": 83872,
+      "filename": "patient_explanation_example.png",
+      "name": "patient_explanation_chart",
+      "sha256": "9ac2c882164d4df9e0fa8d8bab71750277033264bf6fb92054fa93c5ca925b0f"
+    },
+    {
+      "bytes": 1778,
+      "filename": "patient_explanation_example.json",
+      "name": "patient_explanation_example",
+      "sha256": "162ff32d30dd2a39afbaffc7ae07bfac479b82dbe07837ee531e6abe7fb84079"
+    },
+    {
       "bytes": 541,
       "filename": "patient_split.json",
       "name": "patient_split",
@@ -79,10 +91,10 @@
       "sha256": "915ecc46544132b399234c7a8611f8eb0e8da7e279971f073c2c593cddfd2ee1"
     },
     {
-      "bytes": 7686,
+      "bytes": 29534,
       "filename": "training_session_response.json",
       "name": "training_session_response",
-      "sha256": "a0786664c79f28f7b20430887997d78cb09d15acb18c1e9c2d8f6fe1af45ad96"
+      "sha256": "8b7bb10b8fc4410aef265aeae754a68d4aefa391110fd665f2b3254ab093c91c"
     },
     {
       "bytes": 3091,

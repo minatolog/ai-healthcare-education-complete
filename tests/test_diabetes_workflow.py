@@ -40,6 +40,7 @@ class DiabetesTrainingWorkflowTests(unittest.TestCase):
         self.assertEqual(len(self.session.training_result.history), 20)
         self.assertEqual(len(self.session.evaluation_result.predictions), 10)
         self.assertEqual(len(self.session.feature_importance), 6)
+        self.assertEqual(len(self.session.test_explanations), 10)
 
     def test_session_response_has_backend_ready_sections(self) -> None:
         payload = self.session.as_dict()
@@ -58,6 +59,7 @@ class DiabetesTrainingWorkflowTests(unittest.TestCase):
         self.assertEqual(len(payload["training_curve"]["points"]), 20)
         self.assertEqual(len(payload["feature_importance"]["features"]), 6)
         self.assertEqual(payload["test_evaluation"]["test_sample_count"], 10)
+        self.assertEqual(len(payload["test_explanations"]["patients"]), 10)
         json.dumps(payload)
 
     def test_test_predictions_are_for_the_locked_test_group(self) -> None:
