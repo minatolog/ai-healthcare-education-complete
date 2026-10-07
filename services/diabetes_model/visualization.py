@@ -18,6 +18,7 @@ os.environ.setdefault("XDG_CACHE_HOME", str(_CACHE_ROOT))
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 
+from .benchmark import MODEL_ORDER, ModelBenchmarkReport
 from .model_artifact import FEATURE_IMPORTANCE_NOTE, FeatureImportanceEntry
 from .robustness import ROBUSTNESS_NOTE, SelectionRobustnessReport
 from .training import RandomForestTrainingResult
@@ -298,6 +299,99 @@ def plot_selection_robustness(
         0.5,
         0.015,
         ROBUSTNESS_NOTE,
+        ha="center",
+        fontsize=8.6,
+        color="#64748b",
+    )
+    figure.tight_layout(rect=(0.04, 0.06, 0.98, 0.97))
+
+    path = Path(output_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    figure.savefig(path, format="png", facecolor=figure.get_facecolor())
+    return path
+
+
+def plot_model_benchmark(
+    report: ModelBenchmarkReport,
+    output_path: str | Path,
+) -> Path:
+    """Render mean model metrics across identical selection scenarios."""
+
+    summary = report.summary_by_algorithm()
+    metric_specs = (
+        ("accuracy", "Accuracy", "#2563eb"),
+        ("balanced_accuracy", "Balanced accuracy", "#14b8a6"),
+        ("f1", "F1", "#f97316"),
+    )
+    positions = list(range(len(MODEL_ORDER)))
+    width = 0.23
+
+    figure = Figure(figsize=(10.2, 5.9), dpi=160, facecolor="#f8fafc")
+    FigureCanvasAgg(figure)
+    axis = figure.add_subplot(1, 1, 1)
+    axis.set_facecolor("#ffffff")
+
+    for metric_index, (metric_key, label, color) in enumerate(metric_specs):
+        offset = (metric_index - 1) * width
+        values = [
+            summary[algorithm][metric_key]["mean"] * 100
+            for algorithm in MODEL_ORDER
+        ]
+        bars = axis.bar(
+            [position + offset for position in positions],
+            values,
+            width=width,
+            color=color,
+            label=label,
+        )
+        for bar, value in zip(bars, values):
+            axis.text(
+                bar.get_x() + bar.get_width() / 2,
+                value + 1.2,
+                f"{value:.1f}%",
+                ha="center",
+                va="bottom",
+                fontsize=8.5,
+                color="#334155",
+            )
+
+    axis.set_title(
+        "Small-Data Model Benchmark",
+        fontsize=17,
+        fontweight="bold",
+        color="#0f172a",
+        pad=15,
+    )
+    axis.text(
+        0.5,
+        1.01,
+        f"Mean results across {report.scenario_count} identical selection scenarios",
+        transform=axis.transAxes,
+        ha="center",
+        va="bottom",
+        fontsize=9.5,
+        color="#475569",
+    )
+    axis.set_xticks(
+        positions,
+        [summary[algorithm]["display_name"] for algorithm in MODEL_ORDER],
+    )
+    axis.set_ylabel("Mean score (%)", fontsize=11, color="#334155")
+    axis.set_ylim(0, 105)
+    axis.grid(axis="y", color="#cbd5e1", alpha=0.65, linewidth=0.8)
+    axis.set_axisbelow(True)
+    axis.tick_params(colors="#475569")
+    axis.spines["top"].set_visible(False)
+    axis.spines["right"].set_visible(False)
+    axis.spines["left"].set_color("#cbd5e1")
+    axis.spines["bottom"].set_color("#cbd5e1")
+    axis.legend(loc="upper right", frameon=False, fontsize=9)
+
+    figure.text(
+        0.5,
+        0.015,
+        "Synthetic comparison only; Random Forest is retained for the "
+        "learning activity design.",
         ha="center",
         fontsize=8.6,
         color="#64748b",

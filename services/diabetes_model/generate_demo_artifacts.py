@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 from .artifact_manifest import create_artifact_manifest
+from .benchmark import benchmark_models
 from .model_artifact import (
     FEATURE_IMPORTANCE_NOTE,
     export_model_bundle,
@@ -18,6 +19,7 @@ from .robustness import analyse_selection_robustness
 from .schema import load_reference_cohort
 from .visualization import (
     plot_feature_importance,
+    plot_model_benchmark,
     plot_selection_robustness,
     plot_training_history,
 )
@@ -82,6 +84,11 @@ def generate_demo_artifacts(
     robustness_chart_path = plot_selection_robustness(
         robustness, output_path / "selection_robustness.png"
     )
+    benchmark = benchmark_models(robustness_report=robustness)
+    benchmark_path = output_path / "model_benchmark.json"
+    benchmark_chart_path = plot_model_benchmark(
+        benchmark, output_path / "model_benchmark.png"
+    )
 
     _write_json(training_path, training_result.summary_as_dict())
     _write_json(evaluation_path, evaluation_result.as_dict())
@@ -104,6 +111,7 @@ def generate_demo_artifacts(
     )
     _write_json(session_path, session.as_dict())
     _write_json(robustness_path, robustness.as_dict())
+    _write_json(benchmark_path, benchmark.as_dict())
 
     outputs = {
         "curve": curve_path,
@@ -118,6 +126,8 @@ def generate_demo_artifacts(
         "training_session_response": session_path,
         "selection_robustness": robustness_path,
         "selection_robustness_chart": robustness_chart_path,
+        "model_benchmark": benchmark_path,
+        "model_benchmark_chart": benchmark_chart_path,
     }
     manifest_path = create_artifact_manifest(
         outputs, output_path / "artifact_manifest.json"

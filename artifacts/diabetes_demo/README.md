@@ -18,6 +18,7 @@ demonstrate the complete ML flow for the proposal and backend handoff:
 - `backend_prediction_example.json`: example JSON request and response
 - `training_session_response.json`: full response for one 20-patient selection
 - `selection_robustness.json` and `.png`: variability across 30 valid selections
+- `model_benchmark.json` and `.png`: Random Forest versus two reference models
 - `artifact_manifest.json`: file sizes, SHA-256 checksums, and runtime versions
 - `patient_split.json`: exact patient IDs used in the demo split
 

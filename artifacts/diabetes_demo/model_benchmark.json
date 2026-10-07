@@ -1,0 +1,1519 @@
+{
+  "analysis_type": "model_benchmark",
+  "highest_mean_balanced_accuracy": "logistic_regression",
+  "model_choice_note": "The benchmark measures predictive stability. Random Forest remains the activity model for its tree-growth visualisation and intuitive split importance, not because it has the highest benchmark score.",
+  "models": [
+    "random_forest",
+    "logistic_regression",
+    "dummy_most_frequent"
+  ],
+  "note": "Synthetic small-data comparison; results do not represent clinical performance.",
+  "scenario_count": 30,
+  "scenarios": [
+    {
+      "models": [
+        {
+          "accuracy": 0.9,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.875,
+          "display_name": "Random Forest",
+          "f1": 0.8571
+        },
+        {
+          "accuracy": 1.0,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 1.0,
+          "display_name": "Logistic Regression",
+          "f1": 1.0
+        },
+        {
+          "accuracy": 0.4,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.5714
+        }
+      ],
+      "scenario_number": 1,
+      "training_patient_ids": [
+        "P002",
+        "P004",
+        "P005",
+        "P009",
+        "P014",
+        "P017",
+        "P018",
+        "P019",
+        "P020",
+        "P021",
+        "P023",
+        "P026",
+        "P028",
+        "P029",
+        "P032",
+        "P034",
+        "P035",
+        "P038",
+        "P039",
+        "P040"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.6,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.619,
+          "display_name": "Random Forest",
+          "f1": 0.6667
+        },
+        {
+          "accuracy": 0.9,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.8333,
+          "display_name": "Logistic Regression",
+          "f1": 0.9333
+        },
+        {
+          "accuracy": 0.3,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 2,
+      "training_patient_ids": [
+        "P007",
+        "P009",
+        "P010",
+        "P011",
+        "P012",
+        "P014",
+        "P015",
+        "P018",
+        "P020",
+        "P023",
+        "P025",
+        "P026",
+        "P027",
+        "P029",
+        "P030",
+        "P032",
+        "P033",
+        "P034",
+        "P035",
+        "P036"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.7,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.7,
+          "display_name": "Random Forest",
+          "f1": 0.7273
+        },
+        {
+          "accuracy": 0.9,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.9,
+          "display_name": "Logistic Regression",
+          "f1": 0.8889
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 3,
+      "training_patient_ids": [
+        "P001",
+        "P002",
+        "P004",
+        "P007",
+        "P009",
+        "P011",
+        "P013",
+        "P015",
+        "P016",
+        "P017",
+        "P018",
+        "P021",
+        "P022",
+        "P026",
+        "P028",
+        "P029",
+        "P032",
+        "P037",
+        "P038",
+        "P040"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.6,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.6,
+          "display_name": "Random Forest",
+          "f1": 0.6
+        },
+        {
+          "accuracy": 0.8,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.8,
+          "display_name": "Logistic Regression",
+          "f1": 0.8
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 4,
+      "training_patient_ids": [
+        "P001",
+        "P004",
+        "P005",
+        "P008",
+        "P009",
+        "P011",
+        "P012",
+        "P017",
+        "P018",
+        "P019",
+        "P022",
+        "P024",
+        "P025",
+        "P031",
+        "P033",
+        "P034",
+        "P035",
+        "P037",
+        "P038",
+        "P040"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.8,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.75,
+          "display_name": "Random Forest",
+          "f1": 0.6667
+        },
+        {
+          "accuracy": 0.9,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.875,
+          "display_name": "Logistic Regression",
+          "f1": 0.8571
+        },
+        {
+          "accuracy": 0.4,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.5714
+        }
+      ],
+      "scenario_number": 5,
+      "training_patient_ids": [
+        "P001",
+        "P002",
+        "P003",
+        "P005",
+        "P009",
+        "P012",
+        "P013",
+        "P014",
+        "P015",
+        "P016",
+        "P017",
+        "P019",
+        "P021",
+        "P022",
+        "P027",
+        "P028",
+        "P030",
+        "P032",
+        "P033",
+        "P036"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.7,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.7083,
+          "display_name": "Random Forest",
+          "f1": 0.6667
+        },
+        {
+          "accuracy": 0.8,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.75,
+          "display_name": "Logistic Regression",
+          "f1": 0.6667
+        },
+        {
+          "accuracy": 0.4,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.5714
+        }
+      ],
+      "scenario_number": 6,
+      "training_patient_ids": [
+        "P001",
+        "P003",
+        "P004",
+        "P005",
+        "P007",
+        "P008",
+        "P009",
+        "P013",
+        "P015",
+        "P016",
+        "P017",
+        "P019",
+        "P020",
+        "P022",
+        "P023",
+        "P025",
+        "P029",
+        "P032",
+        "P036",
+        "P038"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.2,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.5,
+          "display_name": "Random Forest",
+          "f1": 0.0
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.6875,
+          "display_name": "Logistic Regression",
+          "f1": 0.5455
+        },
+        {
+          "accuracy": 0.2,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 7,
+      "training_patient_ids": [
+        "P002",
+        "P004",
+        "P006",
+        "P007",
+        "P008",
+        "P009",
+        "P011",
+        "P012",
+        "P014",
+        "P015",
+        "P017",
+        "P018",
+        "P020",
+        "P021",
+        "P026",
+        "P027",
+        "P029",
+        "P030",
+        "P033",
+        "P037"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.7,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.6667,
+          "display_name": "Random Forest",
+          "f1": 0.5714
+        },
+        {
+          "accuracy": 0.8,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.75,
+          "display_name": "Logistic Regression",
+          "f1": 0.6667
+        },
+        {
+          "accuracy": 0.4,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.5714
+        }
+      ],
+      "scenario_number": 8,
+      "training_patient_ids": [
+        "P004",
+        "P005",
+        "P007",
+        "P010",
+        "P013",
+        "P015",
+        "P016",
+        "P017",
+        "P019",
+        "P020",
+        "P022",
+        "P025",
+        "P028",
+        "P029",
+        "P030",
+        "P031",
+        "P035",
+        "P036",
+        "P037",
+        "P040"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.7,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.7,
+          "display_name": "Random Forest",
+          "f1": 0.7692
+        },
+        {
+          "accuracy": 0.8,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.8,
+          "display_name": "Logistic Regression",
+          "f1": 0.75
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 9,
+      "training_patient_ids": [
+        "P006",
+        "P007",
+        "P008",
+        "P009",
+        "P010",
+        "P011",
+        "P012",
+        "P017",
+        "P019",
+        "P022",
+        "P026",
+        "P027",
+        "P028",
+        "P029",
+        "P030",
+        "P036",
+        "P037",
+        "P038",
+        "P039",
+        "P040"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.4,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.5714,
+          "display_name": "Random Forest",
+          "f1": 0.5
+        },
+        {
+          "accuracy": 0.9,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.9286,
+          "display_name": "Logistic Regression",
+          "f1": 0.8571
+        },
+        {
+          "accuracy": 0.3,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.4615
+        }
+      ],
+      "scenario_number": 10,
+      "training_patient_ids": [
+        "P005",
+        "P006",
+        "P007",
+        "P008",
+        "P011",
+        "P014",
+        "P016",
+        "P018",
+        "P019",
+        "P020",
+        "P022",
+        "P024",
+        "P026",
+        "P027",
+        "P031",
+        "P034",
+        "P036",
+        "P038",
+        "P039",
+        "P040"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.9,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.9,
+          "display_name": "Random Forest",
+          "f1": 0.9091
+        },
+        {
+          "accuracy": 1.0,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 1.0,
+          "display_name": "Logistic Regression",
+          "f1": 1.0
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 11,
+      "training_patient_ids": [
+        "P001",
+        "P002",
+        "P004",
+        "P006",
+        "P008",
+        "P010",
+        "P013",
+        "P015",
+        "P017",
+        "P020",
+        "P021",
+        "P022",
+        "P024",
+        "P025",
+        "P027",
+        "P028",
+        "P034",
+        "P035",
+        "P036",
+        "P038"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.8,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.8,
+          "display_name": "Random Forest",
+          "f1": 0.75
+        },
+        {
+          "accuracy": 0.7,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.7,
+          "display_name": "Logistic Regression",
+          "f1": 0.6667
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 12,
+      "training_patient_ids": [
+        "P002",
+        "P004",
+        "P005",
+        "P006",
+        "P008",
+        "P010",
+        "P012",
+        "P014",
+        "P016",
+        "P020",
+        "P021",
+        "P022",
+        "P024",
+        "P026",
+        "P027",
+        "P029",
+        "P030",
+        "P031",
+        "P033",
+        "P036"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.9,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.9,
+          "display_name": "Random Forest",
+          "f1": 0.8889
+        },
+        {
+          "accuracy": 0.9,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.9,
+          "display_name": "Logistic Regression",
+          "f1": 0.9091
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 13,
+      "training_patient_ids": [
+        "P001",
+        "P005",
+        "P006",
+        "P007",
+        "P010",
+        "P011",
+        "P013",
+        "P014",
+        "P019",
+        "P021",
+        "P023",
+        "P026",
+        "P028",
+        "P029",
+        "P030",
+        "P032",
+        "P035",
+        "P038",
+        "P039",
+        "P040"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.9,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.9,
+          "display_name": "Random Forest",
+          "f1": 0.8889
+        },
+        {
+          "accuracy": 0.9,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.9,
+          "display_name": "Logistic Regression",
+          "f1": 0.8889
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 14,
+      "training_patient_ids": [
+        "P004",
+        "P005",
+        "P006",
+        "P007",
+        "P012",
+        "P013",
+        "P014",
+        "P016",
+        "P021",
+        "P022",
+        "P026",
+        "P027",
+        "P028",
+        "P029",
+        "P032",
+        "P033",
+        "P034",
+        "P035",
+        "P037",
+        "P040"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.7,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.7,
+          "display_name": "Random Forest",
+          "f1": 0.6667
+        },
+        {
+          "accuracy": 0.8,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.8,
+          "display_name": "Logistic Regression",
+          "f1": 0.75
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 15,
+      "training_patient_ids": [
+        "P002",
+        "P003",
+        "P004",
+        "P005",
+        "P007",
+        "P008",
+        "P012",
+        "P013",
+        "P015",
+        "P016",
+        "P017",
+        "P019",
+        "P024",
+        "P027",
+        "P028",
+        "P029",
+        "P030",
+        "P035",
+        "P036",
+        "P037"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.9,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.875,
+          "display_name": "Random Forest",
+          "f1": 0.8571
+        },
+        {
+          "accuracy": 0.8,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.7917,
+          "display_name": "Logistic Regression",
+          "f1": 0.75
+        },
+        {
+          "accuracy": 0.4,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.5714
+        }
+      ],
+      "scenario_number": 16,
+      "training_patient_ids": [
+        "P001",
+        "P002",
+        "P004",
+        "P005",
+        "P011",
+        "P012",
+        "P014",
+        "P015",
+        "P016",
+        "P022",
+        "P023",
+        "P025",
+        "P026",
+        "P028",
+        "P032",
+        "P033",
+        "P034",
+        "P038",
+        "P039",
+        "P040"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 1.0,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 1.0,
+          "display_name": "Random Forest",
+          "f1": 1.0
+        },
+        {
+          "accuracy": 1.0,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 1.0,
+          "display_name": "Logistic Regression",
+          "f1": 1.0
+        },
+        {
+          "accuracy": 0.4,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.5714
+        }
+      ],
+      "scenario_number": 17,
+      "training_patient_ids": [
+        "P001",
+        "P002",
+        "P004",
+        "P005",
+        "P007",
+        "P009",
+        "P011",
+        "P014",
+        "P017",
+        "P018",
+        "P021",
+        "P022",
+        "P023",
+        "P024",
+        "P031",
+        "P033",
+        "P034",
+        "P036",
+        "P038",
+        "P039"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.5,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.5,
+          "display_name": "Random Forest",
+          "f1": 0.4444
+        },
+        {
+          "accuracy": 0.8,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.8,
+          "display_name": "Logistic Regression",
+          "f1": 0.75
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 18,
+      "training_patient_ids": [
+        "P001",
+        "P004",
+        "P006",
+        "P008",
+        "P011",
+        "P017",
+        "P019",
+        "P020",
+        "P021",
+        "P022",
+        "P023",
+        "P024",
+        "P026",
+        "P029",
+        "P030",
+        "P031",
+        "P034",
+        "P036",
+        "P037",
+        "P039"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.8,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.75,
+          "display_name": "Random Forest",
+          "f1": 0.6667
+        },
+        {
+          "accuracy": 1.0,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 1.0,
+          "display_name": "Logistic Regression",
+          "f1": 1.0
+        },
+        {
+          "accuracy": 0.4,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.5714
+        }
+      ],
+      "scenario_number": 19,
+      "training_patient_ids": [
+        "P002",
+        "P003",
+        "P005",
+        "P006",
+        "P010",
+        "P013",
+        "P016",
+        "P017",
+        "P018",
+        "P020",
+        "P024",
+        "P025",
+        "P028",
+        "P029",
+        "P030",
+        "P032",
+        "P033",
+        "P034",
+        "P035",
+        "P038"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.9,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.9,
+          "display_name": "Random Forest",
+          "f1": 0.8889
+        },
+        {
+          "accuracy": 0.9,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.9,
+          "display_name": "Logistic Regression",
+          "f1": 0.8889
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 20,
+      "training_patient_ids": [
+        "P004",
+        "P005",
+        "P006",
+        "P008",
+        "P009",
+        "P012",
+        "P013",
+        "P014",
+        "P015",
+        "P016",
+        "P019",
+        "P022",
+        "P024",
+        "P026",
+        "P031",
+        "P034",
+        "P037",
+        "P038",
+        "P039",
+        "P040"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.8,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.8,
+          "display_name": "Random Forest",
+          "f1": 0.8
+        },
+        {
+          "accuracy": 0.8,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.8,
+          "display_name": "Logistic Regression",
+          "f1": 0.8
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 21,
+      "training_patient_ids": [
+        "P001",
+        "P003",
+        "P004",
+        "P008",
+        "P009",
+        "P010",
+        "P011",
+        "P015",
+        "P017",
+        "P019",
+        "P023",
+        "P024",
+        "P027",
+        "P030",
+        "P031",
+        "P033",
+        "P035",
+        "P036",
+        "P038",
+        "P040"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 1.0,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 1.0,
+          "display_name": "Random Forest",
+          "f1": 1.0
+        },
+        {
+          "accuracy": 0.8,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.7917,
+          "display_name": "Logistic Regression",
+          "f1": 0.8333
+        },
+        {
+          "accuracy": 0.4,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 22,
+      "training_patient_ids": [
+        "P001",
+        "P002",
+        "P004",
+        "P005",
+        "P006",
+        "P008",
+        "P009",
+        "P010",
+        "P013",
+        "P015",
+        "P021",
+        "P023",
+        "P024",
+        "P025",
+        "P026",
+        "P027",
+        "P032",
+        "P033",
+        "P036",
+        "P039"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.8,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.8,
+          "display_name": "Random Forest",
+          "f1": 0.75
+        },
+        {
+          "accuracy": 0.9,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.9,
+          "display_name": "Logistic Regression",
+          "f1": 0.9091
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 23,
+      "training_patient_ids": [
+        "P001",
+        "P003",
+        "P004",
+        "P006",
+        "P008",
+        "P010",
+        "P011",
+        "P014",
+        "P016",
+        "P018",
+        "P019",
+        "P020",
+        "P023",
+        "P026",
+        "P027",
+        "P031",
+        "P032",
+        "P034",
+        "P036",
+        "P038"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.8,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.8,
+          "display_name": "Random Forest",
+          "f1": 0.75
+        },
+        {
+          "accuracy": 0.8,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.8,
+          "display_name": "Logistic Regression",
+          "f1": 0.8
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 24,
+      "training_patient_ids": [
+        "P001",
+        "P002",
+        "P004",
+        "P006",
+        "P009",
+        "P010",
+        "P011",
+        "P013",
+        "P014",
+        "P020",
+        "P022",
+        "P024",
+        "P027",
+        "P028",
+        "P029",
+        "P030",
+        "P034",
+        "P035",
+        "P036",
+        "P040"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.8,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.8333,
+          "display_name": "Random Forest",
+          "f1": 0.8
+        },
+        {
+          "accuracy": 0.9,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.9167,
+          "display_name": "Logistic Regression",
+          "f1": 0.9091
+        },
+        {
+          "accuracy": 0.4,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 25,
+      "training_patient_ids": [
+        "P001",
+        "P003",
+        "P007",
+        "P009",
+        "P011",
+        "P012",
+        "P013",
+        "P015",
+        "P016",
+        "P017",
+        "P018",
+        "P019",
+        "P021",
+        "P023",
+        "P025",
+        "P026",
+        "P027",
+        "P028",
+        "P029",
+        "P039"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.9,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.9,
+          "display_name": "Random Forest",
+          "f1": 0.8889
+        },
+        {
+          "accuracy": 0.7,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.7,
+          "display_name": "Logistic Regression",
+          "f1": 0.6667
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 26,
+      "training_patient_ids": [
+        "P001",
+        "P004",
+        "P006",
+        "P007",
+        "P008",
+        "P009",
+        "P011",
+        "P013",
+        "P014",
+        "P016",
+        "P017",
+        "P025",
+        "P031",
+        "P033",
+        "P035",
+        "P036",
+        "P037",
+        "P038",
+        "P039",
+        "P040"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.8,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.8,
+          "display_name": "Random Forest",
+          "f1": 0.8
+        },
+        {
+          "accuracy": 0.8,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.8,
+          "display_name": "Logistic Regression",
+          "f1": 0.8
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 27,
+      "training_patient_ids": [
+        "P002",
+        "P003",
+        "P006",
+        "P007",
+        "P011",
+        "P012",
+        "P013",
+        "P014",
+        "P015",
+        "P016",
+        "P020",
+        "P021",
+        "P024",
+        "P025",
+        "P027",
+        "P028",
+        "P031",
+        "P035",
+        "P038",
+        "P040"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.7,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.6667,
+          "display_name": "Random Forest",
+          "f1": 0.5714
+        },
+        {
+          "accuracy": 0.7,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.6667,
+          "display_name": "Logistic Regression",
+          "f1": 0.5714
+        },
+        {
+          "accuracy": 0.4,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.5714
+        }
+      ],
+      "scenario_number": 28,
+      "training_patient_ids": [
+        "P001",
+        "P002",
+        "P004",
+        "P005",
+        "P008",
+        "P009",
+        "P011",
+        "P013",
+        "P015",
+        "P016",
+        "P019",
+        "P023",
+        "P024",
+        "P028",
+        "P030",
+        "P031",
+        "P033",
+        "P037",
+        "P038",
+        "P040"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.9,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.9,
+          "display_name": "Random Forest",
+          "f1": 0.9091
+        },
+        {
+          "accuracy": 0.9,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.9,
+          "display_name": "Logistic Regression",
+          "f1": 0.8889
+        },
+        {
+          "accuracy": 0.5,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.0
+        }
+      ],
+      "scenario_number": 29,
+      "training_patient_ids": [
+        "P001",
+        "P007",
+        "P009",
+        "P011",
+        "P012",
+        "P014",
+        "P015",
+        "P016",
+        "P020",
+        "P023",
+        "P024",
+        "P026",
+        "P027",
+        "P028",
+        "P030",
+        "P032",
+        "P035",
+        "P036",
+        "P037",
+        "P039"
+      ]
+    },
+    {
+      "models": [
+        {
+          "accuracy": 0.6,
+          "algorithm": "random_forest",
+          "balanced_accuracy": 0.619,
+          "display_name": "Random Forest",
+          "f1": 0.5
+        },
+        {
+          "accuracy": 0.8,
+          "algorithm": "logistic_regression",
+          "balanced_accuracy": 0.7619,
+          "display_name": "Logistic Regression",
+          "f1": 0.6667
+        },
+        {
+          "accuracy": 0.3,
+          "algorithm": "dummy_most_frequent",
+          "balanced_accuracy": 0.5,
+          "display_name": "Dummy baseline",
+          "f1": 0.4615
+        }
+      ],
+      "scenario_number": 30,
+      "training_patient_ids": [
+        "P001",
+        "P002",
+        "P003",
+        "P007",
+        "P008",
+        "P009",
+        "P016",
+        "P017",
+        "P020",
+        "P021",
+        "P022",
+        "P023",
+        "P026",
+        "P029",
+        "P031",
+        "P032",
+        "P033",
+        "P038",
+        "P039",
+        "P040"
+      ]
+    }
+  ],
+  "summary": {
+    "dummy_most_frequent": {
+      "accuracy": {
+        "maximum": 0.5,
+        "mean": 0.4367,
+        "median": 0.5,
+        "minimum": 0.2
+      },
+      "balanced_accuracy": {
+        "maximum": 0.5,
+        "mean": 0.5,
+        "median": 0.5,
+        "minimum": 0.5
+      },
+      "display_name": "Dummy baseline",
+      "f1": {
+        "maximum": 0.5714,
+        "mean": 0.1832,
+        "median": 0.0,
+        "minimum": 0.0
+      }
+    },
+    "logistic_regression": {
+      "accuracy": {
+        "maximum": 1.0,
+        "mean": 0.84,
+        "median": 0.8,
+        "minimum": 0.5
+      },
+      "balanced_accuracy": {
+        "maximum": 1.0,
+        "mean": 0.8384,
+        "median": 0.8,
+        "minimum": 0.6667
+      },
+      "display_name": "Logistic Regression",
+      "f1": {
+        "maximum": 1.0,
+        "mean": 0.8138,
+        "median": 0.8167,
+        "minimum": 0.5455
+      }
+    },
+    "random_forest": {
+      "accuracy": {
+        "maximum": 1.0,
+        "mean": 0.7567,
+        "median": 0.8,
+        "minimum": 0.2
+      },
+      "balanced_accuracy": {
+        "maximum": 1.0,
+        "mean": 0.7678,
+        "median": 0.8,
+        "minimum": 0.5
+      },
+      "display_name": "Random Forest",
+      "f1": {
+        "maximum": 1.0,
+        "mean": 0.7252,
+        "median": 0.75,
+        "minimum": 0.0
+      }
+    }
+  }
+}

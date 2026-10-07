@@ -56,6 +56,24 @@ guaranteed performance level. This is a sensitivity exercise on the same small
 synthetic cohort, not independent validation and not evidence of clinical
 performance.
 
+## Reference-model benchmark
+
+`benchmark_models()` compares the activity's Random Forest with a scaled,
+class-balanced Logistic Regression and a most-frequent-class Dummy baseline on
+the same 30 deterministic selection scenarios. The mean test results are:
+
+| Model | Accuracy | Balanced accuracy | F1 |
+| --- | ---: | ---: | ---: |
+| Random Forest | 75.7% | 76.8% | 72.5% |
+| Logistic Regression | 84.0% | 83.8% | 81.4% |
+| Dummy baseline | 43.7% | 50.0% | 18.3% |
+
+Logistic Regression is the strongest predictive reference on this synthetic
+cohort. Random Forest remains the classroom activity model because adding trees
+provides intuitive progress checkpoints and its split importance supports the
+planned feature-importance interaction. The project therefore does not claim
+that Random Forest is the most accurate algorithm.
+
 ## Model input order
 
 The feature order is fixed because every row supplied to the model must use the

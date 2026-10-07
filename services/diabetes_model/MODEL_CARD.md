@@ -73,6 +73,23 @@ from 20% to 100%, with a mean of 75.7% and median of 80%. This wide variation is
 expected with such a small cohort and is an important part of the educational
 message: data selection can strongly affect model behaviour.
 
+## Reference-model comparison
+
+The same 30 selection scenarios were also evaluated with a scaled,
+class-balanced Logistic Regression and a most-frequent-class Dummy baseline:
+
+| Model | Mean accuracy | Mean balanced accuracy | Mean F1 |
+| --- | ---: | ---: | ---: |
+| Random Forest | 75.7% | 76.8% | 72.5% |
+| Logistic Regression | 84.0% | 83.8% | 81.4% |
+| Dummy baseline | 43.7% | 50.0% | 18.3% |
+
+Logistic Regression is the strongest predictive reference in this experiment.
+Random Forest remains the activity model because incremental tree checkpoints
+support the planned training animation and split importance is straightforward
+to visualise for students. This is an educational design decision, not a claim
+that Random Forest is the best-performing classifier.
+
 ## Explainability
 
 The project exports global Random Forest mean-decrease-in-impurity importance.

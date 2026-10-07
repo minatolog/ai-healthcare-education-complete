@@ -31,6 +31,18 @@
       "sha256": "6fa83ed7c7942307dc4c2a1009dcc14e6d56a2f0d71d5a67ab04687aee491b38"
     },
     {
+      "bytes": 32322,
+      "filename": "model_benchmark.json",
+      "name": "model_benchmark",
+      "sha256": "f020765f67496bf6dc6cce3b24b1a0d30474bce477cddbc7cb87929b3d0ffcc1"
+    },
+    {
+      "bytes": 74759,
+      "filename": "model_benchmark.png",
+      "name": "model_benchmark_chart",
+      "sha256": "23920d205f3099a77c5ad6d9268953e9e645fed9f47b57c168303037207f0d3c"
+    },
+    {
       "bytes": 1793,
       "filename": "diabetes_random_forest.metadata.json",
       "name": "model_metadata",

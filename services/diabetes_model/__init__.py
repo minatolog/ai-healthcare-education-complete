@@ -1,5 +1,16 @@
 """Educational diabetes model package."""
 
+from .benchmark import (
+    BENCHMARK_NOTE,
+    MODEL_CHOICE_NOTE,
+    MODEL_DISPLAY_NAMES,
+    MODEL_ORDER,
+    ModelBenchmarkReport,
+    ModelBenchmarkScenario,
+    ScenarioModelMetrics,
+    benchmark_models,
+)
+
 from .features import (
     FEATURE_DEFINITIONS,
     MODEL_FEATURES,
@@ -75,6 +86,7 @@ from .training import (
 )
 from .visualization import (
     plot_feature_importance,
+    plot_model_benchmark,
     plot_selection_robustness,
     plot_training_history,
 )
@@ -86,6 +98,14 @@ from .workflow import (
 )
 
 __all__ = [
+    "BENCHMARK_NOTE",
+    "MODEL_CHOICE_NOTE",
+    "MODEL_DISPLAY_NAMES",
+    "MODEL_ORDER",
+    "ModelBenchmarkReport",
+    "ModelBenchmarkScenario",
+    "ScenarioModelMetrics",
+    "benchmark_models",
     "FEATURE_DEFINITIONS",
     "MODEL_FEATURES",
     "FeatureDefinition",
@@ -144,6 +164,7 @@ __all__ = [
     "TrainingHistoryPoint",
     "train_random_forest",
     "plot_feature_importance",
+    "plot_model_benchmark",
     "plot_selection_robustness",
     "plot_training_history",
     "DEFAULT_COHORT_PATH",
