@@ -1,4 +1,6 @@
 """SMP U-Net with one 2D slice or three adjacent CT-slice channels."""
+import math
+from numbers import Real
 import torch
 from torch import nn
 import segmentation_models_pytorch as smp
@@ -33,9 +35,26 @@ class KidneyUNet(nn.Module):
         return self.network(images)
 
 
-def segmentation_loss(logits, target):
-    """Cross entropy plus foreground soft-Dice; labels stay exclusive 0/1/2."""
-    ce = nn.functional.cross_entropy(logits, target)
+def validate_tumour_ce_weight(value):
+    """Validate a fixed relative tumour CE weight, without fitting data statistics."""
+    if isinstance(value, bool) or not isinstance(value, Real) or not math.isfinite(value) or value <= 0:
+        raise ValueError("tumour_ce_weight must be a positive finite number, not a boolean.")
+    return float(value)
+
+
+def segmentation_loss(logits, target, *, tumour_ce_weight=1.0):
+    """Class-weighted CE plus unchanged, equally averaged foreground soft-Dice.
+
+    PyTorch's weighted CE mean divides by the sum of reference-class weights in
+    the minibatch. A weight of 2 is a relative cost, not an absolute doubling of
+    every tumour gradient. The default retains the original unweighted CE call.
+    """
+    weight = validate_tumour_ce_weight(tumour_ce_weight)
+    if weight == 1.0:
+        ce = nn.functional.cross_entropy(logits, target)
+    else:
+        class_weights = torch.tensor([1.0, 1.0, weight], dtype=logits.dtype, device=logits.device)
+        ce = nn.functional.cross_entropy(logits, target, weight=class_weights, reduction="mean")
     probabilities = logits.softmax(dim=1)
     one_hot = nn.functional.one_hot(target, 3).permute(0, 3, 1, 2).to(probabilities.dtype)
     intersection = (probabilities * one_hot).sum((0, 2, 3))[1:]

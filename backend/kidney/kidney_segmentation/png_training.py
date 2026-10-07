@@ -11,6 +11,7 @@ import hashlib
 from importlib.metadata import version
 import json
 import math
+from numbers import Integral, Real
 import os
 from pathlib import Path
 import tempfile
@@ -23,7 +24,7 @@ from torch.utils.data import DataLoader
 from . import CLASSES
 from .cohort import canonical_fingerprint, validate_cohort
 from .metrics import confusion_matrix, patient_report, summarize_patients
-from .model import KidneyUNet, segmentation_loss
+from .model import KidneyUNet, segmentation_loss, validate_tumour_ce_weight
 from .png_dataset import PNGConfig, PNGPatientDataset
 from .pretrained import (build_verified_model, CONFIG_SHA256, REVISION,
                          WEIGHTS_SHA256)
@@ -31,6 +32,7 @@ from .pretrained import (build_verified_model, CONFIG_SHA256, REVISION,
 SCHEMA = "png_segmentation_v1"
 METRIC_SCOPE = ("hard-argmax pixels in every exported reference-selected 256x256 "
                 "2D PNG slice of the specified patient pool; no resize or full-volume evaluation")
+SELECTION_METRICS = ("validation_loss", "tumour_dice")
 
 
 def _hash(content):
@@ -39,6 +41,154 @@ def _hash(content):
 
 def _utc():
     return datetime.now(timezone.utc).isoformat()
+
+
+def _selection_rules(metric):
+    if not isinstance(metric, str) or metric not in SELECTION_METRICS:
+        raise ValueError("Checkpoint selection metric must be validation_loss or tumour_dice.")
+    return {"metric": metric, "direction": "min" if metric == "validation_loss" else "max",
+            "tie_break": ("earlier_epoch" if metric == "validation_loss"
+                          else "lower_validation_loss_then_earlier_epoch")}
+
+
+def _finite_real(value):
+    return (not isinstance(value, (bool, np.bool_)) and isinstance(value, Real)
+            and math.isfinite(value))
+
+
+def png_loss_configuration(tumour_ce_weight=1.0):
+    """JSON-safe description of the fixed train/validation minibatch objective."""
+    weight = validate_tumour_ce_weight(tumour_ce_weight)
+    return {"name": "cross_entropy_plus_foreground_soft_dice",
+            "version": "ce-class-weight-foreground-dice-v1",
+            "ce_class_weights": [1.0, 1.0, weight], "ce_reduction": "mean",
+            "ce_mean_denominator": "sum_of_reference_class_weights_in_minibatch",
+            "foreground_dice_class_ids": [1, 2], "foreground_dice_class_average": "equal_mean",
+            "foreground_dice_smoothing": 1.0,
+            "epoch_loss_aggregation": "slice_weighted_mean_of_minibatch_combined_losses"}
+
+
+def _same_loss_configuration(observed, expected):
+    try:
+        return (isinstance(observed, dict)
+                and json.dumps(observed, sort_keys=True, allow_nan=False)
+                == json.dumps(expected, sort_keys=True, allow_nan=False))
+    except (TypeError, ValueError):
+        return False
+
+
+def _validate_loss_configuration(metadata):
+    """Keep genuine historical v1 evidence unchanged; reject partial new evidence."""
+    report, history = metadata.get("best_validation_report"), metadata.get("history")
+    names = ("tumour_ce_weight", "loss_configuration")
+    top_new = any(key in metadata for key in names)
+    report_new = isinstance(report, dict) and any(key in report for key in names)
+    history_new = isinstance(history, list) and any(isinstance(row, dict) and any(key in row for key in names)
+                                                  for row in history)
+    if not (top_new or report_new or history_new):
+        return
+    if not all(key in metadata for key in names):
+        raise ValueError("PNG checkpoint loss configuration evidence is incomplete.")
+    weight = validate_tumour_ce_weight(metadata["tumour_ce_weight"])
+    expected = png_loss_configuration(weight)
+    if not _same_loss_configuration(metadata["loss_configuration"], expected):
+        raise ValueError("PNG checkpoint loss configuration differs from its tumour CE weight.")
+    if (not isinstance(report, dict) or "tumour_ce_weight" not in report
+            or validate_tumour_ce_weight(report["tumour_ce_weight"]) != weight
+            or not _same_loss_configuration(report.get("loss_configuration"), expected)):
+        raise ValueError("PNG checkpoint selected report uses a different loss configuration.")
+    if (not isinstance(history, list) or not history or type(metadata.get("epochs")) is not int
+            or len(history) != metadata["epochs"]):
+        raise ValueError("PNG checkpoint loss configuration requires complete epoch history.")
+    for row in history:
+        if (not isinstance(row, dict) or "tumour_ce_weight" not in row
+                or validate_tumour_ce_weight(row["tumour_ce_weight"]) != weight):
+            raise ValueError("PNG checkpoint history uses a different tumour CE weight.")
+
+
+def _selection_values(report, metric):
+    """Return a larger-is-better rank, reported score and selected-model loss.
+
+    Zero Dice is a valid score. Undefined or non-finite tumour Dice never falls
+    back to another selection criterion. Exact ranking ties keep the first epoch.
+    """
+    _selection_rules(metric)
+    loss = report.get("loss") if isinstance(report, dict) else None
+    if not _finite_real(loss) or loss < 0:
+        raise ValueError("Checkpoint selection requires a finite non-negative validation loss.")
+    loss = float(loss)
+    if metric == "validation_loss":
+        return (-loss,), loss, loss
+    means, counts = report.get("patient_mean"), report.get("contributing_patient_counts")
+    tumour_mean = means.get("tumour") if isinstance(means, dict) else None
+    tumour_counts = counts.get("tumour") if isinstance(counts, dict) else None
+    score = tumour_mean.get("dice") if isinstance(tumour_mean, dict) else None
+    count = tumour_counts.get("dice") if isinstance(tumour_counts, dict) else None
+    if (not _finite_real(score) or not 0 <= score <= 1
+            or isinstance(count, (bool, np.bool_)) or not isinstance(count, Integral) or count < 1):
+        raise ValueError("Tumour Dice selection requires a finite patient-mean Dice in [0,1] with contributing patients; no fallback is used.")
+    patient_count = report.get("patient_count")
+    if patient_count is not None and (type(patient_count) is not int or not 1 <= count <= patient_count):
+        raise ValueError("Tumour Dice contributing-patient count is inconsistent.")
+    score = float(score)
+    return (score, -loss), score, loss
+
+
+def _validate_checkpoint_selection(metadata):
+    """Check explicit selection evidence; historical v1 metadata stays untouched."""
+    history = metadata.get("history")
+    # Contributor counts existed in reports before selection was configurable,
+    # but these history fields were introduced with explicit selection evidence.
+    history_fields = ("selection_metric", "selection_score", "checkpoint_selected",
+                      "validation_contributing_patient_counts")
+    history_new = isinstance(history, list) and any(
+        isinstance(record, dict) and any(key in record for key in history_fields)
+        for record in history)
+    if ("checkpoint_selection" not in metadata and "lowest_validation_loss_observed" not in metadata
+            and not history_new):
+        return
+    selection = metadata.get("checkpoint_selection")
+    if not isinstance(selection, dict):
+        raise ValueError("PNG checkpoint selection evidence is incomplete.")
+    rules = _selection_rules(selection.get("metric"))
+    if any(selection.get(key) != value for key, value in rules.items()):
+        raise ValueError("PNG checkpoint selection policy is inconsistent.")
+    numeric_evidence = [selection.get(key) for key in
+                        ("best_score", "selected_validation_loss", "lowest_validation_loss_observed")]
+    numeric_evidence.extend(metadata.get(key) for key in
+                            ("best_validation_loss", "lowest_validation_loss_observed"))
+    if any(not _finite_real(value) for value in numeric_evidence):
+        raise ValueError("PNG checkpoint selection scores/losses must be finite numbers, not booleans.")
+    metric = rules["metric"]
+    epochs, best_epoch = metadata.get("epochs"), metadata.get("best_epoch")
+    if (not isinstance(history, list) or not history or type(epochs) is not int
+            or len(history) != epochs or type(best_epoch) is not int):
+        raise ValueError("PNG checkpoint selection requires complete epoch history.")
+    candidates = []
+    for expected_epoch, record in enumerate(history, 1):
+        if not isinstance(record, dict) or type(record.get("epoch")) is not int or record["epoch"] != expected_epoch:
+            raise ValueError("PNG checkpoint selection history must contain each epoch in order.")
+        report = {"loss": record.get("validation_loss"),
+                  "patient_mean": record.get("validation_patient_mean", {}),
+                  "contributing_patient_counts": record.get("validation_contributing_patient_counts", {})}
+        rank, score, loss = _selection_values(report, metric)
+        if (record.get("selection_metric") != metric or not _finite_real(record.get("selection_score"))
+                or record["selection_score"] != score):
+            raise ValueError("PNG checkpoint history selection score is inconsistent.")
+        candidates.append((rank, expected_epoch, score, loss))
+    chosen = max(candidates, key=lambda candidate: candidate[0])
+    report = metadata.get("best_validation_report")
+    _, score, loss = _selection_values(report, metric)
+    lowest = min(candidate[3] for candidate in candidates)
+    if (best_epoch != chosen[1] or score != chosen[2] or loss != chosen[3]
+            or report.get("patient_mean") != history[best_epoch - 1].get("validation_patient_mean")
+            or report.get("contributing_patient_counts", {}) != history[best_epoch - 1].get("validation_contributing_patient_counts", {})
+            or selection.get("best_score") != score
+            or selection.get("selected_validation_loss") != loss
+            or metadata.get("best_validation_loss") != loss
+            or selection.get("lowest_validation_loss_observed") != lowest
+            or metadata.get("lowest_validation_loss_observed") != lowest):
+        raise ValueError("PNG checkpoint selected epoch/report differs from its declared selection history.")
 
 
 def _check_audit_preprocessing(audit, config):
@@ -252,8 +402,10 @@ class _Progress:
 
 
 def evaluate_png_validation(model, dataset, *, batch_size=2, device="cpu", progress=None,
-                            epoch=None, epochs=None):
+                            epoch=None, epochs=None, tumour_ce_weight=1.0):
     """Hard predictions accumulated per validation patient, without optimizer work."""
+    tumour_ce_weight = validate_tumour_ce_weight(tumour_ce_weight)
+    loss_configuration = png_loss_configuration(tumour_ce_weight)
     if not isinstance(dataset, AuditedPNGDataset) or dataset.role != "validation":
         raise ValueError("Only a locked audited validation dataset can be evaluated here.")
     _check_bindings(dataset.context)
@@ -264,12 +416,12 @@ def evaluate_png_validation(model, dataset, *, batch_size=2, device="cpu", progr
     counts, seen, loss_sum = Counter(), 0, 0.0
     loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, drop_last=False, num_workers=0)
     reporter = _Progress(progress, {"phase": "validation", "epoch": epoch, "epochs": epochs,
-                                    "metric_scope": METRIC_SCOPE})
+                                    "metric_scope": METRIC_SCOPE, "tumour_ce_weight": tumour_ce_weight})
     with torch.inference_mode():
         for batch_index, batch in enumerate(loader, 1):
             logits = model(batch["input"].to(device))
             target = batch["target"].to(device)
-            loss = segmentation_loss(logits, target)
+            loss = segmentation_loss(logits, target, tumour_ce_weight=tumour_ce_weight)
             if not torch.isfinite(loss) or not torch.isfinite(logits).all():
                 raise ValueError("Validation logits/loss became non-finite.")
             predicted = logits.argmax(1).cpu().numpy()
@@ -290,7 +442,8 @@ def evaluate_png_validation(model, dataset, *, batch_size=2, device="cpu", progr
         reports.append(item)
     report = summarize_patients(reports)
     report.update(loss=loss_sum / seen, split="validation", slice_count=seen, metric_scope=METRIC_SCOPE,
-                  loss_scope="slice-weighted mean of minibatch cross entropy plus foreground soft-Dice",
+                  tumour_ce_weight=tumour_ce_weight, loss_configuration=loss_configuration,
+                  loss_scope="slice-weighted mean of minibatch class-weighted cross entropy (mean normalized by the sum of reference-class weights) plus unchanged equally averaged kidney/tumour soft-Dice",
                   model_selection_only=True, clinical_performance_evidence=False,
                   full_scan_coverage=False, created_at_utc=_utc())
     return report
@@ -298,12 +451,17 @@ def evaluate_png_validation(model, dataset, *, batch_size=2, device="cpu", progr
 
 def train_png(root, cohort_path, audit_path, *, epochs=1, batch_size=2, lr=1e-3,
               seed=42, device="cpu", num_threads=2, progress=None, cache_root=None,
-              model_builder=None, data_mode="real", visual_review_note=None):
+              model_builder=None, data_mode="real", visual_review_note=None,
+              selection_metric="validation_loss", tumour_ce_weight=1.0):
     """Train a new PNG model and return its best-validation state and evidence.
 
     No files are written here. The caller persists reports and a new checkpoint.
     A visual_review_note records a human statement; it does not certify alignment.
+    Selection affects the saved epoch only, never loss, sampling or optimizer work.
     """
+    selection_rules = _selection_rules(selection_metric)
+    tumour_ce_weight = validate_tumour_ce_weight(tumour_ce_weight)
+    loss_configuration = png_loss_configuration(tumour_ce_weight)
     for value, name in ((epochs, "epochs"), (batch_size, "batch_size"), (num_threads, "num_threads")):
         if type(value) is not int or value < 1:
             raise ValueError("%s must be a positive integer." % name)
@@ -324,12 +482,13 @@ def train_png(root, cohort_path, audit_path, *, epochs=1, batch_size=2, lr=1e-3,
     if data_mode == "synthetic_fixture" and model_builder is None:
         raise ValueError("Synthetic fixture training requires an explicit test model builder.")
     training, validation = AuditedPNGDataset(context, "train"), AuditedPNGDataset(context, "validation")
-    reporter = _Progress(progress, {"data_mode": data_mode, "metric_scope": METRIC_SCOPE})
+    reporter = _Progress(progress, {"data_mode": data_mode, "metric_scope": METRIC_SCOPE,
+                                    "selection_metric": selection_metric, "tumour_ce_weight": tumour_ce_weight})
     reporter.emit("initial", phase="initialization", train_patient_count=len(training.patient_ids),
                   validation_patient_count=len(validation.patient_ids), train_slice_count=len(training),
                   validation_slice_count=len(validation), test_prediction_pixels_loaded=False,
                   epochs=epochs, device="cpu", num_threads=num_threads, batch_size=batch_size,
-                  learning_rate=lr, seed=seed)
+                  learning_rate=lr, seed=seed, loss_configuration=loss_configuration)
     previous_threads = torch.get_num_threads()
     torch.set_num_threads(num_threads)
     started = _utc()
@@ -353,6 +512,7 @@ def train_png(root, cohort_path, audit_path, *, epochs=1, batch_size=2, lr=1e-3,
         loader = DataLoader(training, batch_size=batch_size, shuffle=True, generator=generator,
                             drop_last=False, num_workers=0)
         best_loss, best_epoch, best_state, best_report = float("inf"), None, None, None
+        best_rank, best_score, lowest_loss = None, None, float("inf")
         history, optimizer_steps, last_report = [], 0, None
         for epoch in range(1, epochs + 1):
             _check_bindings(context)
@@ -366,7 +526,7 @@ def train_png(root, cohort_path, audit_path, *, epochs=1, batch_size=2, lr=1e-3,
                 optimizer.zero_grad(set_to_none=True)
                 logits = model(batch["input"].to(device))
                 target = batch["target"].to(device)
-                loss = segmentation_loss(logits, target)
+                loss = segmentation_loss(logits, target, tumour_ce_weight=tumour_ce_weight)
                 if not torch.isfinite(logits).all() or not torch.isfinite(loss):
                     raise ValueError("Training logits/loss became non-finite.")
                 loss.backward()
@@ -386,17 +546,26 @@ def train_png(root, cohort_path, audit_path, *, epochs=1, batch_size=2, lr=1e-3,
                 raise ValueError("Every exported training slice must be used exactly once per epoch.")
             _check_encoder(model, encoder_before)
             last_report = evaluate_png_validation(model, validation, batch_size=batch_size, device=device,
-                                                  progress=progress, epoch=epoch, epochs=epochs)
+                                                  progress=progress, epoch=epoch, epochs=epochs,
+                                                  tumour_ce_weight=tumour_ce_weight)
             _check_encoder(model, encoder_before)
+            rank, score, validation_loss = _selection_values(last_report, selection_metric)
+            selected_this_epoch = best_rank is None or rank > best_rank
+            lowest_loss = min(lowest_loss, validation_loss)
             record = {"epoch": epoch, "epochs": epochs, "train_loss": loss_sum / seen,
+                      "tumour_ce_weight": tumour_ce_weight,
                       "validation_loss": last_report["loss"], "train_slices_seen": seen,
                       "validation_slices_seen": last_report["slice_count"],
                       "validation_patient_mean": last_report["patient_mean"],
+                      "validation_contributing_patient_counts": copy.deepcopy(last_report.get("contributing_patient_counts", {})),
+                      "selection_metric": selection_metric, "selection_score": score,
+                      "checkpoint_selected": selected_this_epoch,
                       "optimizer_steps_completed": optimizer_steps, "started_at_utc": epoch_started,
                       "completed_at_utc": _utc(), "metric_scope": METRIC_SCOPE}
             history.append(record)
-            if record["validation_loss"] < best_loss:
+            if selected_this_epoch:
                 best_loss, best_epoch, best_state = record["validation_loss"], epoch, _state(model)
+                best_rank, best_score = rank, score
                 best_report = copy.deepcopy(last_report)
             reporter.emit("epoch_completed", phase="epoch_summary", **record)
         _check_bindings(context)
@@ -409,6 +578,7 @@ def train_png(root, cohort_path, audit_path, *, epochs=1, batch_size=2, lr=1e-3,
             raise ValueError("Both decoder and segmentation head must update during training.")
         metadata = {
             "schema_version": SCHEMA, "architecture": model.architecture, "input_channels": 1,
+            "tumour_ce_weight": tumour_ce_weight, "loss_configuration": copy.deepcopy(loss_configuration),
             "input_mode": "single_2d_slice", "classes": CLASSES, "data_mode": data_mode,
             "preprocessing": context["config"].to_dict(), "preprocessing_sha256": training.config_sha256,
             "audit": copy.deepcopy(context["audit"]), "cohort": copy.deepcopy(context["cohort"]),
@@ -422,6 +592,10 @@ def train_png(root, cohort_path, audit_path, *, epochs=1, batch_size=2, lr=1e-3,
             "segmentation_head_updated": changed["head"], "gradient_checks_completed": optimizer_steps,
             "state_fingerprint_sha256": _state_hash(best_state),
             "epochs": epochs, "best_epoch": best_epoch, "best_validation_loss": best_loss,
+            "lowest_validation_loss_observed": lowest_loss,
+            "checkpoint_selection": {**selection_rules, "best_score": best_score,
+                                     "selected_validation_loss": best_loss,
+                                     "lowest_validation_loss_observed": lowest_loss},
             "batch_size": batch_size, "learning_rate": lr, "seed": seed, "device": "cpu", "num_threads": num_threads,
             "optimizer": "Adam", "optimizer_steps_completed": optimizer_steps,
             "sampling": "all exported training slices once per epoch; shuffled without replacement; no label-based selection/oversampling",
@@ -436,12 +610,13 @@ def train_png(root, cohort_path, audit_path, *, epochs=1, batch_size=2, lr=1e-3,
             "started_at_utc": started, "completed_at_utc": _utc(),
             "limitations": ["Reference-selected exports do not establish full-scan segmentation performance.",
                             "Validation selects the checkpoint and is not an untouched final test.",
-                            "One epoch is a baseline execution, not established clinical performance.",
+                            "This training run is an educational baseline, not established clinical performance.",
                             "Machine hashes/counts and training do not certify anatomical annotation alignment."]}
         metadata["metadata_fingerprint_sha256"] = canonical_fingerprint(metadata, "metadata_fingerprint_sha256")
         model.png_metadata = copy.deepcopy(metadata)
         model.pretrained_proof = copy.deepcopy(proof)
         reporter.emit("completed", phase="completed", best_epoch=best_epoch, best_validation_loss=best_loss,
+                      selection_score=best_score, lowest_validation_loss_observed=lowest_loss,
                       optimizer_steps_completed=optimizer_steps, test_prediction_pixels_loaded=False)
         return {"model": model, "history": history, "metadata": metadata, "proof": proof,
                 "validation_report": best_report, "best_validation_report": best_report,
@@ -473,6 +648,8 @@ def _validate_metadata(metadata):
         raise ValueError("Checkpoint encoder provenance changed during training.")
     if metadata["data_mode"] == "real" and metadata["architecture"] != "smp_unet_resnet18":
         raise ValueError("Unsupported real PNG checkpoint architecture.")
+    _validate_checkpoint_selection(metadata)
+    _validate_loss_configuration(metadata)
     return config
 
 

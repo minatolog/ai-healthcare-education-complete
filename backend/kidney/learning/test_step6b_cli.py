@@ -259,3 +259,92 @@ def test_valid_pending_reference_report_and_note_are_recorded_without_clinical_c
     assert result["visual_review_note"] == args.visual_review_note
     assert result["clinical_alignment_verified"] is False
     assert not args.output_dir.exists() and not state["train_calls"]
+
+
+def test_default_selection_retains_loss_policy_in_run_evidence_and_training(environment):
+    args, state = environment
+    result = CLI.run(args)
+    assert result['configuration']['selection_metric'] == 'validation_loss'
+    assert state['train_calls'][0]['selection_metric'] == 'validation_loss'
+
+
+def test_tumour_selection_is_passed_to_training_and_saved_in_run_summary(environment):
+    args, state = environment
+    args.selection_metric = 'tumour_dice'
+    state['fitted']['metadata']['checkpoint_selection'] = {
+        'metric': 'tumour_dice', 'best_score': 0.2, 'direction': 'maximize'}
+    result = CLI.run(args)
+    assert result['configuration']['selection_metric'] == 'tumour_dice'
+    assert state['train_calls'][0]['selection_metric'] == 'tumour_dice'
+    assert result['checkpoint_selection'] == state['fitted']['metadata']['checkpoint_selection']
+    assert read_json(args.output_dir / 'run_summary.json') == result
+
+
+def test_check_only_records_tumour_selection_without_running_training(environment):
+    args, state = environment
+    args.selection_metric, args.check_only = 'tumour_dice', True
+    result = CLI.run(args)
+    assert result['configuration']['selection_metric'] == 'tumour_dice'
+    assert not state['train_calls'] and not args.output_dir.exists()
+
+
+def test_invalid_selection_rejected_before_reading_runtime_or_reserving_output(environment):
+    args, state = environment
+    args.selection_metric = 'test_dice'
+    with pytest.raises(ValueError, match='checkpoint selection'):
+        CLI.run(args)
+    assert not state['runtime_load_calls'] and not args.output_dir.exists()
+
+
+def test_parser_rejects_unknown_selection_before_loading_runtime(environment):
+    _, state = environment
+    with pytest.raises(SystemExit) as error:
+        CLI.main(['--selection-metric', 'test_dice'])
+    assert error.value.code == 2 and not state['runtime_load_calls']
+
+
+def test_default_ce_weight_passed_without_changing_sampling_or_selection(environment):
+    args, state = environment
+    result = CLI.run(args)
+    assert result['configuration']['tumour_ce_weight'] == 1.0
+    assert state['train_calls'][0]['tumour_ce_weight'] == 1.0
+    assert state['train_calls'][0]['selection_metric'] == 'validation_loss'
+    assert result['configuration']['training_sampling'] == 'all exported training rows, shuffled once per epoch; no label-based sampling'
+
+
+def test_weighted_ce_configuration_and_metadata_are_persisted(environment, capsys):
+    args, state = environment
+    args.tumour_ce_weight, args.selection_metric = 2.0, 'tumour_dice'
+    state['fitted']['metadata']['loss_configuration'] = {'fixture': 'loss metadata passed through; not a real training result'}
+    result = CLI.run(args)
+    assert result['configuration']['tumour_ce_weight'] == 2.0
+    assert state['train_calls'][0]['tumour_ce_weight'] == 2.0
+    assert result['loss_configuration'] == state['fitted']['metadata']['loss_configuration']
+    assert read_json(args.output_dir / 'run_summary.json')['configuration']['tumour_ce_weight'] == 2.0
+    assert 'Relative CE class weights [background, kidney, tumour]: [1.0, 1.0, 2.0]' in capsys.readouterr().out
+    assert snapshot(args.root) == {}
+
+
+def test_weighted_ce_check_only_creates_no_run_or_model(environment):
+    args, state = environment
+    args.tumour_ce_weight, args.check_only = 2.0, True
+    result = CLI.run(args)
+    assert result['configuration']['tumour_ce_weight'] == 2.0
+    assert result['ct_mask_pngs_decoded'] == 0 and result['optimizer_steps'] == 0
+    assert not state['train_calls'] and not state['save_calls'] and not args.output_dir.exists()
+
+
+@pytest.mark.parametrize('weight', [0, -1, None, True, False, '2', float('nan'), float('inf')])
+def test_invalid_ce_weight_fails_before_loading_runtime_or_writing_outputs(environment, weight):
+    args, state = environment
+    args.tumour_ce_weight = weight
+    with pytest.raises(ValueError, match='CE weight'):
+        CLI.run(args)
+    assert not state['runtime_load_calls'] and not state['context_calls'] and not args.output_dir.exists()
+
+
+def test_parser_rejects_text_ce_weight_before_loading_runtime(environment):
+    _, state = environment
+    with pytest.raises(SystemExit) as error:
+        CLI.main(['--tumour-ce-weight', 'invalid'])
+    assert error.value.code == 2 and not state['runtime_load_calls']
