@@ -93,6 +93,8 @@ from .training import (
     RandomForestTrainingConfig,
     RandomForestTrainingResult,
     TrainingHistoryPoint,
+    TrainingProgressCallback,
+    TrainingProgressEvent,
     train_random_forest,
 )
 from .visualization import (
@@ -184,6 +186,8 @@ __all__ = [
     "RandomForestTrainingConfig",
     "RandomForestTrainingResult",
     "TrainingHistoryPoint",
+    "TrainingProgressCallback",
+    "TrainingProgressEvent",
     "train_random_forest",
     "plot_feature_importance",
     "plot_model_benchmark",

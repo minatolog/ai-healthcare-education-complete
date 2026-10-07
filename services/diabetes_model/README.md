@@ -37,10 +37,25 @@ test metrics, and one prediction per test patient. The fitted estimator remains
 available as `session.training_result.model` if the backend needs to retain it.
 
 Training is synchronous and runs in Python on the server side. The browser does
-not execute the model file. To create a classroom-friendly progress animation,
-the frontend can reveal the returned 5-to-100-tree checkpoint history one point
-at a time after the session completes. This keeps the displayed curve faithful
-to the values actually measured during model training.
+not execute the model file. The optional synchronous progress callback emits an
+event after each 5-to-100-tree checkpoint:
+
+```python
+def on_progress(event):
+    queue_for_client(event.as_dict())
+
+session = run_training_session(
+    selected_patient_ids,
+    progress_callback=on_progress,
+)
+```
+
+Each event contains `step`, `total_steps`, `progress_percent`, `trees_built`,
+`train_accuracy`, and `validation_accuracy`. A future backend may forward these
+events with SSE or WebSocket, but this package has no dependency on either
+transport. If live streaming is not used, the completed response contains the
+same 20 points for a frontend animation. Both approaches display values that
+were actually measured during training.
 
 ## Selection pre-flight check
 

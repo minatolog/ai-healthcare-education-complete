@@ -31,13 +31,14 @@ from .split import (
 from .training import (
     RandomForestTrainingConfig,
     RandomForestTrainingResult,
+    TrainingProgressCallback,
     train_random_forest,
 )
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_COHORT_PATH = REPOSITORY_ROOT / "data" / "synthetic" / "diabetes_patients.csv"
-SESSION_SCHEMA_VERSION = "1.2"
+SESSION_SCHEMA_VERSION = "1.3"
 
 
 class TrainingSelectionError(SplitValidationError):
@@ -117,6 +118,7 @@ def run_training_session(
     cohort_path: str | Path = DEFAULT_COHORT_PATH,
     split_seed: int = DEFAULT_SPLIT_SEED,
     training_config: RandomForestTrainingConfig | None = None,
+    progress_callback: TrainingProgressCallback | None = None,
 ) -> TrainingSessionResult:
     """Run split, preparation, model selection, and held-out evaluation.
 
@@ -139,6 +141,7 @@ def run_training_session(
         prepared.training,
         prepared.validation,
         training_config,
+        progress_callback=progress_callback,
     )
     evaluation_result = evaluate_test_set(training_result, prepared.test)
     feature_importance = extract_feature_importance(training_result)

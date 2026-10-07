@@ -13,6 +13,7 @@ from services.diabetes_model.training import (
     DEFAULT_TREE_COUNTS,
     ModelTrainingError,
     RandomForestTrainingConfig,
+    TrainingProgressEvent,
     train_random_forest,
 )
 
@@ -81,9 +82,37 @@ class DiabetesRandomForestTrainingTests(unittest.TestCase):
         self.assertEqual(len(history), len(DEFAULT_TREE_COUNTS))
         self.assertEqual(history[0]["step"], 1)
         self.assertEqual(history[0]["trees_built"], DEFAULT_TREE_COUNTS[0])
+        self.assertEqual(history[0]["progress_percent"], 5.0)
+        self.assertEqual(history[-1]["progress_percent"], 100.0)
+        self.assertEqual(history[-1]["total_steps"], len(DEFAULT_TREE_COUNTS))
         self.assertIsNone(history[0]["loss"])
         self.assertIn("train_accuracy", history[0])
         self.assertIn("validation_accuracy", history[0])
+
+    def test_callback_receives_each_checkpoint_in_order(self) -> None:
+        events: list[TrainingProgressEvent] = []
+        result = train_random_forest(
+            self.prepared.training,
+            self.prepared.validation,
+            progress_callback=events.append,
+        )
+
+        self.assertEqual(tuple(events), result.progress_events())
+        self.assertEqual(len(events), len(DEFAULT_TREE_COUNTS))
+        self.assertEqual(
+            [event.step for event in events],
+            list(range(1, len(DEFAULT_TREE_COUNTS) + 1)),
+        )
+        self.assertEqual(events[0].progress_percent, 5.0)
+        self.assertEqual(events[-1].progress_percent, 100.0)
+
+    def test_invalid_progress_callback_is_rejected(self) -> None:
+        with self.assertRaisesRegex(ModelTrainingError, "must be callable"):
+            train_random_forest(
+                self.prepared.training,
+                self.prepared.validation,
+                progress_callback="not-callable",
+            )
 
     def test_test_dataset_is_not_needed_for_training(self) -> None:
         test_ids = set(self.prepared.test.patient_ids)

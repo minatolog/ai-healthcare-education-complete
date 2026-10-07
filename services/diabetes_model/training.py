@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections import Counter
 from dataclasses import dataclass
+from typing import Callable
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
@@ -61,6 +62,36 @@ class TrainingHistoryPoint:
 
 
 @dataclass(frozen=True)
+class TrainingProgressEvent:
+    """One callback event emitted after evaluating a tree checkpoint."""
+
+    step: int
+    total_steps: int
+    trees_built: int
+    training_accuracy: float
+    validation_accuracy: float
+
+    @property
+    def progress_percent(self) -> float:
+        return self.step / self.total_steps * 100
+
+    def as_dict(self) -> dict[str, str | int | float]:
+        return {
+            "event": "training_progress",
+            "phase": "checkpoint_evaluation",
+            "step": self.step,
+            "total_steps": self.total_steps,
+            "progress_percent": round(self.progress_percent, 1),
+            "trees_built": self.trees_built,
+            "train_accuracy": round(self.training_accuracy, 4),
+            "validation_accuracy": round(self.validation_accuracy, 4),
+        }
+
+
+TrainingProgressCallback = Callable[[TrainingProgressEvent], None]
+
+
+@dataclass(frozen=True)
 class RandomForestTrainingResult:
     """Selected model and graph-ready training history."""
 
@@ -72,19 +103,33 @@ class RandomForestTrainingResult:
     training_patient_ids: tuple[str, ...]
     validation_patient_ids: tuple[str, ...]
 
-    def history_as_dicts(self) -> list[dict[str, int | float | None]]:
+    def history_as_dicts(
+        self,
+    ) -> list[dict[str, str | int | float | None]]:
         """Return JSON-ready points for the website's training curve."""
 
         return [
             {
-                "step": step,
-                "trees_built": point.trees_built,
-                "train_accuracy": round(point.training_accuracy, 4),
-                "validation_accuracy": round(point.validation_accuracy, 4),
+                **event.as_dict(),
                 "loss": None,
             }
-            for step, point in enumerate(self.history, start=1)
+            for event in self.progress_events()
         ]
+
+    def progress_events(self) -> tuple[TrainingProgressEvent, ...]:
+        """Reconstruct the same events emitted during model fitting."""
+
+        total_steps = len(self.history)
+        return tuple(
+            TrainingProgressEvent(
+                step=step,
+                total_steps=total_steps,
+                trees_built=point.trees_built,
+                training_accuracy=point.training_accuracy,
+                validation_accuracy=point.validation_accuracy,
+            )
+            for step, point in enumerate(self.history, start=1)
+        )
 
     def summary_as_dict(self) -> dict[str, object]:
         """Return model-selection details without serialising the estimator."""
@@ -104,6 +149,8 @@ def train_random_forest(
     training: PreparedDataset,
     validation: PreparedDataset,
     config: RandomForestTrainingConfig | None = None,
+    *,
+    progress_callback: TrainingProgressCallback | None = None,
 ) -> RandomForestTrainingResult:
     """Train on 20 records and use validation accuracy to select tree count.
 
@@ -113,6 +160,8 @@ def train_random_forest(
 
     training_config = config or RandomForestTrainingConfig()
     training_config.validate()
+    if progress_callback is not None and not callable(progress_callback):
+        raise ModelTrainingError("progress_callback must be callable.")
     _validate_model_dataset("training", training)
     _validate_model_dataset("validation", validation)
 
@@ -128,23 +177,33 @@ def train_random_forest(
     )
     history: list[TrainingHistoryPoint] = []
 
-    for tree_count in training_config.tree_counts:
+    total_steps = len(training_config.tree_counts)
+    for step, tree_count in enumerate(training_config.tree_counts, start=1):
         progress_model.set_params(n_estimators=tree_count)
         progress_model.fit(training.features, training.labels)
 
         training_predictions = progress_model.predict(training.features)
         validation_predictions = progress_model.predict(validation.features)
-        history.append(
-            TrainingHistoryPoint(
-                trees_built=tree_count,
-                training_accuracy=float(
-                    accuracy_score(training.labels, training_predictions)
-                ),
-                validation_accuracy=float(
-                    accuracy_score(validation.labels, validation_predictions)
-                ),
-            )
+        history_point = TrainingHistoryPoint(
+            trees_built=tree_count,
+            training_accuracy=float(
+                accuracy_score(training.labels, training_predictions)
+            ),
+            validation_accuracy=float(
+                accuracy_score(validation.labels, validation_predictions)
+            ),
         )
+        history.append(history_point)
+        if progress_callback is not None:
+            progress_callback(
+                TrainingProgressEvent(
+                    step=step,
+                    total_steps=total_steps,
+                    trees_built=history_point.trees_built,
+                    training_accuracy=history_point.training_accuracy,
+                    validation_accuracy=history_point.validation_accuracy,
+                )
+            )
 
     best_point = max(
         history,

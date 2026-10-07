@@ -52,6 +52,10 @@ diagnostic thresholds.
 The smallest tree count tied for the best validation accuracy is selected. The
 default reproducible demonstration selects 60 trees.
 
+The training function can synchronously emit one progress event after each of
+the 20 tree checkpoints. This supports a future live browser animation through
+the backend without introducing a web-framework dependency into the ML package.
+
 ## Demonstration results
 
 For the committed balanced demonstration selection:

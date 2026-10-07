@@ -77,6 +77,17 @@ class DiabetesTrainingWorkflowTests(unittest.TestCase):
         repeated = run_training_session(reversed(self.selected_ids))
         self.assertEqual(repeated.as_dict(), self.session.as_dict())
 
+    def test_session_forwards_training_progress_events(self) -> None:
+        events = []
+        run_training_session(
+            self.selected_ids,
+            progress_callback=events.append,
+        )
+        self.assertEqual(len(events), 20)
+        self.assertEqual(events[0].trees_built, 5)
+        self.assertEqual(events[-1].trees_built, 100)
+        self.assertEqual(events[-1].progress_percent, 100.0)
+
     def test_invalid_student_selection_is_rejected(self) -> None:
         with self.assertRaisesRegex(SplitValidationError, "Exactly 20"):
             run_training_session(self.selected_ids[:-1])

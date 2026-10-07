@@ -91,16 +91,22 @@
       "sha256": "915ecc46544132b399234c7a8611f8eb0e8da7e279971f073c2c593cddfd2ee1"
     },
     {
-      "bytes": 29534,
-      "filename": "training_session_response.json",
-      "name": "training_session_response",
-      "sha256": "8b7bb10b8fc4410aef265aeae754a68d4aefa391110fd665f2b3254ab093c91c"
+      "bytes": 5224,
+      "filename": "training_progress_events.json",
+      "name": "training_progress_events",
+      "sha256": "fc8443b3a31b7cc2babb5317a2a114fc1176e86b66132d182abd08d1068d47d9"
     },
     {
-      "bytes": 3091,
+      "bytes": 32354,
+      "filename": "training_session_response.json",
+      "name": "training_session_response",
+      "sha256": "abeca473d0b8532a8b3b39bda26b3c261b0e47308d43bfb580f1a5d7692be8d9"
+    },
+    {
+      "bytes": 5751,
       "filename": "training_summary.json",
       "name": "training_summary",
-      "sha256": "564aa83392da3f8a2fc7191bade6ccc80772bcc1c92728da46b8f0adb571a146"
+      "sha256": "2f450ebee44f628a35a1d8da515704906e94dab83e2341609ec35729779d1982"
     }
   ],
   "educational_only": true,

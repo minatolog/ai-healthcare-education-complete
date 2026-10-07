@@ -21,6 +21,7 @@ demonstrate the complete ML flow for the proposal and backend handoff:
 - `model_benchmark.json` and `.png`: Random Forest versus two reference models
 - `selection_assessment_examples.json`: ready, warning, and error examples
 - `patient_explanation_example.json` and `.png`: one local sensitivity example
+- `training_progress_events.json`: 20 callback events for live curve updates
 - `artifact_manifest.json`: file sizes, SHA-256 checksums, and runtime versions
 - `patient_split.json`: exact patient IDs used in the demo split
 

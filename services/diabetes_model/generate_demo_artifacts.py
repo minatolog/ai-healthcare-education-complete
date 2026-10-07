@@ -97,6 +97,7 @@ def generate_demo_artifacts(
     explanation_chart_path = plot_patient_explanation(
         explanation, output_path / "patient_explanation_example.png"
     )
+    progress_events_path = output_path / "training_progress_events.json"
 
     _write_json(training_path, training_result.summary_as_dict())
     _write_json(evaluation_path, evaluation_result.as_dict())
@@ -143,6 +144,20 @@ def generate_demo_artifacts(
         },
     )
     _write_json(explanation_path, explanation.as_dict())
+    _write_json(
+        progress_events_path,
+        {
+            "event_contract": "synchronous_checkpoint_callback",
+            "events": [
+                event.as_dict()
+                for event in training_result.progress_events()
+            ],
+            "note": (
+                "A backend may forward each callback event through SSE or a "
+                "WebSocket; this model package has no web-framework dependency."
+            ),
+        },
+    )
 
     outputs = {
         "curve": curve_path,
@@ -162,6 +177,7 @@ def generate_demo_artifacts(
         "selection_assessment_examples": assessment_examples_path,
         "patient_explanation_example": explanation_path,
         "patient_explanation_chart": explanation_chart_path,
+        "training_progress_events": progress_events_path,
     }
     manifest_path = create_artifact_manifest(
         outputs, output_path / "artifact_manifest.json"
