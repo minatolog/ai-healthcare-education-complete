@@ -21,7 +21,8 @@ def utc_now():
 
 
 def load_runtime():
-    source = Path(__file__).resolve().parents[1]
+    root = Path(__file__).resolve().parents[1]
+    source = root / 'kidney-segmentation' if (root / 'kidney-segmentation').is_dir() else root
     sys.path.insert(0, str(source))
     return importlib.import_module('kidney_segmentation.png_training')
 
@@ -83,8 +84,17 @@ def settings(args):
         raise ValueError('Epochs, batch size and finite learning rate must be positive.')
     if not 0 <= args.seed < 2**63 or not 1 <= args.cpu_threads <= 16 or args.device != 'cpu':
         raise ValueError('Use CPU, 1-16 threads and a non-negative seed below 2**63 for this first PNG entry.')
+    selection_metric = getattr(args, 'selection_metric', 'validation_loss')
+    if selection_metric not in ('validation_loss', 'tumour_dice'):
+        raise ValueError('Choose validation_loss or patient-mean tumour_dice for checkpoint selection.')
+    tumour_ce_weight = getattr(args, 'tumour_ce_weight', 1.0)
+    if (isinstance(tumour_ce_weight, bool) or not isinstance(tumour_ce_weight, (int, float))
+            or not math.isfinite(tumour_ce_weight) or tumour_ce_weight <= 0):
+        raise ValueError('Tumour CE weight must be a positive finite number; background/kidney remain 1.')
     return {'epochs': args.epochs, 'batch_size': args.batch_size, 'learning_rate': args.learning_rate,
             'seed': args.seed, 'device': args.device, 'cpu_threads': args.cpu_threads,
+            'selection_metric': selection_metric,
+            'tumour_ce_weight': float(tumour_ce_weight),
             'training_sampling': 'all exported training rows, shuffled once per epoch; no label-based sampling',
             'resume': False}
 
@@ -111,6 +121,9 @@ def run(args):
     print('Locked PNG inputs: train=%d patients/%d slices; validation=%d patients/%d slices.' %
           (counts['train'], slices['train'], counts['validation'], slices['validation']), flush=True)
     print('Final test and independent prediction remain metadata only for this command.', flush=True)
+    print('Checkpoint selection metric: %s' % config['selection_metric'], flush=True)
+    print('Relative CE class weights [background, kidney, tumour]: [1.0, 1.0, %s]; foreground Dice unchanged.' %
+          config['tumour_ce_weight'], flush=True)
     if args.check_only:
         result = {**base, 'status': 'preflight_completed', 'offline_cache': cache,
                   'model_initialized': False, 'ct_mask_pngs_decoded': 0,
@@ -139,6 +152,8 @@ def run(args):
         fitted = runtime.train_png(root, args.cohort, args.audit, epochs=args.epochs,
                                    batch_size=args.batch_size, lr=args.learning_rate, seed=args.seed,
                                    device=args.device, num_threads=args.cpu_threads, progress=on_progress,
+                                   selection_metric=config['selection_metric'],
+                                   tumour_ce_weight=config['tumour_ce_weight'],
                                    visual_review_note=args.visual_review_note)
         checkpoint = runtime.save_png_checkpoint(output / 'best_model.pt', fitted['model'], fitted['metadata'])
         atomic_json(output / 'training_history.json', {
@@ -150,6 +165,8 @@ def run(args):
         current.update(status='completed', finished_at_utc=utc_now(), formal_training_completed=True,
                        epochs_completed=len(fitted['history']), checkpoint=checkpoint, artifact_sha256=artifacts,
                        best_epoch=fitted['metadata'].get('best_epoch'),
+                       checkpoint_selection=fitted['metadata'].get('checkpoint_selection'),
+                       loss_configuration=fitted['metadata'].get('loss_configuration'),
                        validation_patient_mean=fitted['best_validation_report']['patient_mean'],
                        pretrained_encoder_proof=fitted['proof'])
         atomic_json(output / 'run_summary.json', current)
@@ -166,6 +183,9 @@ def run(args):
         raise
     print('\n[LOCKED PNG TRAINING COMPLETED]')
     print('Epochs=%d; best validation checkpoint: %s' % (len(fitted['history']), output / 'best_model.pt'))
+    print('Checkpoint selection: %s; selected epoch: %s' %
+          (config['selection_metric'], current['best_epoch']))
+    print('Tumour CE weight: %s; foreground Dice unchanged.' % config['tumour_ce_weight'])
     print('Validation patient means: %s' % json.dumps(current['validation_patient_mean'], allow_nan=False))
     print('Run evidence: %s' % output)
     print('Metrics describe selected exported slices. No final test, independent prediction or patient diagnosis was performed.')
@@ -185,6 +205,10 @@ def main(argv=None):
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--device', choices=('cpu',), default='cpu')
     parser.add_argument('--cpu-threads', type=int, default=2)
+    parser.add_argument('--selection-metric', choices=('validation_loss', 'tumour_dice'), default='validation_loss',
+                        help='Save the lowest-loss or highest patient-mean validation tumour-Dice epoch; does not change training gradients')
+    parser.add_argument('--tumour-ce-weight', type=float, default=1.0,
+                        help='Positive finite relative CE weight for tumour; background/kidney weights stay 1 and foreground soft-Dice is unchanged')
     parser.add_argument('--visual-review-note', default=None, help='Optional description of your limited training-preview inspection; does not certify clinical annotation quality')
     parser.add_argument('--check-only', action='store_true', help='Metadata and offline-cache checks only; no CT/mask decode or model initialization')
     args = parser.parse_args(argv)

@@ -1,89 +1,75 @@
-# Kidney Feature-Branch Handoff
+# Kidney Backend Handoff
 
-Feature branch: `feat/yining-kidney-segmentation`
+Source module: `backend/kidney`. Target integration branch: `develop`. The next suggested feature branch is `feat/yining-kidney-evaluation-inference`; creating it does not change the reviewed data or model.
 
-Base branch: `develop`
+The implemented route is one grayscale 256x256 CT PNG per input, with a verified pretrained frozen ResNet-18 encoder and trainable U-Net decoder/head, producing background/kidney/tumour pixel labels. The full-volume/2.5D reference route is separate. Kidney and Diabetes remain independent tasks without multimodal fusion.
 
-Source module: `backend/kidney`
+## Completed local evidence
 
-This contribution packages the existing Kidney Tumour learning/model source in the team's backend tree. It preserves the local starter, dataset, reviewed patient assignments, pinned pretrained weight hashes and data bindings. It does not include a real trained PNG model or claim frontend/API compatibility.
+The reviewed patient lock is 20 training/2,071 selected slices, 10 validation/1,156, 10 final test/530 and five additional prediction patients/676. All slices for a patient share one pool; the original 210-case legacy split remains unchanged.
 
-## Current scope and evidence
+Local run05 trained for the predefined ten epochs with relative CE tumour weight 2, fixed seed 42, batch size 2 and frozen encoder. Epoch 10 was selected by maximum patient-mean validation tumour Dice before freezing. Final test completed once on all 530 locked test slices, with kidney Dice 0.876164 and tumour Dice 0.368032. Four test patients have zero tumour Dice. CT-only prediction completed all 676 prediction CTs, producing predicted masks, model overlays and five fixed previews; original model state and test evidence stayed unchanged.
 
-The implemented project route is one-channel, 256×256 PNG segmentation with `KidneyUNet(input_channels=1)`: verified offline ImageNet ResNet-18 encoder, frozen encoder parameters/BatchNorm, trainable U-Net decoder and three-class head. The earlier complete-volume/2.5D modules remain a separate reference route.
+See [the reviewed results summary](RUN05_MODEL_RESULTS.md) for fingerprints, metric contributors and limitations. Raw data, weights and generated run evidence remain local. The original MR !3 server CI passed; the next published MR requires its own pipeline result. Current fixture-test totals are recorded in [the next MR description](NEXT_MR_DESCRIPTION.md).
 
-The source includes metadata inventory, PNG/pixel audit, explicit-patient loader, development one-update exercise, cohort creation/validation, train-only reference previews, audit-bound PNG training/validation and PNG checkpoint save/load. The flat-layout local suite passed **188 engineering tests**, including 16 metadata-audit fixture tests. All 13 core model-package Python files were SHA-identical to the existing source during migration. GitLab server CI has not run; these checks are separate from real-data performance.
+## Actual Python interfaces
 
-The reviewed local data audit covered 20,686 paired selected slices from 210 cases. Its fixed cohort contains 20 training patients/2,071 slices, 10 validation/1,156, 10 final test/530 and five independent prediction/676. `case_00000` is training because it was exposed to development. The 40 modelling patients and five prediction patients remain separate. The original 147/32/31 split is unchanged.
+These are callable local interfaces, not committed HTTP endpoints.
 
-Real PNG training and validation have not been completed. Training reference preview generation does not establish completed manual anatomical review. No final PNG test, independent PNG prediction, clinical performance evidence, calibrated confidence or patient-level healthy/tumour diagnosis is claimed.
-
-## Actual Python boundary
-
-The following are source interfaces, not HTTP endpoints:
-
-| Interface | Current role |
+| Module/interface | Role |
 | --- | --- |
-| `PNGConfig`, `PNGPatientDataset` in `png_dataset.py` | Explicit patient PNG loading; one input channel; separate integer target; identity/source hashes |
-| `audit_png_dataset` in `png_audit.py` | Programmatic file, pixel, label/CSV, content and original-split checks |
-| `make_cohort`, `validate_cohort` in `cohort.py` | Deterministic audit-bound 20/10/10 + five prediction assignments and leakage controls |
-| `load_training_context` in `png_training.py` | Validate cohort/audit/manifest/original-split/preprocessing bindings without decoding PNGs |
-| `train_png` in `png_training.py` | Fresh train/validation run; returns `model`, `history`, `metadata`, `proof`, `best_validation_report`; caller persists artifacts |
-| `evaluate_png_validation` in `png_training.py` | Only an audited validation dataset from the fitted cohort; no optimizer work |
-| `save_png_checkpoint`, `load_png_checkpoint` | Create/restore `png_segmentation_v1`; loader returns `(model, config, metadata)` |
-| `learning/06b_train_png.py` | CPU orchestration, preflight, progress, failure/interruption records and non-overwriting output directory |
+| `png_dataset.PNGConfig`, `PNGPatientDataset` | Single-channel normalization; explicit patient loading with separate reference target |
+| `png_audit.audit_png_dataset`, `cohort.make_cohort`, `validate_cohort` | Machine file/pixel/CSV audit and deterministic audit-bound patient pools |
+| `png_training.load_training_context` | Current cohort/audit/manifest/legacy-split/preprocessing bindings; no PNG decode |
+| `png_training.train_png` | Fresh train/validation run; optional selection metric/CE tumour weight; returns model, history, metadata, proof and selected validation report |
+| `png_training.evaluate_png_validation` | Fixed validation scoring without optimizer updates |
+| `png_training.save_png_checkpoint`, `load_png_checkpoint` | Save/restore `png_segmentation_v1`; verify complete state/provenance and metadata evidence |
+| `png_final_test.inspect_completed_run`, `make_freeze_record`, `validate_freeze_record` | Metadata/tensor inspection and exact model/configuration/pool freeze |
+| `png_final_test.inspect_frozen_model`, `evaluate_frozen_test` | Check persisted freeze; evaluate every fixed test row once with unchanged model state |
+| `png_prediction.inspect_prediction_inputs`, `build_prediction_dataset` | Frozen CT-only prediction identities/paths; no PNG decode in preflight |
+| `png_prediction.predict_frozen_pool` | CT-only prediction, labels/overlays/fixed previews and persisted JSON report |
 
-Inputs are `[B,1,256,256]` float32 CTs with `(PNG/255−0.456)/0.224`; targets are `[B,256,256]` int64 IDs 0/1/2; logits are `[B,3,256,256]`. Patient and original slice identities must accompany every eventual output asset. PNG intensities are already processed uint8, not HU.
+Learning CLI commands wrap these interfaces with portable external paths, preflight, progress, non-overwriting outputs and failure/interruption records. The final-test CLI also records a persistent access ledger. Original checkpoints and completed test/prediction records must not be edited to bypass workflow controls.
 
-## Fields available for a future backend adapter
+Inputs are `[B,1,256,256]` float32 CT tensors normalized as `(PNG/255-0.456)/0.224`. Supervised targets are `[B,256,256]` int64 labels 0/1/2. Logits are `[B,3,256,256]`; frozen inference uses hard argmax. PNG intensities are already processed uint8, not raw HU.
 
-These are the actual local structures that an adapter can map. There is currently no committed shared JSON envelope, request route or public asset endpoint in this module.
+## Local fields available to the shared adapter
 
-| Local result | Actual fields useful for integration |
+| Result | Actual useful fields |
 | --- | --- |
-| Training progress callback | `event`, `timestamp_utc`, `phase`, `epoch`, `epochs`, `batch_index`, `total_batches`, `slices_seen`, `total_slices`, `loss`, `progress`; event-specific fields vary |
-| Epoch history | `epoch`, `epochs`, `train_loss`, `validation_loss`, `train_slices_seen`, `validation_slices_seen`, `validation_patient_mean`, `optimizer_steps_completed`, `metric_scope`, timestamps |
-| Validation report | `unit`, `patient_count`, `patient_mean`, `contributing_patient_counts`, `patients`, `absent_class_policy`, `split`, `slice_count`, `loss`, `loss_scope`, `metric_scope`, `model_selection_only` |
-| Each patient report | `patient_id`, `exported_slice_count`, `per_class`, `confusion_matrix`, `confusion_matrix_convention="rows_actual_columns_predicted"` |
-| Each class result | `dice`, `iou`, `precision`, `recall`, `f1`, `support_pixels`, `predicted_pixels`, `true_positive`, `false_positive`, `false_negative` |
-| Checkpoint metadata | `schema_version`, `architecture`, `input_mode`, `input_channels`, `classes`, `preprocessing`, `preprocessing_sha256`, `audit`, `cohort`, `pretrained_proof`, `best_epoch`, `best_validation_loss`, state/data fingerprints and limitations |
-| CLI run summary | `status`, `configuration`, `patient_counts`, `selected_slice_counts`, audit/cohort fingerprints, `reference_review`, `formal_training_completed`; successful runs add checkpoint/artifact hashes and validation results |
+| Progress | `event`, `timestamp_utc`, `phase`, epoch/batch/slice counts, `loss`, `progress`, optimizer counts as applicable |
+| Training history | Epoch losses, `validation_patient_mean`, `validation_contributing_patient_counts`, `selection_metric`, `selection_score`, `checkpoint_selected`, `tumour_ce_weight`, update counts |
+| Validation/final-test metrics | `patient_count`, `patient_mean`, `contributing_patient_counts`, `patients`, slice count, scope and hashes |
+| Patient/class metric | `patient_id`, `exported_slice_count`, `per_class`, confusion matrix; Dice/IoU/precision/recall/F1, supports, TP/FP/FN |
+| Frozen record | Checkpoint/state/configuration/data fingerprints, selected epoch/policy, fixed pools and preprocessing |
+| CT-only prediction report | `patient_ids`, `patients`, `slice_count`, `patient_slice_counts`, `classes`, `overlay`, model/freeze hashes and scope flags |
+| Patient prediction | `patient_id`, `exported_slice_count`, `slices`, `preview` |
+| Slice prediction | `sample_id`, `slice_index`, source image hashes, `predicted_class_counts`, `predicted_mask`, `model_overlay` |
+| Prediction asset | `path`, `sha256`; preview also contains `sample_ids` and `selection_rule` |
 
-Undefined metric denominators produce `null`, and means exclude those entries while reporting contributor counts. Loss is a slice-weighted minibatch CE+soft-Dice mean; reported overlap metrics use hard argmax predictions and patient-balanced means. Best checkpoint selection uses validation loss, not final-test scores.
+Undefined metric denominators are `null`; means exclude them and report contributor counts. Metrics are computed from hard labels per patient then averaged across patients. Default checkpoint selection uses validation loss; the explicit tumour-Dice route records its ranking/tie policy. Test and prediction results never select checkpoint/threshold settings.
 
-Do not expose raw checkpoint metadata as a public API response: it contains local paths and extensive audit/source records. A shared service must map approved fields into its own response schema and asset registry.
+Do not expose the full checkpoint metadata or local prediction paths directly as a public response. They include machine paths and extensive audit records. The shared service needs an approved envelope, model/task identifiers, validated requests, job states and an asset registry mapping local generated files to stable public URLs. Those are future adapter contracts, not existing response fields.
 
-## Capabilities to advertise accurately
+## Capability status
 
-The stable project identity is **Kidney Tumour**, task **segmentation**, three classes background/kidney/tumour. Those are domain facts for a future capability response, not implemented `model_id`/`task` JSON keys here. A team adapter must agree the final identifiers with the Diabetes contributor rather than inventing an available Diabetes implementation.
-
-| Capability | Dedicated PNG path status |
+| Capability | Status |
 | --- | --- |
-| Audit and patient-cohort checks | Implemented |
-| Training-only reference previews | Implemented; manual review remains explicit/pending |
-| Frozen-encoder training + validation | Implemented and fixture tested; real run pending |
-| PNG checkpoint save/load | Implemented; generated weights remain local |
-| Final-test PNG evaluation | Follow-up; test pixels remain unused by Step 6B |
-| Independent new-patient PNG prediction | Follow-up; five prediction cases remain reserved |
-| Predicted segmentation overlays/explanation | Follow-up for the PNG backend path; reference overlays are not predictions |
-| HTTP API, job persistence, public asset serving, frontend wiring | Follow-up |
-| Diabetes adapter/shared envelope | Follow-up; separate model/task, no multimodal fusion |
+| Audit, patient lock and training reference previews | Implemented; manual anatomical review remains pending |
+| Frozen-encoder training/validation and compatible PNG checkpoint | Implemented and executed locally |
+| Frozen PNG final test | Implemented and executed locally |
+| CT-only independent prediction and segmentation overlays | Implemented and executed locally; no reference accuracy or diagnosis claim |
+| Calibrated confidence, patient-level healthy/tumour diagnosis | Not implemented or supported by this cohort |
+| Shared HTTP routes, jobs, uploads and public asset serving | Pending |
+| Actual frontend wiring and Diabetes adapter/shared envelope | Pending |
 
-There is no region “confidence” or patient-level malignant/healthy label to map. The legacy/synthetic demo code elsewhere is not evidence that this PNG contribution integrates with the actual team frontend.
+The model overlay is segmentation, not Grad-CAM. Reference-based PNG export means all results describe selected 2D slices, not complete-scan or external clinical performance. Hashes/counts do not certify anatomical correctness or external source aliases.
 
-## Portability and Git boundaries
+## Next integration work
 
-Run commands from `backend/kidney`, with an explicit absolute `--root /absolute/path/to/kits_project`; see [the module README](../../backend/kidney/README.md). Do not use the old sibling-data default. Bind local audit/cohort/review files through explicit arguments when they remain in the original starter. No code migration requires editing or copying the actual dataset.
+1. Publish the reviewed source MR into `develop`, inspect its Changes and wait for the new server CI.
+2. Read the actual team backend/frontend and Diabetes contributor's code before defining shared capability, job, metric, prediction, asset and error contracts.
+3. Implement the backend adapter/asset serving and exercise train progress, validation/test evaluation and CT-only prediction through the real frontend flow.
+4. Reconcile Proposal/Jira/Figma wording with segmentation and the fixed 20/10/10 plus separate prediction pool before marking user-facing acceptance criteria complete.
 
-Only source, tests, configuration and English documentation belong in this branch. Keep CTs/masks, `.venv`, Hugging Face caches, encoder/model weights, checkpoints, previews, audit/run outputs, logs and `learning_outputs/` outside Git. Small reviewed metadata copies can be considered later through a deliberate team decision; this source contribution does not include them.
-
-## Next work, in order
-
-1. Run the migrated engineering suites and CI in the personal feature-branch checkout; inspect the source-only diff against `develop`.
-2. Inspect the Step 6A training previews and record any visible pairing/alignment problem without claiming medical label certification.
-3. Run the user-started Step 6B baseline on the unchanged locked train/validation pools; retain actual history, progress, provenance and interruption/completion status locally.
-4. Add final PNG testing for the frozen validation-selected model, then independent new-patient prediction with identity-bound predicted overlays. Keep the final test separate from model selection.
-5. Agree backend contracts and capability/error/asset fields with the frontend and Diabetes contributor. Implement the shared service adapter, persistence and input/output validation, then exercise the real application flow.
-6. Reconcile Proposal, Jira acceptance criteria and the actual Figma stages against that implemented flow before updating completion claims or requesting merge review.
-
-This handoff records a source contribution and the remaining work. It does not mark a Jira story done or declare the branch ready to merge.
+Run team commands from `backend/kidney` with explicit absolute external data/evidence paths; see [the module setup](../../backend/kidney/README.md). Source/tests/English guides and this small results summary belong in Git. CTs, masks, environments, caches, checkpoints, logs, previews and generated `learning_outputs/` do not. Existing first-MR documents remain historical records.
