@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 import os
+import statistics
 import tempfile
 from pathlib import Path
 
@@ -18,6 +19,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 
 from .model_artifact import FEATURE_IMPORTANCE_NOTE, FeatureImportanceEntry
+from .robustness import ROBUSTNESS_NOTE, SelectionRobustnessReport
 from .training import RandomForestTrainingResult
 
 
@@ -199,6 +201,108 @@ def plot_feature_importance(
         color="#64748b",
     )
     figure.tight_layout(rect=(0.06, 0.06, 0.98, 0.97))
+
+    path = Path(output_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    figure.savefig(path, format="png", facecolor=figure.get_facecolor())
+    return path
+
+
+def plot_selection_robustness(
+    report: SelectionRobustnessReport,
+    output_path: str | Path,
+) -> Path:
+    """Show how validation and test accuracy vary by student selection."""
+
+    if not report.scenarios:
+        raise ValueError("Robustness report must contain at least one scenario.")
+
+    scenario_numbers = [
+        scenario.scenario_number for scenario in report.scenarios
+    ]
+    validation_scores = [
+        scenario.best_validation_accuracy * 100
+        for scenario in report.scenarios
+    ]
+    test_scores = [
+        scenario.test_accuracy * 100 for scenario in report.scenarios
+    ]
+
+    figure = Figure(figsize=(10.2, 5.9), dpi=160, facecolor="#f8fafc")
+    FigureCanvasAgg(figure)
+    axis = figure.add_subplot(1, 1, 1)
+    axis.set_facecolor("#ffffff")
+    axis.scatter(
+        scenario_numbers,
+        validation_scores,
+        color="#f97316",
+        marker="o",
+        s=42,
+        alpha=0.85,
+        label="Best validation accuracy",
+    )
+    axis.scatter(
+        scenario_numbers,
+        test_scores,
+        color="#2563eb",
+        marker="s",
+        s=42,
+        alpha=0.85,
+        label="Held-out test accuracy",
+    )
+    axis.axhline(
+        statistics.fmean(validation_scores),
+        color="#f97316",
+        linewidth=1.4,
+        linestyle="--",
+        alpha=0.7,
+    )
+    axis.axhline(
+        statistics.fmean(test_scores),
+        color="#2563eb",
+        linewidth=1.4,
+        linestyle="--",
+        alpha=0.7,
+    )
+
+    axis.set_title(
+        "Performance Changes with Student Selection",
+        fontsize=17,
+        fontweight="bold",
+        color="#0f172a",
+        pad=15,
+    )
+    axis.text(
+        0.5,
+        1.01,
+        f"{report.scenario_count} valid selections • 20 training patients each",
+        transform=axis.transAxes,
+        ha="center",
+        va="bottom",
+        fontsize=9.5,
+        color="#475569",
+    )
+    axis.set_xlabel("Selection scenario", fontsize=11, color="#334155")
+    axis.set_ylabel("Accuracy (%)", fontsize=11, color="#334155")
+    axis.set_xlim(0, report.scenario_count + 1)
+    axis.set_ylim(0, 102)
+    axis.grid(axis="y", color="#cbd5e1", alpha=0.65, linewidth=0.8)
+    axis.tick_params(colors="#475569")
+    axis.spines["top"].set_visible(False)
+    axis.spines["right"].set_visible(False)
+    axis.spines["left"].set_color("#cbd5e1")
+    axis.spines["bottom"].set_color("#cbd5e1")
+    axis.legend(loc="lower right", frameon=False, fontsize=9.5)
+
+    figure.text(
+        0.5,
+        0.015,
+        ROBUSTNESS_NOTE,
+        ha="center",
+        fontsize=8.6,
+        color="#64748b",
+    )
+    figure.tight_layout(rect=(0.04, 0.06, 0.98, 0.97))
 
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)

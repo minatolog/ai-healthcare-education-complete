@@ -37,6 +37,15 @@ from .prediction import (
     PredictionInputError,
     predict_patient,
 )
+from .robustness import (
+    DEFAULT_SCENARIO_COUNT,
+    DEFAULT_SELECTION_SEED,
+    ROBUSTNESS_NOTE,
+    RobustnessAnalysisError,
+    SelectionRobustnessReport,
+    SelectionScenarioResult,
+    analyse_selection_robustness,
+)
 from .schema import (
     CSV_COLUMNS,
     FEATURE_COLUMNS,
@@ -64,7 +73,11 @@ from .training import (
     TrainingHistoryPoint,
     train_random_forest,
 )
-from .visualization import plot_feature_importance, plot_training_history
+from .visualization import (
+    plot_feature_importance,
+    plot_selection_robustness,
+    plot_training_history,
+)
 from .workflow import (
     DEFAULT_COHORT_PATH,
     SESSION_SCHEMA_VERSION,
@@ -102,6 +115,13 @@ __all__ = [
     "PredictionInput",
     "PredictionInputError",
     "predict_patient",
+    "DEFAULT_SCENARIO_COUNT",
+    "DEFAULT_SELECTION_SEED",
+    "ROBUSTNESS_NOTE",
+    "RobustnessAnalysisError",
+    "SelectionRobustnessReport",
+    "SelectionScenarioResult",
+    "analyse_selection_robustness",
     "CSV_COLUMNS",
     "FEATURE_COLUMNS",
     "TARGET_COLUMN",
@@ -124,6 +144,7 @@ __all__ = [
     "TrainingHistoryPoint",
     "train_random_forest",
     "plot_feature_importance",
+    "plot_selection_robustness",
     "plot_training_history",
     "DEFAULT_COHORT_PATH",
     "SESSION_SCHEMA_VERSION",

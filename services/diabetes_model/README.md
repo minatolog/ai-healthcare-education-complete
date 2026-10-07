@@ -39,6 +39,20 @@ the frontend can reveal the returned 5-to-100-tree checkpoint history one point
 at a time after the session completes. This keeps the displayed curve faithful
 to the values actually measured during model training.
 
+## Sensitivity to student selection
+
+Because only 20 fictional patients are used for training, the result can change
+substantially when students choose different patient cards. The deterministic
+`analyse_selection_robustness()` check trains 30 valid selection scenarios and
+summarises validation accuracy, held-out test accuracy, balanced accuracy, F1,
+selected tree counts, and mean feature importance.
+
+The generated `selection_robustness.json` and `selection_robustness.png` make
+this limitation visible instead of presenting the single demo result as a
+guaranteed performance level. This is a sensitivity exercise on the same small
+synthetic cohort, not independent validation and not evidence of clinical
+performance.
+
 ## Model input order
 
 The feature order is fixed because every row supplied to the model must use the

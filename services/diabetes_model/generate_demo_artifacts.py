@@ -13,8 +13,13 @@ from .model_artifact import (
     load_model_bundle,
 )
 from .prediction import PredictionInput, predict_patient
+from .robustness import analyse_selection_robustness
 from .schema import load_reference_cohort
-from .visualization import plot_feature_importance, plot_training_history
+from .visualization import (
+    plot_feature_importance,
+    plot_selection_robustness,
+    plot_training_history,
+)
 from .workflow import DEFAULT_COHORT_PATH, run_training_session
 
 
@@ -71,6 +76,11 @@ def generate_demo_artifacts(
     example_prediction = predict_patient(loaded_bundle, example_input.as_dict())
     prediction_example_path = output_path / "backend_prediction_example.json"
     session_path = output_path / "training_session_response.json"
+    robustness = analyse_selection_robustness()
+    robustness_path = output_path / "selection_robustness.json"
+    robustness_chart_path = plot_selection_robustness(
+        robustness, output_path / "selection_robustness.png"
+    )
 
     _write_json(training_path, training_result.summary_as_dict())
     _write_json(evaluation_path, evaluation_result.as_dict())
@@ -92,6 +102,7 @@ def generate_demo_artifacts(
         },
     )
     _write_json(session_path, session.as_dict())
+    _write_json(robustness_path, robustness.as_dict())
 
     return {
         "curve": curve_path,
@@ -104,6 +115,8 @@ def generate_demo_artifacts(
         "feature_importance_chart": importance_chart_path,
         "backend_prediction_example": prediction_example_path,
         "training_session_response": session_path,
+        "selection_robustness": robustness_path,
+        "selection_robustness_chart": robustness_chart_path,
     }
 
 
