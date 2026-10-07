@@ -18,6 +18,7 @@ demonstrate the complete ML flow for the proposal and backend handoff:
 - `backend_prediction_example.json`: example JSON request and response
 - `training_session_response.json`: full response for one 20-patient selection
 - `selection_robustness.json` and `.png`: variability across 30 valid selections
+- `artifact_manifest.json`: file sizes, SHA-256 checksums, and runtime versions
 - `patient_split.json`: exact patient IDs used in the demo split
 
 Only load the `.joblib` file when it comes from this trusted repository. The
@@ -27,3 +28,12 @@ clinical importance.
 They are not clinical results and are not representative of real diabetes
 prevalence or diagnostic performance. A student's different training selection
 will produce different model scores and metrics.
+
+Verify the generated delivery files from the repository root:
+
+```bash
+.venv/bin/python -m services.diabetes_model.artifact_manifest \
+  artifacts/diabetes_demo/artifact_manifest.json
+```
+
+The checksum manifest detects file changes but is not a digital signature.

@@ -3,6 +3,9 @@
 This package contains the educational diabetes model pipeline. It works only
 with fictional patient data and is not clinically validated.
 
+See [`MODEL_CARD.md`](MODEL_CARD.md) for intended use, evaluation results,
+limitations, and the client/backend handoff summary.
+
 ## Current pipeline
 
 1. Load and validate the fixed 40-patient synthetic cohort.
@@ -190,3 +193,16 @@ From the repository root:
 ```bash
 .venv/bin/python -m unittest discover -s tests -p 'test_*.py'
 ```
+
+## Verify generated artifacts
+
+Regeneration writes `artifact_manifest.json` with each delivery file's byte
+size and SHA-256 checksum. Verify the files with:
+
+```bash
+.venv/bin/python -m services.diabetes_model.artifact_manifest \
+  artifacts/diabetes_demo/artifact_manifest.json
+```
+
+This detects file changes or transfer damage. Because the manifest is stored
+beside the artifacts, it is an integrity check rather than a digital signature.

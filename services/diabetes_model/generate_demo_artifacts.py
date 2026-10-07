@@ -6,6 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
+from .artifact_manifest import create_artifact_manifest
 from .model_artifact import (
     FEATURE_IMPORTANCE_NOTE,
     export_model_bundle,
@@ -104,7 +105,7 @@ def generate_demo_artifacts(
     _write_json(session_path, session.as_dict())
     _write_json(robustness_path, robustness.as_dict())
 
-    return {
+    outputs = {
         "curve": curve_path,
         "training_summary": training_path,
         "test_evaluation": evaluation_path,
@@ -118,6 +119,11 @@ def generate_demo_artifacts(
         "selection_robustness": robustness_path,
         "selection_robustness_chart": robustness_chart_path,
     }
+    manifest_path = create_artifact_manifest(
+        outputs, output_path / "artifact_manifest.json"
+    )
+    outputs["artifact_manifest"] = manifest_path
+    return outputs
 
 
 def _write_json(path: Path, payload: object) -> None:
