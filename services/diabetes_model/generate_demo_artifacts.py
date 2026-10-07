@@ -6,8 +6,6 @@ import argparse
 import json
 from pathlib import Path
 
-from .evaluation import evaluate_test_set
-from .features import prepare_model_split
 from .model_artifact import (
     FEATURE_IMPORTANCE_NOTE,
     export_model_bundle,
@@ -16,13 +14,12 @@ from .model_artifact import (
 )
 from .prediction import PredictionInput, predict_patient
 from .schema import load_reference_cohort
-from .split import create_student_split
-from .training import train_random_forest
 from .visualization import plot_feature_importance, plot_training_history
+from .workflow import DEFAULT_COHORT_PATH, run_training_session
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_DATASET = REPOSITORY_ROOT / "data" / "synthetic" / "diabetes_patients.csv"
+DEFAULT_DATASET = DEFAULT_COHORT_PATH
 DEFAULT_OUTPUT_DIRECTORY = REPOSITORY_ROOT / "artifacts" / "diabetes_demo"
 
 
@@ -38,10 +35,10 @@ def generate_demo_artifacts(
     label_one_ids = [
         record.patient_id for record in records if record.diabetes_label == 1
     ][:10]
-    patient_split = create_student_split(records, label_zero_ids + label_one_ids)
-    prepared = prepare_model_split(patient_split)
-    training_result = train_random_forest(prepared.training, prepared.validation)
-    evaluation_result = evaluate_test_set(training_result, prepared.test)
+    session = run_training_session(label_zero_ids + label_one_ids)
+    patient_split = session.patient_split
+    training_result = session.training_result
+    evaluation_result = session.evaluation_result
 
     output_path = Path(output_directory)
     output_path.mkdir(parents=True, exist_ok=True)
@@ -73,6 +70,7 @@ def generate_demo_artifacts(
     loaded_bundle = load_model_bundle(model_paths.model)
     example_prediction = predict_patient(loaded_bundle, example_input.as_dict())
     prediction_example_path = output_path / "backend_prediction_example.json"
+    session_path = output_path / "training_session_response.json"
 
     _write_json(training_path, training_result.summary_as_dict())
     _write_json(evaluation_path, evaluation_result.as_dict())
@@ -93,6 +91,7 @@ def generate_demo_artifacts(
             "response": example_prediction.as_dict(),
         },
     )
+    _write_json(session_path, session.as_dict())
 
     return {
         "curve": curve_path,
@@ -104,6 +103,7 @@ def generate_demo_artifacts(
         "feature_importance": importance_path,
         "feature_importance_chart": importance_chart_path,
         "backend_prediction_example": prediction_example_path,
+        "training_session_response": session_path,
     }
 
 

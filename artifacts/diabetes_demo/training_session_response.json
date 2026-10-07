@@ -1,0 +1,346 @@
+{
+  "educational_only": true,
+  "feature_importance": {
+    "features": [
+      {
+        "display_name": "Fasting blood glucose",
+        "feature_name": "glucose_mmol_l",
+        "importance": 0.330003,
+        "rank": 1
+      },
+      {
+        "display_name": "HbA1c",
+        "feature_name": "hba1c_percent",
+        "importance": 0.272993,
+        "rank": 2
+      },
+      {
+        "display_name": "Body mass index",
+        "feature_name": "bmi",
+        "importance": 0.160553,
+        "rank": 3
+      },
+      {
+        "display_name": "Systolic blood pressure",
+        "feature_name": "systolic_bp_mmhg",
+        "importance": 0.131355,
+        "rank": 4
+      },
+      {
+        "display_name": "Age",
+        "feature_name": "age_years",
+        "importance": 0.094001,
+        "rank": 5
+      },
+      {
+        "display_name": "Family history of diabetes",
+        "feature_name": "family_history",
+        "importance": 0.011095,
+        "rank": 6
+      }
+    ],
+    "importance_type": "global_split_importance",
+    "note": "Random Forest split importance; it does not prove causation or clinical importance."
+  },
+  "model": {
+    "algorithm": "RandomForestClassifier",
+    "best_tree_count": 60,
+    "best_validation_accuracy": 0.7,
+    "feature_names": [
+      "age_years",
+      "glucose_mmol_l",
+      "hba1c_percent",
+      "bmi",
+      "systolic_bp_mmhg",
+      "family_history"
+    ]
+  },
+  "schema_version": "1.0",
+  "session_status": "completed",
+  "split": {
+    "test": [
+      "P021",
+      "P023",
+      "P026",
+      "P028",
+      "P029",
+      "P030",
+      "P032",
+      "P036",
+      "P037",
+      "P040"
+    ],
+    "training": [
+      "P001",
+      "P002",
+      "P003",
+      "P004",
+      "P005",
+      "P006",
+      "P007",
+      "P008",
+      "P009",
+      "P010",
+      "P011",
+      "P012",
+      "P013",
+      "P014",
+      "P015",
+      "P016",
+      "P019",
+      "P020",
+      "P022",
+      "P024"
+    ],
+    "validation": [
+      "P017",
+      "P018",
+      "P025",
+      "P027",
+      "P031",
+      "P033",
+      "P034",
+      "P035",
+      "P038",
+      "P039"
+    ]
+  },
+  "split_counts": {
+    "test": 10,
+    "training": 20,
+    "validation": 10
+  },
+  "test_evaluation": {
+    "evaluation_scope": "held_out_test",
+    "metrics": {
+      "accuracy": 0.9,
+      "balanced_accuracy": 0.9,
+      "confusion_matrix": [
+        [
+          5,
+          0
+        ],
+        [
+          1,
+          4
+        ]
+      ],
+      "f1": 0.8889,
+      "precision": 1.0,
+      "recall": 0.8
+    },
+    "predictions": [
+      {
+        "actual_label": 0,
+        "estimated_diabetes_probability": 0.3981,
+        "patient_id": "P021",
+        "predicted_label": 0
+      },
+      {
+        "actual_label": 0,
+        "estimated_diabetes_probability": 0.1336,
+        "patient_id": "P023",
+        "predicted_label": 0
+      },
+      {
+        "actual_label": 0,
+        "estimated_diabetes_probability": 0.1656,
+        "patient_id": "P026",
+        "predicted_label": 0
+      },
+      {
+        "actual_label": 1,
+        "estimated_diabetes_probability": 0.725,
+        "patient_id": "P028",
+        "predicted_label": 1
+      },
+      {
+        "actual_label": 1,
+        "estimated_diabetes_probability": 0.5076,
+        "patient_id": "P029",
+        "predicted_label": 1
+      },
+      {
+        "actual_label": 0,
+        "estimated_diabetes_probability": 0.2142,
+        "patient_id": "P030",
+        "predicted_label": 0
+      },
+      {
+        "actual_label": 1,
+        "estimated_diabetes_probability": 0.4086,
+        "patient_id": "P032",
+        "predicted_label": 0
+      },
+      {
+        "actual_label": 1,
+        "estimated_diabetes_probability": 0.6369,
+        "patient_id": "P036",
+        "predicted_label": 1
+      },
+      {
+        "actual_label": 0,
+        "estimated_diabetes_probability": 0.3572,
+        "patient_id": "P037",
+        "predicted_label": 0
+      },
+      {
+        "actual_label": 1,
+        "estimated_diabetes_probability": 0.5772,
+        "patient_id": "P040",
+        "predicted_label": 1
+      }
+    ],
+    "probability_note": "Model-estimated educational score; not a calibrated clinical risk.",
+    "test_sample_count": 10
+  },
+  "training_curve": {
+    "points": [
+      {
+        "loss": null,
+        "step": 1,
+        "train_accuracy": 0.95,
+        "trees_built": 5,
+        "validation_accuracy": 0.6
+      },
+      {
+        "loss": null,
+        "step": 2,
+        "train_accuracy": 0.95,
+        "trees_built": 10,
+        "validation_accuracy": 0.6
+      },
+      {
+        "loss": null,
+        "step": 3,
+        "train_accuracy": 1.0,
+        "trees_built": 15,
+        "validation_accuracy": 0.6
+      },
+      {
+        "loss": null,
+        "step": 4,
+        "train_accuracy": 1.0,
+        "trees_built": 20,
+        "validation_accuracy": 0.6
+      },
+      {
+        "loss": null,
+        "step": 5,
+        "train_accuracy": 1.0,
+        "trees_built": 25,
+        "validation_accuracy": 0.6
+      },
+      {
+        "loss": null,
+        "step": 6,
+        "train_accuracy": 1.0,
+        "trees_built": 30,
+        "validation_accuracy": 0.6
+      },
+      {
+        "loss": null,
+        "step": 7,
+        "train_accuracy": 1.0,
+        "trees_built": 35,
+        "validation_accuracy": 0.6
+      },
+      {
+        "loss": null,
+        "step": 8,
+        "train_accuracy": 1.0,
+        "trees_built": 40,
+        "validation_accuracy": 0.6
+      },
+      {
+        "loss": null,
+        "step": 9,
+        "train_accuracy": 1.0,
+        "trees_built": 45,
+        "validation_accuracy": 0.6
+      },
+      {
+        "loss": null,
+        "step": 10,
+        "train_accuracy": 1.0,
+        "trees_built": 50,
+        "validation_accuracy": 0.6
+      },
+      {
+        "loss": null,
+        "step": 11,
+        "train_accuracy": 1.0,
+        "trees_built": 55,
+        "validation_accuracy": 0.6
+      },
+      {
+        "loss": null,
+        "step": 12,
+        "train_accuracy": 1.0,
+        "trees_built": 60,
+        "validation_accuracy": 0.7
+      },
+      {
+        "loss": null,
+        "step": 13,
+        "train_accuracy": 1.0,
+        "trees_built": 65,
+        "validation_accuracy": 0.6
+      },
+      {
+        "loss": null,
+        "step": 14,
+        "train_accuracy": 1.0,
+        "trees_built": 70,
+        "validation_accuracy": 0.6
+      },
+      {
+        "loss": null,
+        "step": 15,
+        "train_accuracy": 1.0,
+        "trees_built": 75,
+        "validation_accuracy": 0.6
+      },
+      {
+        "loss": null,
+        "step": 16,
+        "train_accuracy": 1.0,
+        "trees_built": 80,
+        "validation_accuracy": 0.7
+      },
+      {
+        "loss": null,
+        "step": 17,
+        "train_accuracy": 1.0,
+        "trees_built": 85,
+        "validation_accuracy": 0.7
+      },
+      {
+        "loss": null,
+        "step": 18,
+        "train_accuracy": 1.0,
+        "trees_built": 90,
+        "validation_accuracy": 0.7
+      },
+      {
+        "loss": null,
+        "step": 19,
+        "train_accuracy": 1.0,
+        "trees_built": 95,
+        "validation_accuracy": 0.7
+      },
+      {
+        "loss": null,
+        "step": 20,
+        "train_accuracy": 1.0,
+        "trees_built": 100,
+        "validation_accuracy": 0.7
+      }
+    ],
+    "series": [
+      "train_accuracy",
+      "validation_accuracy"
+    ],
+    "x_axis": "trees_built"
+  }
+}

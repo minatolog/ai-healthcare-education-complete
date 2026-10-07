@@ -16,6 +16,7 @@ demonstrate the complete ML flow for the proposal and backend handoff:
 - `test_evaluation.json`: one-time held-out evaluation
 - `feature_importance.png` and `feature_importance.json`: global split importance
 - `backend_prediction_example.json`: example JSON request and response
+- `training_session_response.json`: full response for one 20-patient selection
 - `patient_split.json`: exact patient IDs used in the demo split
 
 Only load the `.joblib` file when it comes from this trusted repository. The

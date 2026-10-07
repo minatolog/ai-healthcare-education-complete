@@ -13,6 +13,32 @@ with fictional patient data and is not clinically validated.
 6. Select the smallest tree count that achieves the best validation accuracy.
 7. Evaluate the selected model once on the locked test group.
 
+## Student-selected training session
+
+The framework-independent `run_training_session()` function is the single
+integration point for the future backend. It accepts exactly 20 patient IDs
+selected by a student and performs the full split, preprocessing, training,
+validation-based selection, feature-importance calculation, and held-out test
+evaluation:
+
+```python
+from services.diabetes_model import run_training_session
+
+session = run_training_session(selected_patient_ids)
+response_json = session.as_dict()
+```
+
+The response contains the 20/10/10 patient IDs, graph-ready training and
+validation checkpoints, selected model information, global feature importance,
+test metrics, and one prediction per test patient. The fitted estimator remains
+available as `session.training_result.model` if the backend needs to retain it.
+
+Training is synchronous and runs in Python on the server side. The browser does
+not execute the model file. To create a classroom-friendly progress animation,
+the frontend can reveal the returned 5-to-100-tree checkpoint history one point
+at a time after the session completes. This keeps the displayed curve faithful
+to the values actually measured during model training.
+
 ## Model input order
 
 The feature order is fixed because every row supplied to the model must use the

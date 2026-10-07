@@ -65,6 +65,12 @@ from .training import (
     train_random_forest,
 )
 from .visualization import plot_feature_importance, plot_training_history
+from .workflow import (
+    DEFAULT_COHORT_PATH,
+    SESSION_SCHEMA_VERSION,
+    TrainingSessionResult,
+    run_training_session,
+)
 
 __all__ = [
     "FEATURE_DEFINITIONS",
@@ -119,4 +125,8 @@ __all__ = [
     "train_random_forest",
     "plot_feature_importance",
     "plot_training_history",
+    "DEFAULT_COHORT_PATH",
+    "SESSION_SCHEMA_VERSION",
+    "TrainingSessionResult",
+    "run_training_session",
 ]
