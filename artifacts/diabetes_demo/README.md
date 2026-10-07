@@ -41,3 +41,9 @@ Verify the generated delivery files from the repository root:
 ```
 
 The checksum manifest detects file changes but is not a digital signature.
+
+Run the final package-level acceptance check with:
+
+```bash
+.venv/bin/python -m services.diabetes_model.acceptance
+```

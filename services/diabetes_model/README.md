@@ -5,6 +5,8 @@ with fictional patient data and is not clinically validated.
 
 See [`MODEL_CARD.md`](MODEL_CARD.md) for intended use, evaluation results,
 limitations, and the client/backend handoff summary.
+See [`BACKEND_HANDOFF.md`](BACKEND_HANDOFF.md) for the final integration
+contract, progress callback, errors, safety wording, and acceptance command.
 
 ## Current pipeline
 
@@ -279,3 +281,15 @@ size and SHA-256 checksum. Verify the files with:
 
 This detects file changes or transfer damage. Because the manifest is stored
 beside the artifacts, it is an integrity check rather than a digital signature.
+
+## Final delivery acceptance
+
+Run the complete operational handoff check after installing dependencies or
+copying the repository to a new machine:
+
+```bash
+.venv/bin/python -m services.diabetes_model.acceptance
+```
+
+The command exits unsuccessfully if the cohort, model bundle, artifact hashes,
+JSON contracts, progress events, evaluation, or local explanation is invalid.
