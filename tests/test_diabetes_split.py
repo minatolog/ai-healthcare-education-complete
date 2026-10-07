@@ -8,6 +8,7 @@ from pathlib import Path
 from services.diabetes_model.schema import load_reference_cohort
 from services.diabetes_model.split import (
     SplitValidationError,
+    assess_training_selection,
     create_student_split,
 )
 
@@ -86,6 +87,44 @@ class DiabetesSplitTests(unittest.TestCase):
         first = create_student_split(self.records, self.training_ids, seed=123)
         second = create_student_split(self.records, self.training_ids, seed=123)
         self.assertEqual(first, second)
+
+    def test_balanced_selection_assessment_is_ready(self) -> None:
+        assessment = assess_training_selection(
+            self.records, self.training_ids
+        )
+        self.assertTrue(assessment.ready)
+        self.assertEqual(assessment.selected_count, 20)
+        self.assertEqual(assessment.unique_count, 20)
+        self.assertEqual(assessment.training_label_0_count, 10)
+        self.assertEqual(assessment.training_label_1_count, 10)
+        self.assertEqual(assessment.issues, ())
+
+    def test_valid_imbalanced_selection_returns_warning(self) -> None:
+        label_zero_ids = [
+            record.patient_id for record in self.records if record.diabetes_label == 0
+        ]
+        label_one_ids = [
+            record.patient_id for record in self.records if record.diabetes_label == 1
+        ]
+        assessment = assess_training_selection(
+            self.records,
+            label_zero_ids[:18] + label_one_ids[:2],
+        )
+        self.assertTrue(assessment.ready)
+        self.assertEqual(len(assessment.issues), 1)
+        self.assertEqual(
+            assessment.issues[0].code, "TRAINING_CLASS_IMBALANCE"
+        )
+        self.assertEqual(assessment.issues[0].severity, "warning")
+
+    def test_invalid_assessment_has_stable_error_code(self) -> None:
+        assessment = assess_training_selection(
+            self.records, self.training_ids[:-1]
+        )
+        self.assertFalse(assessment.ready)
+        self.assertEqual(assessment.issues[0].code, "INCORRECT_COUNT")
+        self.assertEqual(assessment.issues[0].severity, "error")
+        self.assertEqual(assessment.as_dict()["training_class_counts"], None)
 
     def test_wrong_training_size_is_rejected(self) -> None:
         with self.assertRaisesRegex(SplitValidationError, "Exactly 20"):

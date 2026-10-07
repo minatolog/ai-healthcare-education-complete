@@ -42,6 +42,29 @@ the frontend can reveal the returned 5-to-100-tree checkpoint history one point
 at a time after the session completes. This keeps the displayed curve faithful
 to the values actually measured during model training.
 
+## Selection pre-flight check
+
+The backend can validate the student's IDs before starting any model fitting:
+
+```python
+from services.diabetes_model import (
+    DEFAULT_COHORT_PATH,
+    assess_training_selection,
+    load_reference_cohort,
+)
+
+records = load_reference_cohort(DEFAULT_COHORT_PATH)
+assessment = assess_training_selection(records, selected_patient_ids)
+response_json = assessment.as_dict()
+```
+
+The response contains `ready`, counts, and stable issue codes. Incorrect count,
+duplicate IDs, unknown IDs, a single-class training group, or insufficient
+remaining examples are errors. A legal but strongly imbalanced training group
+is accepted with `TRAINING_CLASS_IMBALANCE` as a warning. `run_training_session()`
+performs the same check automatically and raises `TrainingSelectionError` with
+the structured assessment before fitting begins.
+
 ## Sensitivity to student selection
 
 Because only 20 fictional patients are used for training, the result can change

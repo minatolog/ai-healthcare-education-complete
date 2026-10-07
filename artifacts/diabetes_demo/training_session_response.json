@@ -55,7 +55,21 @@
       "family_history"
     ]
   },
-  "schema_version": "1.0",
+  "schema_version": "1.1",
+  "selection_assessment": {
+    "issues": [],
+    "ready": true,
+    "remaining_class_counts": {
+      "label_0": 10,
+      "label_1": 10
+    },
+    "selected_count": 20,
+    "training_class_counts": {
+      "label_0": 10,
+      "label_1": 10
+    },
+    "unique_count": 20
+  },
   "session_status": "completed",
   "split": {
     "test": [

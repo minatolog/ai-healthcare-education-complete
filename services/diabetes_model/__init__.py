@@ -72,7 +72,10 @@ from .split import (
     TRAINING_SIZE,
     VALIDATION_SIZE,
     PatientSplit,
+    SelectionIssue,
     SplitValidationError,
+    TrainingSelectionAssessment,
+    assess_training_selection,
     create_student_split,
     validate_patient_split,
 )
@@ -93,6 +96,7 @@ from .visualization import (
 from .workflow import (
     DEFAULT_COHORT_PATH,
     SESSION_SCHEMA_VERSION,
+    TrainingSelectionError,
     TrainingSessionResult,
     run_training_session,
 )
@@ -154,7 +158,10 @@ __all__ = [
     "TRAINING_SIZE",
     "VALIDATION_SIZE",
     "PatientSplit",
+    "SelectionIssue",
     "SplitValidationError",
+    "TrainingSelectionAssessment",
+    "assess_training_selection",
     "create_student_split",
     "validate_patient_split",
     "DEFAULT_TREE_COUNTS",
@@ -169,6 +176,7 @@ __all__ = [
     "plot_training_history",
     "DEFAULT_COHORT_PATH",
     "SESSION_SCHEMA_VERSION",
+    "TrainingSelectionError",
     "TrainingSessionResult",
     "run_training_session",
 ]

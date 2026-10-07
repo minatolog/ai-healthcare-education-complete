@@ -55,6 +55,12 @@
       "sha256": "2068ad87c155183706898b9d1d5f4a9cae73970a6592f9fa8a3fe75b23111e22"
     },
     {
+      "bytes": 1423,
+      "filename": "selection_assessment_examples.json",
+      "name": "selection_assessment_examples",
+      "sha256": "5b51147898468480ee466dadb8d2f88ede17374eb1bd98742226c6e337ffda1d"
+    },
+    {
       "bytes": 21066,
       "filename": "selection_robustness.json",
       "name": "selection_robustness",
@@ -73,10 +79,10 @@
       "sha256": "915ecc46544132b399234c7a8611f8eb0e8da7e279971f073c2c593cddfd2ee1"
     },
     {
-      "bytes": 7408,
+      "bytes": 7686,
       "filename": "training_session_response.json",
       "name": "training_session_response",
-      "sha256": "e6deadaa1da9420143fa1ee04298c5706a431caa5dca67ef31da8ed92b34f66d"
+      "sha256": "a0786664c79f28f7b20430887997d78cb09d15acb18c1e9c2d8f6fe1af45ad96"
     },
     {
       "bytes": 3091,

@@ -14,7 +14,14 @@ from .model_artifact import (
     extract_feature_importance,
 )
 from .schema import load_reference_cohort
-from .split import DEFAULT_SPLIT_SEED, PatientSplit, create_student_split
+from .split import (
+    DEFAULT_SPLIT_SEED,
+    PatientSplit,
+    SplitValidationError,
+    TrainingSelectionAssessment,
+    assess_training_selection,
+    create_student_split,
+)
 from .training import (
     RandomForestTrainingConfig,
     RandomForestTrainingResult,
@@ -24,13 +31,28 @@ from .training import (
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_COHORT_PATH = REPOSITORY_ROOT / "data" / "synthetic" / "diabetes_patients.csv"
-SESSION_SCHEMA_VERSION = "1.0"
+SESSION_SCHEMA_VERSION = "1.1"
+
+
+class TrainingSelectionError(SplitValidationError):
+    """Structured pre-flight failure raised before model training starts."""
+
+    def __init__(self, assessment: TrainingSelectionAssessment) -> None:
+        self.assessment = assessment
+        super().__init__(assessment.error_message())
+
+    def as_dict(self) -> dict[str, object]:
+        return {
+            "error": "invalid_training_selection",
+            "assessment": self.assessment.as_dict(),
+        }
 
 
 @dataclass(frozen=True)
 class TrainingSessionResult:
     """Model objects and a JSON-ready response from one complete session."""
 
+    selection_assessment: TrainingSelectionAssessment
     patient_split: PatientSplit
     training_result: RandomForestTrainingResult
     evaluation_result: FinalEvaluationResult
@@ -44,6 +66,7 @@ class TrainingSessionResult:
             "schema_version": SESSION_SCHEMA_VERSION,
             "session_status": "completed",
             "educational_only": True,
+            "selection_assessment": self.selection_assessment.as_dict(),
             "split": split_ids,
             "split_counts": {
                 group_name: len(patient_ids)
@@ -88,9 +111,12 @@ def run_training_session(
     """
 
     records = load_reference_cohort(cohort_path)
+    assessment = assess_training_selection(records, training_patient_ids)
+    if not assessment.ready:
+        raise TrainingSelectionError(assessment)
     patient_split = create_student_split(
         records,
-        training_patient_ids,
+        assessment.selected_patient_ids,
         seed=split_seed,
     )
     prepared = prepare_model_split(patient_split)
@@ -103,6 +129,7 @@ def run_training_session(
     feature_importance = extract_feature_importance(training_result)
 
     return TrainingSessionResult(
+        selection_assessment=assessment,
         patient_split=patient_split,
         training_result=training_result,
         evaluation_result=evaluation_result,

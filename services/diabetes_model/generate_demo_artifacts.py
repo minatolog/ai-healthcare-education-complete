@@ -17,6 +17,7 @@ from .model_artifact import (
 from .prediction import PredictionInput, predict_patient
 from .robustness import analyse_selection_robustness
 from .schema import load_reference_cohort
+from .split import assess_training_selection
 from .visualization import (
     plot_feature_importance,
     plot_model_benchmark,
@@ -89,6 +90,7 @@ def generate_demo_artifacts(
     benchmark_chart_path = plot_model_benchmark(
         benchmark, output_path / "model_benchmark.png"
     )
+    assessment_examples_path = output_path / "selection_assessment_examples.json"
 
     _write_json(training_path, training_result.summary_as_dict())
     _write_json(evaluation_path, evaluation_result.as_dict())
@@ -112,6 +114,28 @@ def generate_demo_artifacts(
     _write_json(session_path, session.as_dict())
     _write_json(robustness_path, robustness.as_dict())
     _write_json(benchmark_path, benchmark.as_dict())
+    imbalanced_ids = label_zero_ids + [
+        record.patient_id
+        for record in records
+        if record.diabetes_label == 0
+        and record.patient_id not in set(label_zero_ids)
+    ][:8] + label_one_ids[:2]
+    _write_json(
+        assessment_examples_path,
+        {
+            "valid_balanced": session.selection_assessment.as_dict(),
+            "valid_but_imbalanced": assess_training_selection(
+                records, imbalanced_ids
+            ).as_dict(),
+            "invalid_count": assess_training_selection(
+                records, label_zero_ids + label_one_ids[:-1]
+            ).as_dict(),
+            "invalid_duplicate": assess_training_selection(
+                records,
+                label_zero_ids + label_one_ids[:-1] + [label_zero_ids[0]],
+            ).as_dict(),
+        },
+    )
 
     outputs = {
         "curve": curve_path,
@@ -128,6 +152,7 @@ def generate_demo_artifacts(
         "selection_robustness_chart": robustness_chart_path,
         "model_benchmark": benchmark_path,
         "model_benchmark_chart": benchmark_chart_path,
+        "selection_assessment_examples": assessment_examples_path,
     }
     manifest_path = create_artifact_manifest(
         outputs, output_path / "artifact_manifest.json"

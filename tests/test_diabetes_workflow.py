@@ -11,6 +11,7 @@ from services.diabetes_model.split import SplitValidationError
 from services.diabetes_model.workflow import (
     DEFAULT_COHORT_PATH,
     SESSION_SCHEMA_VERSION,
+    TrainingSelectionError,
     run_training_session,
 )
 
@@ -46,6 +47,8 @@ class DiabetesTrainingWorkflowTests(unittest.TestCase):
         self.assertEqual(payload["schema_version"], SESSION_SCHEMA_VERSION)
         self.assertEqual(payload["session_status"], "completed")
         self.assertTrue(payload["educational_only"])
+        self.assertTrue(payload["selection_assessment"]["ready"])
+        self.assertEqual(payload["selection_assessment"]["issues"], [])
         self.assertEqual(
             payload["split_counts"],
             {"training": 20, "validation": 10, "test": 10},
@@ -75,6 +78,19 @@ class DiabetesTrainingWorkflowTests(unittest.TestCase):
     def test_invalid_student_selection_is_rejected(self) -> None:
         with self.assertRaisesRegex(SplitValidationError, "Exactly 20"):
             run_training_session(self.selected_ids[:-1])
+
+    def test_invalid_session_error_is_backend_ready(self) -> None:
+        with self.assertRaises(TrainingSelectionError) as context:
+            run_training_session(self.selected_ids[:-1])
+
+        payload = context.exception.as_dict()
+        self.assertEqual(payload["error"], "invalid_training_selection")
+        self.assertFalse(payload["assessment"]["ready"])
+        self.assertEqual(
+            payload["assessment"]["issues"][0]["code"],
+            "INCORRECT_COUNT",
+        )
+        json.dumps(payload)
 
     def test_default_cohort_path_exists(self) -> None:
         self.assertTrue(Path(DEFAULT_COHORT_PATH).is_file())
