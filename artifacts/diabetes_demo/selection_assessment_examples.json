@@ -1,0 +1,64 @@
+{
+  "invalid_count": {
+    "issues": [
+      {
+        "code": "INCORRECT_COUNT",
+        "message": "Exactly 20 training patients are required; received 19.",
+        "severity": "error"
+      }
+    ],
+    "ready": false,
+    "remaining_class_counts": null,
+    "selected_count": 19,
+    "training_class_counts": null,
+    "unique_count": 19
+  },
+  "invalid_duplicate": {
+    "issues": [
+      {
+        "code": "DUPLICATE_IDS",
+        "message": "Training patient IDs must be unique.",
+        "severity": "error"
+      }
+    ],
+    "ready": false,
+    "remaining_class_counts": null,
+    "selected_count": 20,
+    "training_class_counts": null,
+    "unique_count": 19
+  },
+  "valid_balanced": {
+    "issues": [],
+    "ready": true,
+    "remaining_class_counts": {
+      "label_0": 10,
+      "label_1": 10
+    },
+    "selected_count": 20,
+    "training_class_counts": {
+      "label_0": 10,
+      "label_1": 10
+    },
+    "unique_count": 20
+  },
+  "valid_but_imbalanced": {
+    "issues": [
+      {
+        "code": "TRAINING_CLASS_IMBALANCE",
+        "message": "The training selection is strongly imbalanced, so model scores may be unstable.",
+        "severity": "warning"
+      }
+    ],
+    "ready": true,
+    "remaining_class_counts": {
+      "label_0": 2,
+      "label_1": 18
+    },
+    "selected_count": 20,
+    "training_class_counts": {
+      "label_0": 18,
+      "label_1": 2
+    },
+    "unique_count": 20
+  }
+}

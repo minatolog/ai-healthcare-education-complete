@@ -1,0 +1,84 @@
+{
+  "evaluation_scope": "held_out_test",
+  "metrics": {
+    "accuracy": 0.9,
+    "balanced_accuracy": 0.9,
+    "confusion_matrix": [
+      [
+        5,
+        0
+      ],
+      [
+        1,
+        4
+      ]
+    ],
+    "f1": 0.8889,
+    "precision": 1.0,
+    "recall": 0.8
+  },
+  "predictions": [
+    {
+      "actual_label": 0,
+      "estimated_diabetes_probability": 0.3981,
+      "patient_id": "P021",
+      "predicted_label": 0
+    },
+    {
+      "actual_label": 0,
+      "estimated_diabetes_probability": 0.1336,
+      "patient_id": "P023",
+      "predicted_label": 0
+    },
+    {
+      "actual_label": 0,
+      "estimated_diabetes_probability": 0.1656,
+      "patient_id": "P026",
+      "predicted_label": 0
+    },
+    {
+      "actual_label": 1,
+      "estimated_diabetes_probability": 0.725,
+      "patient_id": "P028",
+      "predicted_label": 1
+    },
+    {
+      "actual_label": 1,
+      "estimated_diabetes_probability": 0.5076,
+      "patient_id": "P029",
+      "predicted_label": 1
+    },
+    {
+      "actual_label": 0,
+      "estimated_diabetes_probability": 0.2142,
+      "patient_id": "P030",
+      "predicted_label": 0
+    },
+    {
+      "actual_label": 1,
+      "estimated_diabetes_probability": 0.4086,
+      "patient_id": "P032",
+      "predicted_label": 0
+    },
+    {
+      "actual_label": 1,
+      "estimated_diabetes_probability": 0.6369,
+      "patient_id": "P036",
+      "predicted_label": 1
+    },
+    {
+      "actual_label": 0,
+      "estimated_diabetes_probability": 0.3572,
+      "patient_id": "P037",
+      "predicted_label": 0
+    },
+    {
+      "actual_label": 1,
+      "estimated_diabetes_probability": 0.5772,
+      "patient_id": "P040",
+      "predicted_label": 1
+    }
+  ],
+  "probability_note": "Model-estimated educational score; not a calibrated clinical risk.",
+  "test_sample_count": 10
+}

@@ -1,0 +1,88 @@
+{
+  "artifact_version": "1.0",
+  "best_tree_count": 60,
+  "class_labels": [
+    0,
+    1
+  ],
+  "educational_only": true,
+  "feature_importance": [
+    {
+      "display_name": "Fasting blood glucose",
+      "feature_name": "glucose_mmol_l",
+      "importance": 0.330003,
+      "rank": 1
+    },
+    {
+      "display_name": "HbA1c",
+      "feature_name": "hba1c_percent",
+      "importance": 0.272993,
+      "rank": 2
+    },
+    {
+      "display_name": "Body mass index",
+      "feature_name": "bmi",
+      "importance": 0.160553,
+      "rank": 3
+    },
+    {
+      "display_name": "Systolic blood pressure",
+      "feature_name": "systolic_bp_mmhg",
+      "importance": 0.131355,
+      "rank": 4
+    },
+    {
+      "display_name": "Age",
+      "feature_name": "age_years",
+      "importance": 0.094001,
+      "rank": 5
+    },
+    {
+      "display_name": "Family history of diabetes",
+      "feature_name": "family_history",
+      "importance": 0.011095,
+      "rank": 6
+    }
+  ],
+  "feature_importance_note": "Random Forest split importance; it does not prove causation or clinical importance.",
+  "feature_names": [
+    "age_years",
+    "glucose_mmol_l",
+    "hba1c_percent",
+    "bmi",
+    "systolic_bp_mmhg",
+    "family_history"
+  ],
+  "model_type": "RandomForestClassifier",
+  "prediction_threshold": 0.5,
+  "probability_note": "Model-estimated educational score; not a calibrated clinical risk.",
+  "sklearn_version": "1.9.1",
+  "training_config": {
+    "class_weight": "balanced",
+    "max_depth": 3,
+    "min_samples_leaf": 2,
+    "random_state": 9900,
+    "tree_counts": [
+      5,
+      10,
+      15,
+      20,
+      25,
+      30,
+      35,
+      40,
+      45,
+      50,
+      55,
+      60,
+      65,
+      70,
+      75,
+      80,
+      85,
+      90,
+      95,
+      100
+    ]
+  }
+}

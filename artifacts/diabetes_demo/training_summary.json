@@ -1,0 +1,237 @@
+{
+  "algorithm": "RandomForestClassifier",
+  "best_tree_count": 60,
+  "best_validation_accuracy": 0.7,
+  "feature_names": [
+    "age_years",
+    "glucose_mmol_l",
+    "hba1c_percent",
+    "bmi",
+    "systolic_bp_mmhg",
+    "family_history"
+  ],
+  "training_history": [
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 5.0,
+      "step": 1,
+      "total_steps": 20,
+      "train_accuracy": 0.95,
+      "trees_built": 5,
+      "validation_accuracy": 0.6
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 10.0,
+      "step": 2,
+      "total_steps": 20,
+      "train_accuracy": 0.95,
+      "trees_built": 10,
+      "validation_accuracy": 0.6
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 15.0,
+      "step": 3,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 15,
+      "validation_accuracy": 0.6
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 20.0,
+      "step": 4,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 20,
+      "validation_accuracy": 0.6
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 25.0,
+      "step": 5,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 25,
+      "validation_accuracy": 0.6
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 30.0,
+      "step": 6,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 30,
+      "validation_accuracy": 0.6
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 35.0,
+      "step": 7,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 35,
+      "validation_accuracy": 0.6
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 40.0,
+      "step": 8,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 40,
+      "validation_accuracy": 0.6
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 45.0,
+      "step": 9,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 45,
+      "validation_accuracy": 0.6
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 50.0,
+      "step": 10,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 50,
+      "validation_accuracy": 0.6
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 55.0,
+      "step": 11,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 55,
+      "validation_accuracy": 0.6
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 60.0,
+      "step": 12,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 60,
+      "validation_accuracy": 0.7
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 65.0,
+      "step": 13,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 65,
+      "validation_accuracy": 0.6
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 70.0,
+      "step": 14,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 70,
+      "validation_accuracy": 0.6
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 75.0,
+      "step": 15,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 75,
+      "validation_accuracy": 0.6
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 80.0,
+      "step": 16,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 80,
+      "validation_accuracy": 0.7
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 85.0,
+      "step": 17,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 85,
+      "validation_accuracy": 0.7
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 90.0,
+      "step": 18,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 90,
+      "validation_accuracy": 0.7
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 95.0,
+      "step": 19,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 95,
+      "validation_accuracy": 0.7
+    },
+    {
+      "event": "training_progress",
+      "loss": null,
+      "phase": "checkpoint_evaluation",
+      "progress_percent": 100.0,
+      "step": 20,
+      "total_steps": 20,
+      "train_accuracy": 1.0,
+      "trees_built": 100,
+      "validation_accuracy": 0.7
+    }
+  ],
+  "training_sample_count": 20,
+  "validation_sample_count": 10
+}
