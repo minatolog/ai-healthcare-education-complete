@@ -1,0 +1,22 @@
+{
+  "dataset_version": "kidney-diabetes-teaching40-v1",
+  "patients": 40,
+  "ct_images": 3757,
+  "reference_masks": 3757,
+  "patient_pools": {
+    "train": 20,
+    "validation": 10,
+    "test": 10
+  },
+  "slice_pools": {
+    "train": 2071,
+    "validation": 1156,
+    "test": 530
+  },
+  "gender": "Unspecified; SQL NULL for all patients",
+  "pairing": "Synthetic educational pairing of independent sources",
+  "sources_sha256": {
+    "data/kidney/project40_manifest.csv": "eaa0056555d8b24b9f0af0bf4c08a228f80bbc6eb5340ea3d79df965fac3ac70",
+    "data/synthetic/diabetes_patients.csv": "3a626ba06c30676a4bc0283b8e08b86bb8077d0a8b540315f499dd23ca36a584"
+  }
+}
