@@ -1,0 +1,115 @@
+{
+  "schema_version": "kidney_data_handoff_v1",
+  "dataset": "KiTS19 processed 2D formal project40 subset",
+  "created_date": "2026-10-09",
+  "source_collection": {
+    "patients": 210,
+    "slice_pairs": 20686
+  },
+  "counts": {
+    "patients": 40,
+    "slice_pairs": 3757,
+    "ct_pngs": 3757,
+    "mask_pngs": 3757,
+    "png_bytes": 87913810
+  },
+  "pools": {
+    "train": {
+      "patients": 20,
+      "slice_pairs": 2071
+    },
+    "validation": {
+      "patients": 10,
+      "slice_pairs": 1156
+    },
+    "test": {
+      "patients": 10,
+      "slice_pairs": 530
+    }
+  },
+  "labels": {
+    "0": "background",
+    "1": "kidney",
+    "2": "tumour"
+  },
+  "source_metadata": {
+    "manifest_sha256": "998c4769a16f06f81ed1f8920b4893e9445b2b43cf546f455f5c593707d6def2",
+    "original_split_sha256": "a1b66b85b22ba4c755d44264ddf8dba840c9a9ba950d20ad3783f3c8bea6d085",
+    "cohort_file_sha256": "f30bf340189f229cbd17050fe3ae0b48928e4817532839b2932462ff54f99958",
+    "audit_file_sha256": "47d3de1d704227e76c06d88141ae13a696a0cb15c02f91127d3f5880707e0801",
+    "cohort_fingerprint_sha256": "92ad119edc0f2ea4eea7d586c68a60f2e668045820c851c9388e22c94df3265c",
+    "audit_fingerprint_sha256": "a8f193b857e0d509262a4ea7824d35695cc05aeb2776e2696045d183cbeaba4f"
+  },
+  "preprocessing": {
+    "input_mode": "single_2d_slice",
+    "config": {
+      "input_channels": 1,
+      "size": 256,
+      "mean": 0.456,
+      "std": 0.224,
+      "version": "png-single-slice-gray8-normalized-v1"
+    }
+  },
+  "historical_export": {
+    "ct_window_hu": [
+      -79.0,
+      304.0
+    ],
+    "ct_dtype": "uint8",
+    "slice_axis": 0,
+    "size": [
+      256,
+      256
+    ],
+    "ct_resize": "bilinear",
+    "mask_resize": "nearest",
+    "selection": "All original foreground slices plus random 15% of background slices; reference guided",
+    "source_snapshots": [
+      "provenance/source_processing/preprocess.py",
+      "provenance/source_processing/config.py"
+    ],
+    "exact_raw_to_png_reproduction_established": false
+  },
+  "manifest_scope": {
+    "data2d/manifest.csv": "Unchanged source metadata for all 210 cases; only project40 PNGs are included",
+    "project40_manifest.csv": "Packaged 40 cases only, with an added pool column; use for teammate data processing"
+  },
+  "demo_prediction": {
+    "pool": "test",
+    "eligible_patient_count": 10,
+    "reference_mask_as_model_input": false,
+    "new_independent_patients_added": 0
+  },
+  "legacy_prediction_patient_ids": [
+    "case_00037",
+    "case_00090",
+    "case_00086",
+    "case_00049",
+    "case_00116"
+  ],
+  "legacy_prediction_images_included": false,
+  "exclusions": [
+    "Raw NIfTI volumes",
+    "Unselected 170 patients and their PNGs",
+    "Model/pretrained weights",
+    "Python environments",
+    "Generated model overlays and training outputs",
+    "Clinical records"
+  ],
+  "data_license": "CC BY-NC-SA 4.0",
+  "attribution": "Heller et al., KiTS19; University of Minnesota; Climb 4 Kidney Cancer (C4KC)",
+  "sources": {
+    "official_repository": "https://github.com/neheller/kits19",
+    "official_data_description": "https://kits19.grand-challenge.org/data/",
+    "dataset_paper": "https://arxiv.org/abs/1904.00445",
+    "challenge_paper": "https://doi.org/10.1016/j.media.2020.101821",
+    "license": "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+  },
+  "limitations": [
+    "Selected exported-slice segmentation, not complete-volume evaluation",
+    "All KiTS19 cases belong to a kidney-tumour surgical cohort, not normal-vs-tumour patient labels",
+    "Original voxel spacing is retained; it is not resized PNG pixel spacing",
+    "Frozen final test is already completed; processing QA does not permit using test labels to tune this frozen model",
+    "Historical original lock retains five legacy prediction cases as provenance; current packaged demo uses only the ten test cases"
+  ]
+}
