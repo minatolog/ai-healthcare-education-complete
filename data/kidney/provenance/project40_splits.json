@@ -1,0 +1,1645 @@
+{
+  "schema_version": "png_cohort_v1",
+  "sampling_policy_version": "patient_sha256_rank_v1",
+  "ranking_definition": "SHA256 of compact JSON [policy_version, seed, role, patient_id]; hash order then patient ID",
+  "seed": 42,
+  "required_patient_counts": {
+    "train": 20,
+    "validation": 10,
+    "test": 10,
+    "prediction": 5
+  },
+  "exposed_patient_ids": [
+    "case_00000"
+  ],
+  "manifest_sha256": "998c4769a16f06f81ed1f8920b4893e9445b2b43cf546f455f5c593707d6def2",
+  "audit_fingerprint_sha256": "a8f193b857e0d509262a4ea7824d35695cc05aeb2776e2696045d183cbeaba4f",
+  "preprocessing": {
+    "input_mode": "single_2d_slice",
+    "config": {
+      "input_channels": 1,
+      "size": 256,
+      "mean": 0.456,
+      "std": 0.224,
+      "version": "png-single-slice-gray8-normalized-v1"
+    },
+    "config_sha256": "b280270b30f0fb2c557bc990a65bc358c976e2497979546f023a4e79d4c20a01"
+  },
+  "pools": {
+    "train": [
+      {
+        "patient_id": "case_00000",
+        "source_patient_id": "kits19:case_00000",
+        "selected_slice_count": 322,
+        "content_fingerprint_sha256": "bc906f4dc62b971324f5365d618e5c0c0724c6ef01ad4c256411963bf628ef29"
+      },
+      {
+        "patient_id": "case_00145",
+        "source_patient_id": "kits19:case_00145",
+        "selected_slice_count": 56,
+        "content_fingerprint_sha256": "bc157dcd5f2d26c4f806e820b406c867a3b27af3f5ef6954a5e7a66a90ae7b74"
+      },
+      {
+        "patient_id": "case_00078",
+        "source_patient_id": "kits19:case_00078",
+        "selected_slice_count": 184,
+        "content_fingerprint_sha256": "3168d8b9e3acdfc25c25e67a0045e102bdb824c644469ae9aeea717e33bf552c"
+      },
+      {
+        "patient_id": "case_00135",
+        "source_patient_id": "kits19:case_00135",
+        "selected_slice_count": 316,
+        "content_fingerprint_sha256": "4408ef1d1f579aac82978cda7be4060044440216354fd40a1e5facbfeb0fae15"
+      },
+      {
+        "patient_id": "case_00114",
+        "source_patient_id": "kits19:case_00114",
+        "selected_slice_count": 208,
+        "content_fingerprint_sha256": "8b60ab8979b9d331619fef800802e5cd53d0cc3f2f5fd7db151a1d4b47471ecf"
+      },
+      {
+        "patient_id": "case_00023",
+        "source_patient_id": "kits19:case_00023",
+        "selected_slice_count": 62,
+        "content_fingerprint_sha256": "a81ea8f307371a35bb7af8dcca76cbdd575f39087e1cde13c866a532ebe96369"
+      },
+      {
+        "patient_id": "case_00154",
+        "source_patient_id": "kits19:case_00154",
+        "selected_slice_count": 251,
+        "content_fingerprint_sha256": "a7f5a6cbed4a0025c57aee46ca037d2f356a82cfaa396e69e9cbb528dd57ff9f"
+      },
+      {
+        "patient_id": "case_00209",
+        "source_patient_id": "kits19:case_00209",
+        "selected_slice_count": 43,
+        "content_fingerprint_sha256": "78ffeacaefb84d578629603f92d5ce39f902ed021e60bb5809dd1bd8e5397c13"
+      },
+      {
+        "patient_id": "case_00018",
+        "source_patient_id": "kits19:case_00018",
+        "selected_slice_count": 61,
+        "content_fingerprint_sha256": "a0d65881e3effb11a7dafeb7c15f52ebbad68251b8f83ea7611872dd6214253c"
+      },
+      {
+        "patient_id": "case_00109",
+        "source_patient_id": "kits19:case_00109",
+        "selected_slice_count": 60,
+        "content_fingerprint_sha256": "d3dd804e9a7c3199269f7a4e736f6604fda9c74e988fd6e6c9fd222888e7b8b4"
+      },
+      {
+        "patient_id": "case_00199",
+        "source_patient_id": "kits19:case_00199",
+        "selected_slice_count": 55,
+        "content_fingerprint_sha256": "384bf3074b4083755a54273e66fd5b9ae40ad1e6f7c4a6b474ff39a974545ebb"
+      },
+      {
+        "patient_id": "case_00070",
+        "source_patient_id": "kits19:case_00070",
+        "selected_slice_count": 32,
+        "content_fingerprint_sha256": "66183274d89ea581b398c6cff9e79a7cd78805c1546aec3d713d44ede22abce7"
+      },
+      {
+        "patient_id": "case_00061",
+        "source_patient_id": "kits19:case_00061",
+        "selected_slice_count": 26,
+        "content_fingerprint_sha256": "6504d48e5dd2ad75653568a19790c450439b462296c84fc6100a581014f2dde9"
+      },
+      {
+        "patient_id": "case_00085",
+        "source_patient_id": "kits19:case_00085",
+        "selected_slice_count": 31,
+        "content_fingerprint_sha256": "af2c60c061363e27a174b5dc1b5a9844fb4428c629b957d9072edced45821dfd"
+      },
+      {
+        "patient_id": "case_00028",
+        "source_patient_id": "kits19:case_00028",
+        "selected_slice_count": 47,
+        "content_fingerprint_sha256": "d33ed0c87de51dacf0274a4edadfe38250d6cf0fc64334a04c0048f4f95fa430"
+      },
+      {
+        "patient_id": "case_00042",
+        "source_patient_id": "kits19:case_00042",
+        "selected_slice_count": 176,
+        "content_fingerprint_sha256": "18b708141a263e78fb725beca7efbd93b336cbe5f83198f327c9c8febaecd717"
+      },
+      {
+        "patient_id": "case_00045",
+        "source_patient_id": "kits19:case_00045",
+        "selected_slice_count": 39,
+        "content_fingerprint_sha256": "31a446b7d19ceaa9a6f4e4d2eb33645aacc400710086c23532ebccdb01cf39ae"
+      },
+      {
+        "patient_id": "case_00173",
+        "source_patient_id": "kits19:case_00173",
+        "selected_slice_count": 34,
+        "content_fingerprint_sha256": "b3c9ace8e4dcbcc060e9f022dc57a45c0aa53c1553e7f60832ca5b613375d50b"
+      },
+      {
+        "patient_id": "case_00013",
+        "source_patient_id": "kits19:case_00013",
+        "selected_slice_count": 44,
+        "content_fingerprint_sha256": "61e071655e347320ae2661bba5a8fa9c7e62e9baca46576ef2ae4b5332d0863c"
+      },
+      {
+        "patient_id": "case_00087",
+        "source_patient_id": "kits19:case_00087",
+        "selected_slice_count": 24,
+        "content_fingerprint_sha256": "7bb3cb56b95f8cb32e03f2d02fe415e2e0fb8c58ab5615742bc57568718c4999"
+      }
+    ],
+    "validation": [
+      {
+        "patient_id": "case_00156",
+        "source_patient_id": "kits19:case_00156",
+        "selected_slice_count": 372,
+        "content_fingerprint_sha256": "85b63159afce8f4c95fc49be83848cd730000b583f3abc74a008b2434e61dffb"
+      },
+      {
+        "patient_id": "case_00108",
+        "source_patient_id": "kits19:case_00108",
+        "selected_slice_count": 28,
+        "content_fingerprint_sha256": "59d31e7f4b005779d6d0cad857dd770e0b0205662abd579fcb96fc274d9ff323"
+      },
+      {
+        "patient_id": "case_00059",
+        "source_patient_id": "kits19:case_00059",
+        "selected_slice_count": 359,
+        "content_fingerprint_sha256": "e566d1ff6680c8b1888e008247872610ff19ee95db70a836f78328fdf1098fe1"
+      },
+      {
+        "patient_id": "case_00160",
+        "source_patient_id": "kits19:case_00160",
+        "selected_slice_count": 132,
+        "content_fingerprint_sha256": "4f199f1dd5124db8f9ce7fd79852c1995642e9a015e2dbdb0ce9c4ecede4c437"
+      },
+      {
+        "patient_id": "case_00010",
+        "source_patient_id": "kits19:case_00010",
+        "selected_slice_count": 43,
+        "content_fingerprint_sha256": "c9f10affc4536764fcd582694c9ca16ea07383ee0f5f7a8675783c1321636900"
+      },
+      {
+        "patient_id": "case_00076",
+        "source_patient_id": "kits19:case_00076",
+        "selected_slice_count": 26,
+        "content_fingerprint_sha256": "58cdd73f87a893c1567fef2628fc9043adb10b60b8c309df6c7fc6b7989ec58d"
+      },
+      {
+        "patient_id": "case_00177",
+        "source_patient_id": "kits19:case_00177",
+        "selected_slice_count": 38,
+        "content_fingerprint_sha256": "8bb5da868bbfeb5e3adea78bb9aa48e092e01104a7da77e175d95ff7a6f015f6"
+      },
+      {
+        "patient_id": "case_00168",
+        "source_patient_id": "kits19:case_00168",
+        "selected_slice_count": 38,
+        "content_fingerprint_sha256": "61f36e1ff3c0d4687ce2522f921a6c1f3f42a6159531e42b5e3e60160e66a56c"
+      },
+      {
+        "patient_id": "case_00185",
+        "source_patient_id": "kits19:case_00185",
+        "selected_slice_count": 88,
+        "content_fingerprint_sha256": "f467f0417fe7a95eb35cfb30a786bad1d2878a6200d53082eb58d422a89a6870"
+      },
+      {
+        "patient_id": "case_00011",
+        "source_patient_id": "kits19:case_00011",
+        "selected_slice_count": 32,
+        "content_fingerprint_sha256": "5482a5275bab8c76cb33b93bac727bd41a640aa2b7129699252276e7a83be9c0"
+      }
+    ],
+    "test": [
+      {
+        "patient_id": "case_00055",
+        "source_patient_id": "kits19:case_00055",
+        "selected_slice_count": 44,
+        "content_fingerprint_sha256": "0f8c0578b1bc92392562569110568b40c79f82138819ccde77271a48be99eb81"
+      },
+      {
+        "patient_id": "case_00184",
+        "source_patient_id": "kits19:case_00184",
+        "selected_slice_count": 45,
+        "content_fingerprint_sha256": "1d3a9e55c721440449dd69590cb930610d10fb49e42e8838d552e0bffcda7382"
+      },
+      {
+        "patient_id": "case_00046",
+        "source_patient_id": "kits19:case_00046",
+        "selected_slice_count": 68,
+        "content_fingerprint_sha256": "81e738e01e21d227ed3e59c0a1ffb7adf230538b53bb9131dcea997e10184b24"
+      },
+      {
+        "patient_id": "case_00099",
+        "source_patient_id": "kits19:case_00099",
+        "selected_slice_count": 38,
+        "content_fingerprint_sha256": "857c58aa280debeccd4677e106a304e65a4c9af59c98b3dc31406466e0d64ebb"
+      },
+      {
+        "patient_id": "case_00170",
+        "source_patient_id": "kits19:case_00170",
+        "selected_slice_count": 108,
+        "content_fingerprint_sha256": "50a3ee092c41393a478a6a18570144ba65205194f76ed8e1605e93496d8d4af7"
+      },
+      {
+        "patient_id": "case_00057",
+        "source_patient_id": "kits19:case_00057",
+        "selected_slice_count": 45,
+        "content_fingerprint_sha256": "50fef979142ddc2522ede3c6e4c2431b62e02d1c985c00b1d1bde4461150df31"
+      },
+      {
+        "patient_id": "case_00206",
+        "source_patient_id": "kits19:case_00206",
+        "selected_slice_count": 27,
+        "content_fingerprint_sha256": "515f2dee8b219f6b277b7cc3e5e4d9b654cdd8c4ef47ec070e787988fbcd8114"
+      },
+      {
+        "patient_id": "case_00019",
+        "source_patient_id": "kits19:case_00019",
+        "selected_slice_count": 49,
+        "content_fingerprint_sha256": "ab7dcd781277dde860173dcad7f864b32ad06d58be6b252117a500f5c988d3f4"
+      },
+      {
+        "patient_id": "case_00077",
+        "source_patient_id": "kits19:case_00077",
+        "selected_slice_count": 44,
+        "content_fingerprint_sha256": "0c3ec81b4dbf4b75a6ce90e04d68b3cd351b71f08ffca345a40c0e51e6f46de7"
+      },
+      {
+        "patient_id": "case_00149",
+        "source_patient_id": "kits19:case_00149",
+        "selected_slice_count": 62,
+        "content_fingerprint_sha256": "7c2243d6fd4b267782f0aa5bc9eda328ef23852a49992d8f3d044306c999394a"
+      }
+    ],
+    "prediction": [
+      {
+        "patient_id": "case_00037",
+        "source_patient_id": "kits19:case_00037",
+        "selected_slice_count": 49,
+        "content_fingerprint_sha256": "a6978c781e55591e4283524f04dfc5bc01f82a5b6e8a551660fcaf78731ab319"
+      },
+      {
+        "patient_id": "case_00090",
+        "source_patient_id": "kits19:case_00090",
+        "selected_slice_count": 39,
+        "content_fingerprint_sha256": "5694e9a156272414ff9f8f32c487257c81cb4b546e61f6a3da646fe99e015704"
+      },
+      {
+        "patient_id": "case_00086",
+        "source_patient_id": "kits19:case_00086",
+        "selected_slice_count": 72,
+        "content_fingerprint_sha256": "cd7bbbd97bafafe8caca840f61b1ee7021bcf47e898489c83306b05a7b0769b3"
+      },
+      {
+        "patient_id": "case_00049",
+        "source_patient_id": "kits19:case_00049",
+        "selected_slice_count": 292,
+        "content_fingerprint_sha256": "9bdcffc6a92d79803e16f5981c83bcd51a1a0db5bf663eabd87a26368b332a94"
+      },
+      {
+        "patient_id": "case_00116",
+        "source_patient_id": "kits19:case_00116",
+        "selected_slice_count": 224,
+        "content_fingerprint_sha256": "248fee36eaf283e7f0beea6523bd8c2562af0bc9e719e4d75dc1492ff67297fd"
+      }
+    ]
+  },
+  "excluded_patients": [
+    {
+      "patient_id": "case_00001",
+      "source_patient_id": "kits19:case_00001",
+      "selected_slice_count": 275,
+      "content_fingerprint_sha256": "62297e3a6651a9565aaca7aaba7179dd94534ee06719b8371ddd0f0bf96402ed",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00002",
+      "source_patient_id": "kits19:case_00002",
+      "selected_slice_count": 171,
+      "content_fingerprint_sha256": "59bce25b285b7124ef1a24e9f328ded4214539bfdd42c75841b1cc07e0a702f5",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00003",
+      "source_patient_id": "kits19:case_00003",
+      "selected_slice_count": 154,
+      "content_fingerprint_sha256": "ee973ed02e3f10b2d4ff8ccee44fc6a8c916743ecbd0c47d21ef678122cc64fe",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00004",
+      "source_patient_id": "kits19:case_00004",
+      "selected_slice_count": 41,
+      "content_fingerprint_sha256": "7703318920520261c8514523f1e054addfea59f62ba39da63dfe4a5ec43c5f43",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00005",
+      "source_patient_id": "kits19:case_00005",
+      "selected_slice_count": 365,
+      "content_fingerprint_sha256": "ecb1e11de38ad63e885e047aa33d457cf0f595a56cc049061e418aa7e1501e49",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00006",
+      "source_patient_id": "kits19:case_00006",
+      "selected_slice_count": 55,
+      "content_fingerprint_sha256": "abb24c3111e98d9ec6de56eb78d0b855c40578b3bcae28932168e08ba079c1f3",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00007",
+      "source_patient_id": "kits19:case_00007",
+      "selected_slice_count": 44,
+      "content_fingerprint_sha256": "19250468fe1285774c869b2fe83ced65cdd4186ffe821f6a7ea0e31075d9f6cc",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00008",
+      "source_patient_id": "kits19:case_00008",
+      "selected_slice_count": 85,
+      "content_fingerprint_sha256": "9978b8c029043555006a9e902f69c268ffd0ad207d2e8218dc35f671565008ea",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00009",
+      "source_patient_id": "kits19:case_00009",
+      "selected_slice_count": 48,
+      "content_fingerprint_sha256": "bcc76e83eadef995748d13bc753d083e670df18876aa8ec2d96664929c981097",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00012",
+      "source_patient_id": "kits19:case_00012",
+      "selected_slice_count": 42,
+      "content_fingerprint_sha256": "7841757ba2bf4c2ec48f2968642513dd001d1debd57c05144955d3120315cc1f",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00014",
+      "source_patient_id": "kits19:case_00014",
+      "selected_slice_count": 157,
+      "content_fingerprint_sha256": "9e0b821a8e0f818556a3e295bf7809dfb19c2eae44aee4979ae8a118c5f81a00",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00015",
+      "source_patient_id": "kits19:case_00015",
+      "selected_slice_count": 40,
+      "content_fingerprint_sha256": "675a7fb1ede1397c2c5346f3461e85b8ab4e28c4d55e8871b77bc4850ed6a62c",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00016",
+      "source_patient_id": "kits19:case_00016",
+      "selected_slice_count": 71,
+      "content_fingerprint_sha256": "1629497aae9bf5489f336ec6ea5440e2f65705322fe439fff8940ed645bb62fc",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00017",
+      "source_patient_id": "kits19:case_00017",
+      "selected_slice_count": 42,
+      "content_fingerprint_sha256": "72a64f2a8db6e89976710c90b445f13b36860418904f70403a778f0a531b167a",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00020",
+      "source_patient_id": "kits19:case_00020",
+      "selected_slice_count": 35,
+      "content_fingerprint_sha256": "0e578dbc6078ef9215eea67f47a4a664599df8309bcd7733d52584d4f13d33c5",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00021",
+      "source_patient_id": "kits19:case_00021",
+      "selected_slice_count": 22,
+      "content_fingerprint_sha256": "aa71eeee870d94064619e0912d8c356e89f1bca95bf3295d4a5372b67bfe90c7",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00022",
+      "source_patient_id": "kits19:case_00022",
+      "selected_slice_count": 255,
+      "content_fingerprint_sha256": "432ee3ae330ee80a988db5daed835df6b5051d2ce05e3322448f3f5a9921833b",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00024",
+      "source_patient_id": "kits19:case_00024",
+      "selected_slice_count": 34,
+      "content_fingerprint_sha256": "d2edece5437b3922a52b4afa18383ee400c2d8f3b5035ea5ee1902c0fdaddf89",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00025",
+      "source_patient_id": "kits19:case_00025",
+      "selected_slice_count": 68,
+      "content_fingerprint_sha256": "f78da04093041090ef75e5631ef17464669cadb19010f31ff10204e030e5e1cd",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00026",
+      "source_patient_id": "kits19:case_00026",
+      "selected_slice_count": 85,
+      "content_fingerprint_sha256": "4785fd50f1a53d5aeff0a2f8720929599cc58c2aa82d692bafdeba744c74de8d",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00027",
+      "source_patient_id": "kits19:case_00027",
+      "selected_slice_count": 332,
+      "content_fingerprint_sha256": "5f3984ff37d3f4461fb909d9fc5ea0e1b13651aba45fda98012c78e87a763e79",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00029",
+      "source_patient_id": "kits19:case_00029",
+      "selected_slice_count": 44,
+      "content_fingerprint_sha256": "7e9a042b81c46772ca7931f430ffdfda3d2547331a51414afc1201fdd5b6cd27",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00030",
+      "source_patient_id": "kits19:case_00030",
+      "selected_slice_count": 34,
+      "content_fingerprint_sha256": "18f91fab18ec96177b174c1fd13cac7e3f89531fa588e1ed52107f4be928d463",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00031",
+      "source_patient_id": "kits19:case_00031",
+      "selected_slice_count": 51,
+      "content_fingerprint_sha256": "80b5318324bc8104d1897eff3313415a3ecea33231ab42ee0ad4335397bb51cc",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00032",
+      "source_patient_id": "kits19:case_00032",
+      "selected_slice_count": 73,
+      "content_fingerprint_sha256": "ff2fa1eb5f95a6ec8f9bfc2eb9328a6227f4a54667f50697d2d615e27d2b0fe2",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00033",
+      "source_patient_id": "kits19:case_00033",
+      "selected_slice_count": 166,
+      "content_fingerprint_sha256": "2abd660fa5ef2decceb07f8a8085519f5a653a491fc168a8b386ef4c23094111",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00034",
+      "source_patient_id": "kits19:case_00034",
+      "selected_slice_count": 42,
+      "content_fingerprint_sha256": "879a77a9adeeb29286d7a5b043a63fb265ea7021bc3d18e85ff0e763960d7293",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00035",
+      "source_patient_id": "kits19:case_00035",
+      "selected_slice_count": 41,
+      "content_fingerprint_sha256": "8e168b634a0578a675e8a7fcf8784d9f549b0bdf475ffa08b2383054b704c997",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00036",
+      "source_patient_id": "kits19:case_00036",
+      "selected_slice_count": 58,
+      "content_fingerprint_sha256": "87be715c020475872757608f94df67e68bf2b83a6d7dc920ce88a85e5003297f",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00038",
+      "source_patient_id": "kits19:case_00038",
+      "selected_slice_count": 28,
+      "content_fingerprint_sha256": "e9e2f5e1f8ecea72dd9bc0ef5c3cee93f0f8060f5818e0ee6df5cae55af38cec",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00039",
+      "source_patient_id": "kits19:case_00039",
+      "selected_slice_count": 38,
+      "content_fingerprint_sha256": "ff593dc04306f1bff62655f1b9a786d43c25323d27278512bdb48d6e6bb5e775",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00040",
+      "source_patient_id": "kits19:case_00040",
+      "selected_slice_count": 126,
+      "content_fingerprint_sha256": "d96ca8af4ff389e6cde7c17796ffd30fc9576cc3996fe699bc608d10fd290b28",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00041",
+      "source_patient_id": "kits19:case_00041",
+      "selected_slice_count": 45,
+      "content_fingerprint_sha256": "9f69fe5aaa9d62d6a9dbe11c40c64a091c5106ad8e5d025f816f8db02d74ad6e",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00043",
+      "source_patient_id": "kits19:case_00043",
+      "selected_slice_count": 58,
+      "content_fingerprint_sha256": "1e0c96325499bbd00d7276728bc83907194d2afeb91e4ba6e79b64c99a371dfb",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00044",
+      "source_patient_id": "kits19:case_00044",
+      "selected_slice_count": 35,
+      "content_fingerprint_sha256": "115aa613a206b1f8dc4ca7d77185905ae115bb4103e687e1bca0e3fca6a77098",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00047",
+      "source_patient_id": "kits19:case_00047",
+      "selected_slice_count": 43,
+      "content_fingerprint_sha256": "c9fd0c12953a3a9ba9dd3fbd0ec4c199454553fb459431364232870eee185d35",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00048",
+      "source_patient_id": "kits19:case_00048",
+      "selected_slice_count": 40,
+      "content_fingerprint_sha256": "acfa07799b351a2443f57c3aa0c4a6389627478a2e7a59d01ee02d9b4bfe43b4",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00050",
+      "source_patient_id": "kits19:case_00050",
+      "selected_slice_count": 59,
+      "content_fingerprint_sha256": "9dd2ce7011ed8a61be02b80e9bc5c13684b5847e878dbd20727f0545c5ae8cf5",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00051",
+      "source_patient_id": "kits19:case_00051",
+      "selected_slice_count": 52,
+      "content_fingerprint_sha256": "a0b7a01488538e879dbd646d027ef7671efdd15e014590002c32118e1fb7f29a",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00052",
+      "source_patient_id": "kits19:case_00052",
+      "selected_slice_count": 319,
+      "content_fingerprint_sha256": "da8cca33bba3aaf5be9707a3fea8621f20a01ee9b4dba33066977fa2384db631",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00053",
+      "source_patient_id": "kits19:case_00053",
+      "selected_slice_count": 250,
+      "content_fingerprint_sha256": "e7667c5f4fd3e789acbced267d463fe30712aea06bf9fe5512e81dcd997d81a0",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00054",
+      "source_patient_id": "kits19:case_00054",
+      "selected_slice_count": 44,
+      "content_fingerprint_sha256": "9dd76e960842e70acab5c305a7e4f9d87d9eb3cde32cd9fcb668e1b62ab6d476",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00056",
+      "source_patient_id": "kits19:case_00056",
+      "selected_slice_count": 48,
+      "content_fingerprint_sha256": "7b3137fa2a3418cfe396091ea96cb546c02a17ec2a088f02e9bfbf60ee20a2da",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00058",
+      "source_patient_id": "kits19:case_00058",
+      "selected_slice_count": 41,
+      "content_fingerprint_sha256": "ef5201bcde9d3ea00893a8753207107d4f10a064959d5b03a13e4347bfca3491",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00060",
+      "source_patient_id": "kits19:case_00060",
+      "selected_slice_count": 50,
+      "content_fingerprint_sha256": "56c4edbd07c0f719f35973d16f4b1bd552e0fe8a46dcd087869502572f2a724e",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00062",
+      "source_patient_id": "kits19:case_00062",
+      "selected_slice_count": 32,
+      "content_fingerprint_sha256": "ba35064de0db4e7ba391d67606f69cae2636d56a2cc582f2c5a4ff26e4e488b8",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00063",
+      "source_patient_id": "kits19:case_00063",
+      "selected_slice_count": 278,
+      "content_fingerprint_sha256": "38191644b0ec12febbe18fd87d9fdd5069c6cf502fd57e2257f934948ccd9b69",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00064",
+      "source_patient_id": "kits19:case_00064",
+      "selected_slice_count": 31,
+      "content_fingerprint_sha256": "9d49531cfd04e365c8744a88c4572b11579d68fab40b45b4ab96de45c633fef1",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00065",
+      "source_patient_id": "kits19:case_00065",
+      "selected_slice_count": 61,
+      "content_fingerprint_sha256": "957008d8dc6558af9686848301b748a7ecc315aa8b22d41c9d29550d18b6c819",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00066",
+      "source_patient_id": "kits19:case_00066",
+      "selected_slice_count": 140,
+      "content_fingerprint_sha256": "ff4268242cf0352b43002fdaef1ff556cdbc213834f8958dc31dd3cd8361ff8f",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00067",
+      "source_patient_id": "kits19:case_00067",
+      "selected_slice_count": 189,
+      "content_fingerprint_sha256": "6aed18d1ca19902affe41c60f3f67ab37e2554e2ec983ad66e336997c7ea9792",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00068",
+      "source_patient_id": "kits19:case_00068",
+      "selected_slice_count": 291,
+      "content_fingerprint_sha256": "7e67c5338679d8dd770bbf53ecca8e1e1c344c241b28b6e1c4ad8b3c31ad6a50",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00069",
+      "source_patient_id": "kits19:case_00069",
+      "selected_slice_count": 35,
+      "content_fingerprint_sha256": "b868d231fe9edcd90906fde53769456105a9612a76506f4e9ca4ec95b423250f",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00071",
+      "source_patient_id": "kits19:case_00071",
+      "selected_slice_count": 263,
+      "content_fingerprint_sha256": "682b8e661f51bb66ce3fc869c54bb1172072ab1e95194a9ff340695e857cf57b",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00072",
+      "source_patient_id": "kits19:case_00072",
+      "selected_slice_count": 79,
+      "content_fingerprint_sha256": "c362be3c961fc337ff81279700148d499a9f5d96ecef1d81c297c80137a1e561",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00073",
+      "source_patient_id": "kits19:case_00073",
+      "selected_slice_count": 50,
+      "content_fingerprint_sha256": "a61f531c6410d39301a54fb58b606bedd80c2ebd4363256d9a16a07d38a3b2bb",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00074",
+      "source_patient_id": "kits19:case_00074",
+      "selected_slice_count": 31,
+      "content_fingerprint_sha256": "7926884ff345d50c271350aa8fcef94ebb129c0f581dcc7c1066cd232ab57f48",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00075",
+      "source_patient_id": "kits19:case_00075",
+      "selected_slice_count": 36,
+      "content_fingerprint_sha256": "1d49698e6396141b1350ede1717f074b85fcf455de347aa43a03a76a6967a058",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00079",
+      "source_patient_id": "kits19:case_00079",
+      "selected_slice_count": 41,
+      "content_fingerprint_sha256": "5787be7407ef03bfb1afa7ca28d100fac4f645865d81c10b976a26122e40bf70",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00080",
+      "source_patient_id": "kits19:case_00080",
+      "selected_slice_count": 34,
+      "content_fingerprint_sha256": "3dcbed3057c2fec0aa75463eda021bda9531b8d2baf86ec5a664511e1652ddca",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00081",
+      "source_patient_id": "kits19:case_00081",
+      "selected_slice_count": 64,
+      "content_fingerprint_sha256": "677f541a9b01cfe0b3e7784c348ed71a4e83e04e1c815d92e3d9a61a9ae80908",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00082",
+      "source_patient_id": "kits19:case_00082",
+      "selected_slice_count": 50,
+      "content_fingerprint_sha256": "9fe19b1efb5095d7a6f415bdf43feeeaea99c3cbfa4da094a52d4765063f598d",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00083",
+      "source_patient_id": "kits19:case_00083",
+      "selected_slice_count": 54,
+      "content_fingerprint_sha256": "ca929337a239fe8c00eec13f1004eb946c940c8e7154b5a9b47321dfdefc91c7",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00084",
+      "source_patient_id": "kits19:case_00084",
+      "selected_slice_count": 112,
+      "content_fingerprint_sha256": "8f37edb07063cf050ce7b270db9a097cf5f2600dfc4c8308f8330debbcaef03b",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00088",
+      "source_patient_id": "kits19:case_00088",
+      "selected_slice_count": 43,
+      "content_fingerprint_sha256": "a7ac832c8bdfcbb7195e1b33ca693a8e0affa63a0b08064ddb2a48d410b77b1e",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00089",
+      "source_patient_id": "kits19:case_00089",
+      "selected_slice_count": 31,
+      "content_fingerprint_sha256": "8a5447db794795ac8a6974ef73135e110eddbbe6b5f098d3b59834c977fa4916",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00091",
+      "source_patient_id": "kits19:case_00091",
+      "selected_slice_count": 381,
+      "content_fingerprint_sha256": "1dae453b9f90af9fd44737dc4aa935fccf3aa11c380f65e964a8ba0dd4bd79c0",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00092",
+      "source_patient_id": "kits19:case_00092",
+      "selected_slice_count": 40,
+      "content_fingerprint_sha256": "d9325bbf3966f555029c4c6a2185a56dd743e859f7c328e012566f53a586a9d4",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00093",
+      "source_patient_id": "kits19:case_00093",
+      "selected_slice_count": 339,
+      "content_fingerprint_sha256": "ee68fb5176b9eb23358b8b22b3272c5cebd0dd2d1ad845f323e0a25d524b3daf",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00094",
+      "source_patient_id": "kits19:case_00094",
+      "selected_slice_count": 35,
+      "content_fingerprint_sha256": "51d9c86e38b5adc6412c76e7da80c3efb10786f3210409cce797a51de529546e",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00095",
+      "source_patient_id": "kits19:case_00095",
+      "selected_slice_count": 123,
+      "content_fingerprint_sha256": "88658cf01555fddf29a4b3919f0079a53129f1d3a6bf733b98ee03a7a0085b74",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00096",
+      "source_patient_id": "kits19:case_00096",
+      "selected_slice_count": 284,
+      "content_fingerprint_sha256": "0705e68adcbbbafbc8330e153d82cb8bd368478704768599e52d9492ac44f4bf",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00097",
+      "source_patient_id": "kits19:case_00097",
+      "selected_slice_count": 41,
+      "content_fingerprint_sha256": "515eb39926bcad9cea96fa97b9d8f73120f7ea62e5e6443d946590687e80bbf3",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00098",
+      "source_patient_id": "kits19:case_00098",
+      "selected_slice_count": 152,
+      "content_fingerprint_sha256": "55a8a623b5ceb659ab82925a8f66b2a13b37f5aef9897dc58cc049a2c67b3d49",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00100",
+      "source_patient_id": "kits19:case_00100",
+      "selected_slice_count": 159,
+      "content_fingerprint_sha256": "37e0bde2e9d5ad7f3a0dddb5b762673c2f36e52d8a1ba27bf9a8b42b96cd3de3",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00101",
+      "source_patient_id": "kits19:case_00101",
+      "selected_slice_count": 270,
+      "content_fingerprint_sha256": "de15380f102b17a9fd750c52c01ed51dd4013baad802438f209a09bd162b5a99",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00102",
+      "source_patient_id": "kits19:case_00102",
+      "selected_slice_count": 185,
+      "content_fingerprint_sha256": "943b4ca6135064f4e7519efbebbb67bb5bd7cc45c4ad44f4f74f89cac15b6f66",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00103",
+      "source_patient_id": "kits19:case_00103",
+      "selected_slice_count": 337,
+      "content_fingerprint_sha256": "a79eb3d2c77d3be4d05b565d51102545f8b12a9f8a491cd58268c5164b629693",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00104",
+      "source_patient_id": "kits19:case_00104",
+      "selected_slice_count": 38,
+      "content_fingerprint_sha256": "ae843c841cbc9b3bfdf89df489b8bc67077641e3be19cf30f84aa734d1ff3074",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00105",
+      "source_patient_id": "kits19:case_00105",
+      "selected_slice_count": 57,
+      "content_fingerprint_sha256": "20bc5a0cc76287517dc19cc5cf51aef47aa6ecb78f055f39815af7a803d9befa",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00106",
+      "source_patient_id": "kits19:case_00106",
+      "selected_slice_count": 35,
+      "content_fingerprint_sha256": "3e26809c99074b586cc9abde1f69cd33aebabb6d23264b8d9b043e030ed49b94",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00107",
+      "source_patient_id": "kits19:case_00107",
+      "selected_slice_count": 37,
+      "content_fingerprint_sha256": "68acca7c8a2c3f6553401951a4f39012911308b3b8eca1f10b15655b74a9a027",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00110",
+      "source_patient_id": "kits19:case_00110",
+      "selected_slice_count": 26,
+      "content_fingerprint_sha256": "844ae25c4c10be039c0169a95eb3a576d1c570470b5e733430712390f09462bb",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00111",
+      "source_patient_id": "kits19:case_00111",
+      "selected_slice_count": 73,
+      "content_fingerprint_sha256": "db3ed2205c7426672d64c71d674533c04375ecedb2066b0d56fc5fab83b37c92",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00112",
+      "source_patient_id": "kits19:case_00112",
+      "selected_slice_count": 69,
+      "content_fingerprint_sha256": "9c3b8f782c0d81074f5e3c3570751b402786b1d88f928ee5b186afc7ca142acf",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00113",
+      "source_patient_id": "kits19:case_00113",
+      "selected_slice_count": 27,
+      "content_fingerprint_sha256": "7fc67865f0a9a73a58fff35471a0324f90092132b1639b480200490030bd7d8c",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00115",
+      "source_patient_id": "kits19:case_00115",
+      "selected_slice_count": 226,
+      "content_fingerprint_sha256": "ea07bb66e4257414643dfbcecc1e35fdc7c7a2e70d79f73216b2e41a9802bad5",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00117",
+      "source_patient_id": "kits19:case_00117",
+      "selected_slice_count": 56,
+      "content_fingerprint_sha256": "fe993d6d42d9af325570772bd8f75199d5781b7ba0e0f3b0319b56fe17b78bf1",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00118",
+      "source_patient_id": "kits19:case_00118",
+      "selected_slice_count": 296,
+      "content_fingerprint_sha256": "7ceb805399b3dbcd54791b2e36549fb330463265b61da02e366e0a358fae56cd",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00119",
+      "source_patient_id": "kits19:case_00119",
+      "selected_slice_count": 35,
+      "content_fingerprint_sha256": "d1a721bd265ae81a2be566a05ccf1cf379170d446f9c2ba264e72797a51a3b52",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00120",
+      "source_patient_id": "kits19:case_00120",
+      "selected_slice_count": 122,
+      "content_fingerprint_sha256": "563c443fa64df50ac64e94a71340895cec23d8cca9e0e550d104bf0d574fdc8f",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00121",
+      "source_patient_id": "kits19:case_00121",
+      "selected_slice_count": 29,
+      "content_fingerprint_sha256": "b7bf3dc663f0b9658cd3323270c729a7603a2f80db8f9f3fcf3ba03c1c564651",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00122",
+      "source_patient_id": "kits19:case_00122",
+      "selected_slice_count": 33,
+      "content_fingerprint_sha256": "6fee837fd43969d66e3c37c545114b8a39bded9d5cefe7d31d131c247fd8334f",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00123",
+      "source_patient_id": "kits19:case_00123",
+      "selected_slice_count": 129,
+      "content_fingerprint_sha256": "bdf304349140edeca71f9dbbf9308d68f1eedd57d62027d0a85ab5e7d4e6b187",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00124",
+      "source_patient_id": "kits19:case_00124",
+      "selected_slice_count": 91,
+      "content_fingerprint_sha256": "696343972f27c4df730f10021dc4f37785bf7e163e7facb81991b6991864f132",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00125",
+      "source_patient_id": "kits19:case_00125",
+      "selected_slice_count": 52,
+      "content_fingerprint_sha256": "29458a839d7ccdba5ed393a19741f4f5567978dd113cc2dceb5c45dd238934c2",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00126",
+      "source_patient_id": "kits19:case_00126",
+      "selected_slice_count": 51,
+      "content_fingerprint_sha256": "0c1cb4c5b4e483612b3e64ff3746a96d195b846f04d8b248b0d2fd48a9628f00",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00127",
+      "source_patient_id": "kits19:case_00127",
+      "selected_slice_count": 49,
+      "content_fingerprint_sha256": "e7e55aecb04f540ccb23831af9eecb5b1f0816aaea066a6dec7200b7b93af972",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00128",
+      "source_patient_id": "kits19:case_00128",
+      "selected_slice_count": 65,
+      "content_fingerprint_sha256": "c1a39a3eed9bee23e72eeca3a64c25d10fead398ef2b1d2008ea539efd95145d",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00129",
+      "source_patient_id": "kits19:case_00129",
+      "selected_slice_count": 23,
+      "content_fingerprint_sha256": "1346fd2e9bbd148484af2ff543328abcc64408300d56a6baf108ca734bfee255",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00130",
+      "source_patient_id": "kits19:case_00130",
+      "selected_slice_count": 43,
+      "content_fingerprint_sha256": "5f2d6749faa75084b226a85ffaaca0fcc2733ba3db9beceac78b59d005ef9a33",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00131",
+      "source_patient_id": "kits19:case_00131",
+      "selected_slice_count": 54,
+      "content_fingerprint_sha256": "902ad1facba57035aa6d5342fbe886e13a9aa858a66370120e9ace5bc93bb8f0",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00132",
+      "source_patient_id": "kits19:case_00132",
+      "selected_slice_count": 263,
+      "content_fingerprint_sha256": "de2d52e1276c35dfb2e64208ec6c4ffdc445277e11fadab58fbc54730a450e30",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00133",
+      "source_patient_id": "kits19:case_00133",
+      "selected_slice_count": 74,
+      "content_fingerprint_sha256": "a8b0ff7fe610eaa342b8fa001b35ba71c624fb52d7149a7080acecb68d367bd6",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00134",
+      "source_patient_id": "kits19:case_00134",
+      "selected_slice_count": 54,
+      "content_fingerprint_sha256": "f5c5389cfc37b4d5e39f0a7df6446d650ed90f8bd51e54890d958ac87f7e75a2",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00136",
+      "source_patient_id": "kits19:case_00136",
+      "selected_slice_count": 35,
+      "content_fingerprint_sha256": "a090c949c288bc8278b2ede411e53e8241330d3f2a089b2d9407912f2213c5fe",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00137",
+      "source_patient_id": "kits19:case_00137",
+      "selected_slice_count": 66,
+      "content_fingerprint_sha256": "5127123a3923f2de4805d1cd027027627c25f0409da5bd46044ad2c5927eb406",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00138",
+      "source_patient_id": "kits19:case_00138",
+      "selected_slice_count": 42,
+      "content_fingerprint_sha256": "7abafb7292891365d58d7e9e3afccafbae717ad1c628ec85a37c0787d60babaf",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00139",
+      "source_patient_id": "kits19:case_00139",
+      "selected_slice_count": 37,
+      "content_fingerprint_sha256": "0b3d62b36306d062e8028873a6a37de3af56d20af02373297f9c19ad5363c174",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00140",
+      "source_patient_id": "kits19:case_00140",
+      "selected_slice_count": 144,
+      "content_fingerprint_sha256": "56c129eda3a6e88d9b733cb1837660be70c626ae593b049d1fb44f5031664959",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00141",
+      "source_patient_id": "kits19:case_00141",
+      "selected_slice_count": 312,
+      "content_fingerprint_sha256": "2edd8f7d48216dc4eee5102c3654429c0df9a47447a0075d7b7c361638fd9041",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00142",
+      "source_patient_id": "kits19:case_00142",
+      "selected_slice_count": 165,
+      "content_fingerprint_sha256": "f4b0fb99d713fa74f239ac388a624f0082a01063d940220b32b650662f2d7216",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00143",
+      "source_patient_id": "kits19:case_00143",
+      "selected_slice_count": 32,
+      "content_fingerprint_sha256": "945176b9406ff3be12643efa8edd2ada962b61fd26c9c695c871b7b6c094c2d3",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00144",
+      "source_patient_id": "kits19:case_00144",
+      "selected_slice_count": 78,
+      "content_fingerprint_sha256": "2d2fb853b44a28a5a640072c5c36d8df270084047a7f6a28950392976a03bb2b",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00146",
+      "source_patient_id": "kits19:case_00146",
+      "selected_slice_count": 304,
+      "content_fingerprint_sha256": "82d6f202d902e4b9287d9133905937d764f2eb17d35c46869ced721090bf7047",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00147",
+      "source_patient_id": "kits19:case_00147",
+      "selected_slice_count": 36,
+      "content_fingerprint_sha256": "32196135f4cb0e7b5ce76cd11cfe809437f666001edce8bd6f55735e9e0a83b7",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00148",
+      "source_patient_id": "kits19:case_00148",
+      "selected_slice_count": 31,
+      "content_fingerprint_sha256": "02b0001ae2b7bf1832f9d8178c7f2be0b4fe8a4b9da8091d37ce2e7c7243ab08",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00150",
+      "source_patient_id": "kits19:case_00150",
+      "selected_slice_count": 65,
+      "content_fingerprint_sha256": "213e493fc044eb236898b6c1a72cd9e2102d4bd80ebff1ca0759262089f9e6df",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00151",
+      "source_patient_id": "kits19:case_00151",
+      "selected_slice_count": 437,
+      "content_fingerprint_sha256": "1483935e00636359027f5f5b3cefefdcbc8a0f0b6c3bf35234d3a2865668cb01",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00152",
+      "source_patient_id": "kits19:case_00152",
+      "selected_slice_count": 26,
+      "content_fingerprint_sha256": "14fb19276f9119521b3dbc817462b1e03275142f60da429f211d43d9c8c7b5ce",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00153",
+      "source_patient_id": "kits19:case_00153",
+      "selected_slice_count": 50,
+      "content_fingerprint_sha256": "2ed17327b607ecca37ccee9602bd3b7f7fbb517ad8d4d399a32c2f6e66bb958b",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00155",
+      "source_patient_id": "kits19:case_00155",
+      "selected_slice_count": 306,
+      "content_fingerprint_sha256": "4f9c2fa6ac470f8d9a2a7979ec1de6c0de0a1000f91a00ea0952a69e79aca961",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00157",
+      "source_patient_id": "kits19:case_00157",
+      "selected_slice_count": 277,
+      "content_fingerprint_sha256": "71cd70bb6e278c04ce0593df7a0e392c4a15dda8bfda7ea44ec62a017dc5e4f9",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00158",
+      "source_patient_id": "kits19:case_00158",
+      "selected_slice_count": 354,
+      "content_fingerprint_sha256": "f348978471ff456cf5b6954f17edc285ecbea6db1ce73186ad4c1116fbfd897f",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00159",
+      "source_patient_id": "kits19:case_00159",
+      "selected_slice_count": 355,
+      "content_fingerprint_sha256": "515ad60573baa3aaa702e3a08a97cb3ae4895fef407efa90792461068e4419e4",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00161",
+      "source_patient_id": "kits19:case_00161",
+      "selected_slice_count": 27,
+      "content_fingerprint_sha256": "bbaebe159beb1ece4bfdefef62a464bb24f3adf47b3157ede313ff8db50dd814",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00162",
+      "source_patient_id": "kits19:case_00162",
+      "selected_slice_count": 30,
+      "content_fingerprint_sha256": "b782a4a817a9c9b081f9d10a762645551fa6a18d406af9213ddada6ac88025c0",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00163",
+      "source_patient_id": "kits19:case_00163",
+      "selected_slice_count": 39,
+      "content_fingerprint_sha256": "f617f7b22c60ad8f5cff23f0a20c1cb7b3332b41b4b82e2b622a45affe26cf6d",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00164",
+      "source_patient_id": "kits19:case_00164",
+      "selected_slice_count": 26,
+      "content_fingerprint_sha256": "0c8064cd88b1a0ac5a32e6cd2b38de2cd1093fbb7a013d28c2e244247e979e95",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00165",
+      "source_patient_id": "kits19:case_00165",
+      "selected_slice_count": 217,
+      "content_fingerprint_sha256": "49fa9a39d06b295b192a96592d442e5653c8110833ea7137a33d72b727486b47",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00166",
+      "source_patient_id": "kits19:case_00166",
+      "selected_slice_count": 50,
+      "content_fingerprint_sha256": "870820238ebbb5324925545ab4207449dc01d97ba2320d95e17128f30ef33757",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00167",
+      "source_patient_id": "kits19:case_00167",
+      "selected_slice_count": 40,
+      "content_fingerprint_sha256": "05d6b4b3ac94f39238ea3b20bb741745f857118253c38697b36d346b993f631b",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00169",
+      "source_patient_id": "kits19:case_00169",
+      "selected_slice_count": 31,
+      "content_fingerprint_sha256": "875cea474a48ee405206b5b0bfac583e709dc38ba8cda05be35c9d43189f9563",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00171",
+      "source_patient_id": "kits19:case_00171",
+      "selected_slice_count": 38,
+      "content_fingerprint_sha256": "d150fc3df8e3e944d8356c899011ec60f3f792c2e3378021b310d33077a72501",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00172",
+      "source_patient_id": "kits19:case_00172",
+      "selected_slice_count": 39,
+      "content_fingerprint_sha256": "15e33c8abfc8b810441a5d7d7d0abea154d6a073ca9afd75d81b65f5339630a3",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00174",
+      "source_patient_id": "kits19:case_00174",
+      "selected_slice_count": 39,
+      "content_fingerprint_sha256": "14fe426c04e25cdbc28224bdfd3c559d727bf92b59473c7d8ca54bcf2e3b27f0",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00175",
+      "source_patient_id": "kits19:case_00175",
+      "selected_slice_count": 37,
+      "content_fingerprint_sha256": "b1cba2bf3392030b77011157622f08ac47b488d7edfc9a3c3d9fae834f7d3a27",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00176",
+      "source_patient_id": "kits19:case_00176",
+      "selected_slice_count": 33,
+      "content_fingerprint_sha256": "d7138a2674195eb2408292c4d3573bb06db234bcb595b458f6eb84e7657dea2c",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00178",
+      "source_patient_id": "kits19:case_00178",
+      "selected_slice_count": 33,
+      "content_fingerprint_sha256": "2dd57e20d7f45642d1b51813e24267a5a794828142383ee752220eeaab914cea",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00179",
+      "source_patient_id": "kits19:case_00179",
+      "selected_slice_count": 38,
+      "content_fingerprint_sha256": "c1aa355acaa362463f0ecd145455993f1f8c79a703840930381076f0c9e02315",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00180",
+      "source_patient_id": "kits19:case_00180",
+      "selected_slice_count": 60,
+      "content_fingerprint_sha256": "94c71a81c42e6ebca59a01252b530be57ec7c02aea0be1f84030d4f6792d4df1",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00181",
+      "source_patient_id": "kits19:case_00181",
+      "selected_slice_count": 50,
+      "content_fingerprint_sha256": "dee9a86d143c958f6021b6fd8857d425e40ce036d1165e08938c88a1b8890f25",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00182",
+      "source_patient_id": "kits19:case_00182",
+      "selected_slice_count": 36,
+      "content_fingerprint_sha256": "24765b6cd57ab8bf46e5407d10e7c7f8e053876702d8ae1ad9fd7a08e7768fe1",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00183",
+      "source_patient_id": "kits19:case_00183",
+      "selected_slice_count": 113,
+      "content_fingerprint_sha256": "02084d2e1c42c9ac574a307076940373e12da56d652538ff7033d09f06d05d95",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00186",
+      "source_patient_id": "kits19:case_00186",
+      "selected_slice_count": 48,
+      "content_fingerprint_sha256": "35d3804654277051652407dbc4edba3bbc997b792f67ca9aae69bb3d7873dbad",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00187",
+      "source_patient_id": "kits19:case_00187",
+      "selected_slice_count": 40,
+      "content_fingerprint_sha256": "4a3fa67df1fe6c48e431e1b3ac3d9a825ecd62b7be5f97e605fca333c02d65c7",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00188",
+      "source_patient_id": "kits19:case_00188",
+      "selected_slice_count": 143,
+      "content_fingerprint_sha256": "fd6dbbc77a8cbf6bd7c1553453cd59964c7e06d8d885e641752faea98798c8b7",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00189",
+      "source_patient_id": "kits19:case_00189",
+      "selected_slice_count": 48,
+      "content_fingerprint_sha256": "4b0a19598c3f782ac81bd9ce698badbf0be48a5602cd2b979ba28aeb01a916a5",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00190",
+      "source_patient_id": "kits19:case_00190",
+      "selected_slice_count": 59,
+      "content_fingerprint_sha256": "b8e6a3973f7cbb67f203c74d57a986e71425bb136bb38d28786c1a5b39b65c73",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00191",
+      "source_patient_id": "kits19:case_00191",
+      "selected_slice_count": 146,
+      "content_fingerprint_sha256": "cc8b95575a351398887dad55291507eca2eecb7c45a6afebc88c00348bb96df6",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00192",
+      "source_patient_id": "kits19:case_00192",
+      "selected_slice_count": 46,
+      "content_fingerprint_sha256": "d7648a56bf4a4cb882e8304d9bc16d8a8ddc73f600c052c764aa084f9a0f86e1",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00193",
+      "source_patient_id": "kits19:case_00193",
+      "selected_slice_count": 112,
+      "content_fingerprint_sha256": "399770304dbee5902435b1c47909481798b4d3ab306ed747f63159ddc63d6a3b",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00194",
+      "source_patient_id": "kits19:case_00194",
+      "selected_slice_count": 45,
+      "content_fingerprint_sha256": "f76669286a60db768e80c61274bb1b974d4546414c16868ac01d1fff7ea3c922",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00195",
+      "source_patient_id": "kits19:case_00195",
+      "selected_slice_count": 36,
+      "content_fingerprint_sha256": "e3b985e992b182220b276efb9fc0a55b07659fd160d9c29a9a78cacb7ae34950",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00196",
+      "source_patient_id": "kits19:case_00196",
+      "selected_slice_count": 55,
+      "content_fingerprint_sha256": "5815ea1cd94dd339e63dafebba9fa106531ee3d74cb4c415c91ca3dfc518caf9",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00197",
+      "source_patient_id": "kits19:case_00197",
+      "selected_slice_count": 71,
+      "content_fingerprint_sha256": "abd52e449193d3370649afbbe84d71ca17eae69ba4fcd542031b31546d6d641f",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00198",
+      "source_patient_id": "kits19:case_00198",
+      "selected_slice_count": 82,
+      "content_fingerprint_sha256": "55ac99c95056e45ea33e1f3add240bf936faf014762e93a6f7d8968f568f189c",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00200",
+      "source_patient_id": "kits19:case_00200",
+      "selected_slice_count": 42,
+      "content_fingerprint_sha256": "21871a93e4ec1852cf18a254da328bf0f25ad935710538f174f71dff4d193881",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00201",
+      "source_patient_id": "kits19:case_00201",
+      "selected_slice_count": 54,
+      "content_fingerprint_sha256": "c0f362f6de375606230ee253a27df8be6a16f9c31c5f0cd1bb25a63eceb32026",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00202",
+      "source_patient_id": "kits19:case_00202",
+      "selected_slice_count": 140,
+      "content_fingerprint_sha256": "1c873b778131d433218110ba4b47f5cbabe763e77bc92fc4f93fa2310999e6dd",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00203",
+      "source_patient_id": "kits19:case_00203",
+      "selected_slice_count": 183,
+      "content_fingerprint_sha256": "1ed088f6b81894176d9a17d90a2af2374314388268e1aa4786c6a3d92fcacdb5",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00204",
+      "source_patient_id": "kits19:case_00204",
+      "selected_slice_count": 51,
+      "content_fingerprint_sha256": "24d8ed839465c0c795dbdb3853e4df0255f2432e00fce8abb99a804782c1c7e9",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00205",
+      "source_patient_id": "kits19:case_00205",
+      "selected_slice_count": 38,
+      "content_fingerprint_sha256": "92b17168f507d4dc11f367a0c2334cfaca9f8c0a97f1d0369e21f6cc09569afc",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00207",
+      "source_patient_id": "kits19:case_00207",
+      "selected_slice_count": 46,
+      "content_fingerprint_sha256": "d807c9b43c1b8e1a4abf22bb24c1e1a401cd11c4182c5ec6fabe618347e4e39f",
+      "reason": "not_selected_by_fixed_counts"
+    },
+    {
+      "patient_id": "case_00208",
+      "source_patient_id": "kits19:case_00208",
+      "selected_slice_count": 36,
+      "content_fingerprint_sha256": "7dbc925996bbec135b3b3f3f8a0306300a628c83195f7b7b2230a6ad65cc9339",
+      "reason": "not_selected_by_fixed_counts"
+    }
+  ],
+  "excluded_patient_ids": [
+    "case_00001",
+    "case_00002",
+    "case_00003",
+    "case_00004",
+    "case_00005",
+    "case_00006",
+    "case_00007",
+    "case_00008",
+    "case_00009",
+    "case_00012",
+    "case_00014",
+    "case_00015",
+    "case_00016",
+    "case_00017",
+    "case_00020",
+    "case_00021",
+    "case_00022",
+    "case_00024",
+    "case_00025",
+    "case_00026",
+    "case_00027",
+    "case_00029",
+    "case_00030",
+    "case_00031",
+    "case_00032",
+    "case_00033",
+    "case_00034",
+    "case_00035",
+    "case_00036",
+    "case_00038",
+    "case_00039",
+    "case_00040",
+    "case_00041",
+    "case_00043",
+    "case_00044",
+    "case_00047",
+    "case_00048",
+    "case_00050",
+    "case_00051",
+    "case_00052",
+    "case_00053",
+    "case_00054",
+    "case_00056",
+    "case_00058",
+    "case_00060",
+    "case_00062",
+    "case_00063",
+    "case_00064",
+    "case_00065",
+    "case_00066",
+    "case_00067",
+    "case_00068",
+    "case_00069",
+    "case_00071",
+    "case_00072",
+    "case_00073",
+    "case_00074",
+    "case_00075",
+    "case_00079",
+    "case_00080",
+    "case_00081",
+    "case_00082",
+    "case_00083",
+    "case_00084",
+    "case_00088",
+    "case_00089",
+    "case_00091",
+    "case_00092",
+    "case_00093",
+    "case_00094",
+    "case_00095",
+    "case_00096",
+    "case_00097",
+    "case_00098",
+    "case_00100",
+    "case_00101",
+    "case_00102",
+    "case_00103",
+    "case_00104",
+    "case_00105",
+    "case_00106",
+    "case_00107",
+    "case_00110",
+    "case_00111",
+    "case_00112",
+    "case_00113",
+    "case_00115",
+    "case_00117",
+    "case_00118",
+    "case_00119",
+    "case_00120",
+    "case_00121",
+    "case_00122",
+    "case_00123",
+    "case_00124",
+    "case_00125",
+    "case_00126",
+    "case_00127",
+    "case_00128",
+    "case_00129",
+    "case_00130",
+    "case_00131",
+    "case_00132",
+    "case_00133",
+    "case_00134",
+    "case_00136",
+    "case_00137",
+    "case_00138",
+    "case_00139",
+    "case_00140",
+    "case_00141",
+    "case_00142",
+    "case_00143",
+    "case_00144",
+    "case_00146",
+    "case_00147",
+    "case_00148",
+    "case_00150",
+    "case_00151",
+    "case_00152",
+    "case_00153",
+    "case_00155",
+    "case_00157",
+    "case_00158",
+    "case_00159",
+    "case_00161",
+    "case_00162",
+    "case_00163",
+    "case_00164",
+    "case_00165",
+    "case_00166",
+    "case_00167",
+    "case_00169",
+    "case_00171",
+    "case_00172",
+    "case_00174",
+    "case_00175",
+    "case_00176",
+    "case_00178",
+    "case_00179",
+    "case_00180",
+    "case_00181",
+    "case_00182",
+    "case_00183",
+    "case_00186",
+    "case_00187",
+    "case_00188",
+    "case_00189",
+    "case_00190",
+    "case_00191",
+    "case_00192",
+    "case_00193",
+    "case_00194",
+    "case_00195",
+    "case_00196",
+    "case_00197",
+    "case_00198",
+    "case_00200",
+    "case_00201",
+    "case_00202",
+    "case_00203",
+    "case_00204",
+    "case_00205",
+    "case_00207",
+    "case_00208"
+  ],
+  "duplicate_component_policy": "one eligible representative; development-exposed representative forced into train",
+  "selection_scope": "reference-selected exported 2D PNG slices; no full-volume evaluation",
+  "machine_audit_status": "passed",
+  "manual_clinical_alignment_verified": false,
+  "model_trained": false,
+  "limitations": [
+    "Audit success covers machine checks, not clinical alignment or original source alias verification.",
+    "Source patient IDs are audit-provided case namespaces; real-person aliases are not independently established.",
+    "No healthy-patient label or patient-level tumour/no-tumour diagnosis is inferred.",
+    "Selection uses patient identity, audit eligibility and duplicate protection, not model performance or class labels.",
+    "Preserve an existing lock; changed data, audit or selection settings require an explicit new cohort decision."
+  ],
+  "cohort_fingerprint_sha256": "92ad119edc0f2ea4eea7d586c68a60f2e668045820c851c9388e22c94df3265c"
+}

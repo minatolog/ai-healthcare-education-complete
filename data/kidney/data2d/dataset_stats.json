@@ -1,0 +1,21 @@
+{
+  "n_slices": 20686,
+  "n_cases": 210,
+  "slices_with_kidney": 15826,
+  "slices_with_tumor": 5706,
+  "kidney_px_frac": 0.014932214389695175,
+  "tumor_px_frac": 0.0036841426356253927,
+  "bg_px_frac": 0.9813836429746794,
+  "fig_class_dist": "/content/drive/MyDrive/COMP9444/kits_project/outputs/figures/eda_class_distribution.png",
+  "fig_slices_per_case": "/content/drive/MyDrive/COMP9444/kits_project/outputs/figures/eda_slices_per_case.png",
+  "median_slices_per_case": 50.0,
+  "cases_with_tumor": 210,
+  "fig_spacing": "/content/drive/MyDrive/COMP9444/kits_project/outputs/figures/eda_voxel_spacing.png",
+  "spacing_median_mm": {
+    "z": 3.0,
+    "y": 0.78125,
+    "x": 0.78125
+  },
+  "fig_hu": "/content/drive/MyDrive/COMP9444/kits_project/outputs/figures/eda_hu_histogram.png",
+  "fig_montage": "/content/drive/MyDrive/COMP9444/kits_project/outputs/figures/eda_sample_montage.png"
+}

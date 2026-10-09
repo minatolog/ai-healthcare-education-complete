@@ -12,4 +12,4 @@ From the repository root, use:
 cd backend/kidney
 ```
 
-Read [the module setup and commands](kidney/README.md) and [the feature-branch handoff](../docs/kidney/FEATURE_BRANCH_HANDOFF.md) before integration. Patient images, masks, encoder/model weights, caches, environments and generated outputs stay outside Git.
+Read [the module setup and commands](kidney/README.md) and [the feature-branch handoff](../docs/kidney/FEATURE_BRANCH_HANDOFF.md) before integration. The reviewed 40-patient processed CT/mask handoff is now available under [`data/kidney/`](../data/kidney/README.md). Raw NIfTI scans, encoder/model weights, caches, environments and generated outputs remain external.

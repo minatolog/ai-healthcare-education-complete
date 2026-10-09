@@ -1,6 +1,18 @@
 stages:
   - test
 
+kidney_data_handoff_check:
+  image: python:3.11-slim
+  stage: test
+  before_script:
+    - python -m pip install -r data/kidney/requirements-data.txt
+  script:
+    - python -m unittest discover -s data/kidney -p 'test_validate_handoff.py' -v
+    - python data/kidney/validate_handoff.py
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH'
+
 kidney_audit_tests:
   image: python:3.11-slim
   stage: test

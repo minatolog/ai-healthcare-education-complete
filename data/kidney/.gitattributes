@@ -1,0 +1,4 @@
+# Preserve exact bytes on every platform: hashes bind this entire data snapshot.
+* -text
+*.png binary
+provenance/source_processing/*.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
