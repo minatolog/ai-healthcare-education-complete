@@ -2,7 +2,7 @@
 
 This is the Kidney source contribution based on `develop`. The default project route is **single-channel 2D PNG segmentation** using a frozen, verified ImageNet ResNet-18 encoder and a trainable U-Net decoder/head. Classes are `0=background`, `1=kidney`, `2=tumour`.
 
-The original local Starter remains the manual learning environment and the `kits_project` dataset stays external. Patient data, pretrained/model weights, environments and generated run assets are excluded; a small reviewed results summary is included under `docs/kidney`. The patient lock and original model/data hashes are preserved; placing source here does not recreate the cohort or run training.
+The original local Starter remains the manual learning environment. A reviewed copy of the 40-patient processed CT/mask subset is available in [`data/kidney/`](../../data/kidney/README.md), with unchanged source metadata, the original audit and cohort lock. Raw scans, pretrained/model weights, environments and generated run assets remain external; a small reviewed results summary is included under `docs/kidney`. The patient lock and original model/data hashes are preserved; placing source or data here does not recreate the cohort or run training.
 
 ## Layout
 
@@ -59,7 +59,7 @@ The local Step 5 audit checked 20,686 image/mask pairs across 210 cases. The rev
 | Final test | 10 | 530 |
 | Independent prediction | 5 | 676 |
 
-The modelling cohort is 40 patients; the prediction pool is five additional patients. `case_00000`, inspected and updated during development, belongs to training. All slices of one patient stay in the same pool. Duplicate/source-content controls and bound fingerprints protect the reviewed assignments; external patient aliases and full-scan coverage remain unverified.
+The modelling cohort is 40 patients. The immutable historical lock also records five additional prediction patients, which were used by the original Step 08 route. The current data handoff packages only the formal 40; its demo patient picker uses the ten test patients and adds no new pool. `case_00000`, inspected and updated during development, belongs to training. All slices of one patient stay in the same pool. Duplicate/source-content controls and bound fingerprints protect the reviewed assignments; external patient aliases and full-scan coverage remain unverified.
 
 Existing local audit/lock/review evidence can be referenced by absolute paths. It need not be copied or committed. If preparing evidence locally in this checkout for the first time, these commands write to ignored `learning_outputs/` and preserve an existing cohort lock:
 
