@@ -1,0 +1,2 @@
+# Preserve SQL hashes in the verification report across Windows and Linux.
+*.sql text eol=lf
