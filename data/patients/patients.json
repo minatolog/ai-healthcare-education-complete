@@ -1,0 +1,1362 @@
+[
+  {
+    "patient_code": "P001",
+    "name": "Drew Scott",
+    "age": 38,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 23.1,
+      "systolic_bp_mmhg": 120,
+      "family_history": 0
+    },
+    "biomarker": {
+      "glucose_mmol_l": 9.8,
+      "hba1c_percent": 7.7
+    },
+    "kidney_case_id": "case_00000",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P001",
+      "kidney_source_patient_id": "kits19:case_00000",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 322
+    }
+  },
+  {
+    "patient_code": "P002",
+    "name": "Alex Brown",
+    "age": 58,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 26.4,
+      "systolic_bp_mmhg": 115,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 8.3,
+      "hba1c_percent": 7.1
+    },
+    "kidney_case_id": "case_00010",
+    "kidney_pool": "validation",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P002",
+      "kidney_source_patient_id": "kits19:case_00010",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 43
+    }
+  },
+  {
+    "patient_code": "P003",
+    "name": "Remy Carter",
+    "age": 28,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 30.2,
+      "systolic_bp_mmhg": 122,
+      "family_history": 0
+    },
+    "biomarker": {
+      "glucose_mmol_l": 9.7,
+      "hba1c_percent": 6.9
+    },
+    "kidney_case_id": "case_00011",
+    "kidney_pool": "validation",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P003",
+      "kidney_source_patient_id": "kits19:case_00011",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 32
+    }
+  },
+  {
+    "patient_code": "P004",
+    "name": "Bailey Walker",
+    "age": 48,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 22.8,
+      "systolic_bp_mmhg": 126,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 3.8,
+      "hba1c_percent": 6.5
+    },
+    "kidney_case_id": "case_00013",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P004",
+      "kidney_source_patient_id": "kits19:case_00013",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 44
+    }
+  },
+  {
+    "patient_code": "P005",
+    "name": "Eden Reed",
+    "age": 71,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 39.4,
+      "systolic_bp_mmhg": 135,
+      "family_history": 0
+    },
+    "biomarker": {
+      "glucose_mmol_l": 10.3,
+      "hba1c_percent": 5.9
+    },
+    "kidney_case_id": "case_00018",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P005",
+      "kidney_source_patient_id": "kits19:case_00018",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 61
+    }
+  },
+  {
+    "patient_code": "P006",
+    "name": "Sam Lewis",
+    "age": 82,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 36.9,
+      "systolic_bp_mmhg": 147,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 9.0,
+      "hba1c_percent": 5.0
+    },
+    "kidney_case_id": "case_00019",
+    "kidney_pool": "test",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P006",
+      "kidney_source_patient_id": "kits19:case_00019",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 49
+    }
+  },
+  {
+    "patient_code": "P007",
+    "name": "Kai Morgan",
+    "age": 58,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 20.3,
+      "systolic_bp_mmhg": 113,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 6.1,
+      "hba1c_percent": 7.8
+    },
+    "kidney_case_id": "case_00023",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P007",
+      "kidney_source_patient_id": "kits19:case_00023",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 62
+    }
+  },
+  {
+    "patient_code": "P008",
+    "name": "Elliot Miller",
+    "age": 55,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 27.1,
+      "systolic_bp_mmhg": 146,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 3.8,
+      "hba1c_percent": 6.2
+    },
+    "kidney_case_id": "case_00028",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P008",
+      "kidney_source_patient_id": "kits19:case_00028",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 47
+    }
+  },
+  {
+    "patient_code": "P009",
+    "name": "Emery Evans",
+    "age": 55,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 33.2,
+      "systolic_bp_mmhg": 125,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 4.3,
+      "hba1c_percent": 5.1
+    },
+    "kidney_case_id": "case_00042",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P009",
+      "kidney_source_patient_id": "kits19:case_00042",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 176
+    }
+  },
+  {
+    "patient_code": "P010",
+    "name": "Lane Harris",
+    "age": 34,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 20.9,
+      "systolic_bp_mmhg": 127,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 7.1,
+      "hba1c_percent": 6.0
+    },
+    "kidney_case_id": "case_00045",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P010",
+      "kidney_source_patient_id": "kits19:case_00045",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 39
+    }
+  },
+  {
+    "patient_code": "P011",
+    "name": "Reese Parker",
+    "age": 59,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 17.5,
+      "systolic_bp_mmhg": 142,
+      "family_history": 0
+    },
+    "biomarker": {
+      "glucose_mmol_l": 3.8,
+      "hba1c_percent": 6.7
+    },
+    "kidney_case_id": "case_00046",
+    "kidney_pool": "test",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P011",
+      "kidney_source_patient_id": "kits19:case_00046",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 68
+    }
+  },
+  {
+    "patient_code": "P012",
+    "name": "Logan Kelly",
+    "age": 58,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 26.0,
+      "systolic_bp_mmhg": 161,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 6.9,
+      "hba1c_percent": 4.2
+    },
+    "kidney_case_id": "case_00055",
+    "kidney_pool": "test",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P012",
+      "kidney_source_patient_id": "kits19:case_00055",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 44
+    }
+  },
+  {
+    "patient_code": "P013",
+    "name": "Casey Jackson",
+    "age": 22,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 21.2,
+      "systolic_bp_mmhg": 97,
+      "family_history": 0
+    },
+    "biomarker": {
+      "glucose_mmol_l": 4.2,
+      "hba1c_percent": 6.2
+    },
+    "kidney_case_id": "case_00057",
+    "kidney_pool": "test",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P013",
+      "kidney_source_patient_id": "kits19:case_00057",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 45
+    }
+  },
+  {
+    "patient_code": "P014",
+    "name": "Frankie Brooks",
+    "age": 56,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 26.8,
+      "systolic_bp_mmhg": 139,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 5.7,
+      "hba1c_percent": 5.8
+    },
+    "kidney_case_id": "case_00059",
+    "kidney_pool": "validation",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P014",
+      "kidney_source_patient_id": "kits19:case_00059",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 359
+    }
+  },
+  {
+    "patient_code": "P015",
+    "name": "Harper Baker",
+    "age": 55,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 29.5,
+      "systolic_bp_mmhg": 141,
+      "family_history": 0
+    },
+    "biomarker": {
+      "glucose_mmol_l": 5.5,
+      "hba1c_percent": 5.9
+    },
+    "kidney_case_id": "case_00061",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P015",
+      "kidney_source_patient_id": "kits19:case_00061",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 26
+    }
+  },
+  {
+    "patient_code": "P016",
+    "name": "Charlie Adams",
+    "age": 70,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 30.0,
+      "systolic_bp_mmhg": 94,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 8.6,
+      "hba1c_percent": 8.8
+    },
+    "kidney_case_id": "case_00070",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P016",
+      "kidney_source_patient_id": "kits19:case_00070",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 32
+    }
+  },
+  {
+    "patient_code": "P017",
+    "name": "Dakota Smith",
+    "age": 63,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 27.4,
+      "systolic_bp_mmhg": 90,
+      "family_history": 0
+    },
+    "biomarker": {
+      "glucose_mmol_l": 4.7,
+      "hba1c_percent": 6.0
+    },
+    "kidney_case_id": "case_00076",
+    "kidney_pool": "validation",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P017",
+      "kidney_source_patient_id": "kits19:case_00076",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 26
+    }
+  },
+  {
+    "patient_code": "P018",
+    "name": "Sage Hayes",
+    "age": 40,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 26.7,
+      "systolic_bp_mmhg": 128,
+      "family_history": 0
+    },
+    "biomarker": {
+      "glucose_mmol_l": 5.8,
+      "hba1c_percent": 7.0
+    },
+    "kidney_case_id": "case_00077",
+    "kidney_pool": "test",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P018",
+      "kidney_source_patient_id": "kits19:case_00077",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 44
+    }
+  },
+  {
+    "patient_code": "P019",
+    "name": "Parker Davis",
+    "age": 66,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 31.1,
+      "systolic_bp_mmhg": 155,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 7.1,
+      "hba1c_percent": 6.4
+    },
+    "kidney_case_id": "case_00078",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P019",
+      "kidney_source_patient_id": "kits19:case_00078",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 184
+    }
+  },
+  {
+    "patient_code": "P020",
+    "name": "River James",
+    "age": 40,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 26.3,
+      "systolic_bp_mmhg": 133,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 9.4,
+      "hba1c_percent": 8.3
+    },
+    "kidney_case_id": "case_00085",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P020",
+      "kidney_source_patient_id": "kits19:case_00085",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 31
+    }
+  },
+  {
+    "patient_code": "P021",
+    "name": "Hayden Collins",
+    "age": 49,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 22.2,
+      "systolic_bp_mmhg": 122,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 8.3,
+      "hba1c_percent": 4.8
+    },
+    "kidney_case_id": "case_00087",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P021",
+      "kidney_source_patient_id": "kits19:case_00087",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 24
+    }
+  },
+  {
+    "patient_code": "P022",
+    "name": "Quinn Mitchell",
+    "age": 54,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 33.2,
+      "systolic_bp_mmhg": 140,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 11.1,
+      "hba1c_percent": 6.2
+    },
+    "kidney_case_id": "case_00099",
+    "kidney_pool": "test",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P022",
+      "kidney_source_patient_id": "kits19:case_00099",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 38
+    }
+  },
+  {
+    "patient_code": "P023",
+    "name": "Robin Hill",
+    "age": 31,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 27.9,
+      "systolic_bp_mmhg": 130,
+      "family_history": 0
+    },
+    "biomarker": {
+      "glucose_mmol_l": 4.6,
+      "hba1c_percent": 4.2
+    },
+    "kidney_case_id": "case_00108",
+    "kidney_pool": "validation",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P023",
+      "kidney_source_patient_id": "kits19:case_00108",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 28
+    }
+  },
+  {
+    "patient_code": "P024",
+    "name": "Skyler Green",
+    "age": 67,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 33.2,
+      "systolic_bp_mmhg": 126,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 6.9,
+      "hba1c_percent": 5.2
+    },
+    "kidney_case_id": "case_00109",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P024",
+      "kidney_source_patient_id": "kits19:case_00109",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 60
+    }
+  },
+  {
+    "patient_code": "P025",
+    "name": "Jordan Lee",
+    "age": 53,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 31.1,
+      "systolic_bp_mmhg": 105,
+      "family_history": 0
+    },
+    "biomarker": {
+      "glucose_mmol_l": 5.0,
+      "hba1c_percent": 5.4
+    },
+    "kidney_case_id": "case_00114",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P025",
+      "kidney_source_patient_id": "kits19:case_00114",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 208
+    }
+  },
+  {
+    "patient_code": "P026",
+    "name": "Cameron Fisher",
+    "age": 38,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 26.6,
+      "systolic_bp_mmhg": 147,
+      "family_history": 0
+    },
+    "biomarker": {
+      "glucose_mmol_l": 3.8,
+      "hba1c_percent": 6.5
+    },
+    "kidney_case_id": "case_00135",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P026",
+      "kidney_source_patient_id": "kits19:case_00135",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 316
+    }
+  },
+  {
+    "patient_code": "P027",
+    "name": "Peyton Moore",
+    "age": 44,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 29.2,
+      "systolic_bp_mmhg": 144,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 3.8,
+      "hba1c_percent": 6.7
+    },
+    "kidney_case_id": "case_00145",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P027",
+      "kidney_source_patient_id": "kits19:case_00145",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 56
+    }
+  },
+  {
+    "patient_code": "P028",
+    "name": "Finley Campbell",
+    "age": 24,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 35.3,
+      "systolic_bp_mmhg": 162,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 8.2,
+      "hba1c_percent": 6.8
+    },
+    "kidney_case_id": "case_00149",
+    "kidney_pool": "test",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P028",
+      "kidney_source_patient_id": "kits19:case_00149",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 62
+    }
+  },
+  {
+    "patient_code": "P029",
+    "name": "Avery Cooper",
+    "age": 82,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 32.2,
+      "systolic_bp_mmhg": 177,
+      "family_history": 0
+    },
+    "biomarker": {
+      "glucose_mmol_l": 5.4,
+      "hba1c_percent": 7.8
+    },
+    "kidney_case_id": "case_00154",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P029",
+      "kidney_source_patient_id": "kits19:case_00154",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 251
+    }
+  },
+  {
+    "patient_code": "P030",
+    "name": "Blake Foster",
+    "age": 28,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 35.8,
+      "systolic_bp_mmhg": 136,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 3.9,
+      "hba1c_percent": 5.3
+    },
+    "kidney_case_id": "case_00156",
+    "kidney_pool": "validation",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P030",
+      "kidney_source_patient_id": "kits19:case_00156",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 372
+    }
+  },
+  {
+    "patient_code": "P031",
+    "name": "Jesse Martin",
+    "age": 57,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 27.7,
+      "systolic_bp_mmhg": 159,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 8.3,
+      "hba1c_percent": 6.1
+    },
+    "kidney_case_id": "case_00160",
+    "kidney_pool": "validation",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P031",
+      "kidney_source_patient_id": "kits19:case_00160",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 132
+    }
+  },
+  {
+    "patient_code": "P032",
+    "name": "Jamie Allen",
+    "age": 39,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 31.7,
+      "systolic_bp_mmhg": 145,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 4.8,
+      "hba1c_percent": 8.3
+    },
+    "kidney_case_id": "case_00168",
+    "kidney_pool": "validation",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P032",
+      "kidney_source_patient_id": "kits19:case_00168",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 38
+    }
+  },
+  {
+    "patient_code": "P033",
+    "name": "Kendall King",
+    "age": 41,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 23.6,
+      "systolic_bp_mmhg": 174,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 8.9,
+      "hba1c_percent": 7.2
+    },
+    "kidney_case_id": "case_00170",
+    "kidney_pool": "test",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P033",
+      "kidney_source_patient_id": "kits19:case_00170",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 108
+    }
+  },
+  {
+    "patient_code": "P034",
+    "name": "Taylor Howard",
+    "age": 50,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 32.8,
+      "systolic_bp_mmhg": 168,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 5.6,
+      "hba1c_percent": 4.7
+    },
+    "kidney_case_id": "case_00173",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P034",
+      "kidney_source_patient_id": "kits19:case_00173",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 34
+    }
+  },
+  {
+    "patient_code": "P035",
+    "name": "Riley Taylor",
+    "age": 46,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 37.4,
+      "systolic_bp_mmhg": 123,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 5.5,
+      "hba1c_percent": 5.1
+    },
+    "kidney_case_id": "case_00177",
+    "kidney_pool": "validation",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P035",
+      "kidney_source_patient_id": "kits19:case_00177",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 38
+    }
+  },
+  {
+    "patient_code": "P036",
+    "name": "Morgan Clark",
+    "age": 50,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 39.6,
+      "systolic_bp_mmhg": 138,
+      "family_history": 0
+    },
+    "biomarker": {
+      "glucose_mmol_l": 10.5,
+      "hba1c_percent": 5.7
+    },
+    "kidney_case_id": "case_00184",
+    "kidney_pool": "test",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P036",
+      "kidney_source_patient_id": "kits19:case_00184",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 45
+    }
+  },
+  {
+    "patient_code": "P037",
+    "name": "Jules Turner",
+    "age": 18,
+    "gender": null,
+    "label": "diabetes_negative",
+    "clinical_data": {
+      "bmi": 32.7,
+      "systolic_bp_mmhg": 139,
+      "family_history": 0
+    },
+    "biomarker": {
+      "glucose_mmol_l": 5.3,
+      "hba1c_percent": 6.4
+    },
+    "kidney_case_id": "case_00185",
+    "kidney_pool": "validation",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P037",
+      "kidney_source_patient_id": "kits19:case_00185",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 88
+    }
+  },
+  {
+    "patient_code": "P038",
+    "name": "Rowan Hall",
+    "age": 38,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 19.8,
+      "systolic_bp_mmhg": 141,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 7.6,
+      "hba1c_percent": 7.3
+    },
+    "kidney_case_id": "case_00199",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P038",
+      "kidney_source_patient_id": "kits19:case_00199",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 55
+    }
+  },
+  {
+    "patient_code": "P039",
+    "name": "Devon Edwards",
+    "age": 64,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 30.7,
+      "systolic_bp_mmhg": 162,
+      "family_history": 0
+    },
+    "biomarker": {
+      "glucose_mmol_l": 5.3,
+      "hba1c_percent": 5.3
+    },
+    "kidney_case_id": "case_00206",
+    "kidney_pool": "test",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P039",
+      "kidney_source_patient_id": "kits19:case_00206",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 27
+    }
+  },
+  {
+    "patient_code": "P040",
+    "name": "Tyler Bennett",
+    "age": 34,
+    "gender": null,
+    "label": "diabetes_positive",
+    "clinical_data": {
+      "bmi": 32.5,
+      "systolic_bp_mmhg": 128,
+      "family_history": 1
+    },
+    "biomarker": {
+      "glucose_mmol_l": 7.2,
+      "hba1c_percent": 5.6
+    },
+    "kidney_case_id": "case_00209",
+    "kidney_pool": "train",
+    "dataset_version": "kidney-diabetes-teaching40-v1",
+    "provenance": {
+      "identity_is_fictional": true,
+      "pairing_is_synthetic": true,
+      "pairing_method": "Sorted kidney case IDs paired with sorted diabetes patient IDs",
+      "pairing_note": "Independent sources; not a matched real patient or a multimodal research cohort.",
+      "name_seed": 9900,
+      "diabetes_is_synthetic": true,
+      "kidney_images_are_synthetic": false,
+      "age_source": "synthetic_diabetes",
+      "diabetes_source_patient_id": "P040",
+      "kidney_source_patient_id": "kits19:case_00209",
+      "diabetes_source": "data/synthetic/diabetes_patients.csv",
+      "kidney_source": "data/kidney/project40_manifest.csv",
+      "selected_slice_count": 43
+    }
+  }
+]

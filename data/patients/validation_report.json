@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "postgres_version": "17.0",
+  "database_scope": "Temporary isolated verification cluster; stopped after validation",
+  "patients_verified": 40,
+  "image_records_verified": 7514,
+  "checks": [
+    "Every patient field equals generated source data",
+    "Every CT and mask record equals the manifest-derived seed",
+    "Repeat import preserves counts and existing IDs",
+    "Conflicting import fails and preserves edited records",
+    "Foreign key rejects an unknown patient",
+    "No fabricated training runs"
+  ],
+  "files_sha256": {
+    "database/schema.sql": "dc51a19ab18ab4f05fedbfb20355ae73601c2d9a1ab818ed8bc738d2bba7f1ba",
+    "database/seed_patients.sql": "a21f1c9b2659de39cecc7df1b2899837ced61106893b6fc988dabbbce3e3a98a"
+  }
+}

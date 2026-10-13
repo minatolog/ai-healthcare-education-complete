@@ -31,3 +31,6 @@ git status
 # Temporary files
 *.tmp
 *.bak
+
+# Local PostgreSQL verification clusters (not dataset files)
+.local/
