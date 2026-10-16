@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
+import { HOME_ROUTE, pathForRoute, routeFromPath, type AppRoute, type Mode, type ScreenId } from './routes'
 
 // ── Types ──────────────────────────────────────────────────────
-type Mode = 'diabetes' | 'kidney'
-type ScreenId = 1 | 2 | 3 | 4 | 5 | 6 | 7
 
 interface Patient {
   id: number
@@ -1495,18 +1494,74 @@ function AIReadyIcon() {
 }
 
 // ── Main App ───────────────────────────────────────────────────
+const WORKFLOW_STORAGE_KEY = 'healthcare-education-workflow-v1'
+
+function readSavedWorkflow() {
+  try {
+    const saved = JSON.parse(window.sessionStorage.getItem(WORKFLOW_STORAGE_KEY) ?? '{}')
+    const validIds = new Set(ALL_PATIENTS.map(patient => patient.id))
+    const trainingIds = Array.isArray(saved.trainingIds)
+      ? saved.trainingIds.filter((id: unknown) => typeof id === 'number' && validIds.has(id)).slice(0, 20)
+      : []
+    const testId = NEW_PATIENTS.some(patient => patient.id === saved.testId) ? saved.testId as number : null
+    return {
+      trainingIds: new Set<number>(trainingIds),
+      testId,
+      trainingComplete: saved.trainingComplete === true,
+      evaluationComplete: saved.evaluationComplete === true,
+      trainingLogCount: Number.isInteger(saved.trainingLogCount) && saved.trainingLogCount >= 0
+        ? saved.trainingLogCount as number : 0,
+    }
+  } catch {
+    return { trainingIds: new Set<number>(), testId: null, trainingComplete: false,
+      evaluationComplete: false, trainingLogCount: 0 }
+  }
+}
+
 export default function App() {
-  const [screen, setScreen] = useState<ScreenId>(1)
-  const [mode, setMode] = useState<Mode | null>(null)
-  const [trainingIds, setTrainingIds] = useState<Set<number>>(new Set())
-  const [testId, setTestId] = useState<number | null>(null)
-  const [trainingComplete, setTrainingComplete] = useState(false)
-  const [evaluationComplete, setEvaluationComplete] = useState(false)
-  const [trainingLogCount, setTrainingLogCount] = useState(0)
+  const [route, setRoute] = useState<AppRoute>(() => {
+    const initialRoute = routeFromPath(window.location.pathname)
+    if (!initialRoute) window.history.replaceState(null, '', '/')
+    return initialRoute ?? HOME_ROUTE
+  })
+  const [savedWorkflow] = useState(readSavedWorkflow)
+  const [trainingIds, setTrainingIds] = useState(savedWorkflow.trainingIds)
+  const [testId, setTestId] = useState(savedWorkflow.testId)
+  const [trainingComplete, setTrainingComplete] = useState(savedWorkflow.trainingComplete)
+  const [evaluationComplete, setEvaluationComplete] = useState(savedWorkflow.evaluationComplete)
+  const [trainingLogCount, setTrainingLogCount] = useState(savedWorkflow.trainingLogCount)
+  const { screen, mode } = route
+
+  useEffect(() => {
+    const onPopState = () => {
+      const nextRoute = routeFromPath(window.location.pathname)
+      if (!nextRoute) window.history.replaceState(null, '', '/')
+      setRoute(nextRoute ?? HOME_ROUTE)
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [])
+
+  useEffect(() => {
+    try {
+      window.sessionStorage.setItem(WORKFLOW_STORAGE_KEY, JSON.stringify({
+        trainingIds: [...trainingIds], testId, trainingComplete, evaluationComplete, trainingLogCount,
+      }))
+    } catch {
+      // The routes still work when browser storage is unavailable.
+    }
+  }, [trainingIds, testId, trainingComplete, evaluationComplete, trainingLogCount])
+
+  const navigateTo = (nextScreen: ScreenId, nextMode: Mode | null = mode, patientId: number | null = null) => {
+    const nextRoute: AppRoute = { screen: nextScreen, mode: nextScreen === 1 ? null : nextMode, testId: patientId }
+    const nextPath = pathForRoute(nextRoute)
+    if (window.location.pathname !== nextPath) window.history.pushState(null, '', nextPath)
+    setRoute(nextRoute)
+    window.scrollTo(0, 0)
+  }
 
   const resetWorkflow = () => {
-    setScreen(1)
-    setMode(null)
+    navigateTo(1)
     setTrainingIds(new Set())
     setTestId(null)
     setTrainingComplete(false)
@@ -1516,15 +1571,14 @@ export default function App() {
 
   const handleSelectMode = (m: Mode) => {
     if (mode === m) {
-      setScreen(2)
+      navigateTo(2, m)
       return
     }
-    setMode(m)
     setTestId(null)
     setTrainingComplete(false)
     setEvaluationComplete(false)
     setTrainingLogCount(0)
-    setScreen(2)
+    navigateTo(2, m)
   }
 
   const handleToggleTraining = (id: number) => {
@@ -1563,11 +1617,11 @@ export default function App() {
   }
 
   const evaluationPatients = ALL_PATIENTS.filter(patient => !trainingIds.has(patient.id))
-  const testPatient = testId ? NEW_PATIENTS.find(patient => patient.id === testId) ?? null : null
+  const testPatient = route.testId ? NEW_PATIENTS.find(patient => patient.id === route.testId) ?? null : null
 
   return (
     <div className="min-h-screen" style={{ background: '#F8FAFC' }}>
-      <Header onHome={() => setScreen(1)} />
+      <Header onHome={() => navigateTo(1)} />
       {screen === 1 && <Screen1 onSelect={handleSelectMode} />}
       {screen === 2 && (
         <Screen2
@@ -1575,8 +1629,8 @@ export default function App() {
           mode={mode!}
           onToggle={handleToggleTraining}
           onRandomSelect={handleRandomTraining}
-          onNext={() => setScreen(3)}
-          onBack={() => setScreen(1)}
+          onNext={() => navigateTo(3)}
+          onBack={() => navigateTo(1)}
         />
       )}
       {screen === 3 && mode && (
@@ -1586,8 +1640,8 @@ export default function App() {
           initialVisibleCount={trainingLogCount}
           onProgress={setTrainingLogCount}
           onTrainingComplete={() => setTrainingComplete(true)}
-          onContinue={() => setScreen(4)}
-          onBack={() => setScreen(2)}
+          onContinue={() => navigateTo(4)}
+          onBack={() => navigateTo(2)}
         />
       )}
       {screen === 4 && mode && (
@@ -1595,16 +1649,16 @@ export default function App() {
           patients={evaluationPatients}
           mode={mode}
           completed={evaluationComplete}
-          onComplete={() => { setEvaluationComplete(true); setScreen(5) }}
-          onBack={() => setScreen(3)}
+          onComplete={() => { setEvaluationComplete(true); navigateTo(5) }}
+          onBack={() => navigateTo(3)}
         />
       )}
       {screen === 5 && mode && (
         <EvaluationResultsScreen
           patients={evaluationPatients}
           mode={mode}
-          onNext={() => setScreen(6)}
-          onBack={() => setScreen(4)}
+          onNext={() => navigateTo(6)}
+          onBack={() => navigateTo(4)}
         />
       )}
       {screen === 6 && mode && (
@@ -1612,17 +1666,17 @@ export default function App() {
           mode={mode}
           testId={testId}
           onSelect={handleSelectTest}
-          onNext={() => setScreen(7)}
-          onBack={() => setScreen(5)}
+          onNext={() => navigateTo(7, mode, testId)}
+          onBack={() => navigateTo(5)}
         />
       )}
       {screen === 7 && testPatient && mode && (
         <Screen5
           patient={testPatient}
           mode={mode}
-          onTestAnother={() => { setTestId(null); setScreen(6) }}
+          onTestAnother={() => { setTestId(null); navigateTo(6) }}
           onRestart={resetWorkflow}
-          onBack={() => setScreen(6)}
+          onBack={() => navigateTo(6)}
         />
       )}
     </div>
