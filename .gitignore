@@ -20,7 +20,7 @@ node_modules/
 # Build output
 dist/
 build/
-git status
+# git status
 # Logs
 *.log
 
@@ -34,3 +34,10 @@ git status
 
 # Local PostgreSQL verification clusters (not dataset files)
 .local/
+
+# Figma Make generated files
+frontend/.figma/
+
+# AI development tool files
+frontend/AGENTS.md
+frontend/CLAUDE.md

@@ -1,0 +1,191 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-display: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --color-train: #2563EB;
+  --color-train-50: #EFF6FF;
+  --color-train-100: #DBEAFE;
+  --color-train-200: #BFDBFE;
+  --color-test: #DC2626;
+  --color-test-50: #FEF2F2;
+  --color-test-100: #FEE2E2;
+  --color-test-200: #FECACA;
+  --color-surface: #F8FAFC;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #F8FAFC;
+  color: #0F172A;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+/* Animations */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-fast {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes node-pulse {
+  0%, 100% { opacity: 0.6; r: 8; }
+  50% { opacity: 1; r: 10; }
+}
+
+@keyframes node-pulse-center {
+  0%, 100% { opacity: 0.5; r: 12; }
+  50% { opacity: 0.9; r: 14; }
+}
+
+@keyframes data-dash {
+  0% { stroke-dashoffset: 200; opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0.3; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes progress-fill {
+  from { width: 0%; }
+}
+
+@keyframes glow-train {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37,99,235,0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(37,99,235,0); }
+}
+
+@keyframes glow-test {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(220,38,38,0); }
+}
+
+@keyframes particle-flow {
+  0% { transform: translateX(0) translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateX(280px) translateY(0); opacity: 0; }
+}
+
+@keyframes confidence-ring {
+  from { stroke-dashoffset: 220; }
+}
+
+@keyframes bounce-check {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes terminal-blink {
+  0%, 45% { opacity: 1; }
+  46%, 100% { opacity: 0; }
+}
+
+@keyframes ct-scan {
+  0% { top: 8%; opacity: 0; }
+  10%, 90% { opacity: 1; }
+  100% { top: 92%; opacity: 0; }
+}
+
+@keyframes confidence-fill {
+  from { width: 0; }
+}
+
+.animate-fade-in { animation: fade-in 0.4s ease both; }
+.animate-scale-in { animation: scale-in 0.35s ease both; }
+.animate-slide-up { animation: slide-up 0.5s ease both; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-spin-slow { animation: spin-slow 8s linear infinite; }
+.animate-confidence { animation: confidence-ring 1.2s ease-out both; }
+
+.card-hover {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+}
+
+.patient-card-selected-train {
+  border-color: #2563EB !important;
+  background: #EFF6FF !important;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.20), 0 4px 12px rgba(37,99,235,0.15);
+  animation: glow-train 2s ease infinite;
+}
+
+.patient-card-selected-test {
+  border-color: #DC2626 !important;
+  background: #FEF2F2 !important;
+  box-shadow: 0 0 0 3px rgba(220,38,38,0.20), 0 4px 12px rgba(220,38,38,0.15);
+  animation: glow-test 2s ease infinite;
+}
+
+.checkmark-anim {
+  animation: bounce-check 0.3s ease both;
+}
+
+.nn-node { animation: node-pulse 2s ease-in-out infinite; }
+.nn-node-center { animation: node-pulse-center 1.8s ease-in-out infinite; }
+.nn-edge { animation: data-dash 2s ease-in-out infinite; stroke-dasharray: 8 4; }
+
+.data-particle {
+  animation: particle-flow 2.5s ease-in-out infinite;
+}
+
+.terminal-cursor {
+  animation: terminal-blink 0.9s steps(1) infinite;
+}
+
+.ct-scan-line {
+  animation: ct-scan 1.5s ease-in-out infinite;
+}
+
+.confidence-bar {
+  animation: confidence-fill 1s ease-out both;
+}
