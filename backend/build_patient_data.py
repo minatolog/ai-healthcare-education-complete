@@ -1,4 +1,4 @@
-"""Build a reproducible PostgreSQL seed from the explicit project40 manifest.
+"""Build a reproducible backend JSON store from the explicit project40 manifest.
 
 Only Python's standard library is required. No source datasets are modified.
 """
@@ -144,53 +144,6 @@ def build(root=ROOT):
     return patients, images, mapping
 
 
-def literal(value):
-    if value is None:
-        return 'NULL'
-    if isinstance(value, (int, float)):
-        return str(value)
-    if isinstance(value, dict):
-        value = json.dumps(value, ensure_ascii=True, separators=(',', ':'), allow_nan=False)
-        return "'" + value.replace("'", "''") + "'::jsonb"
-    return "'" + value.replace("'", "''") + "'"
-
-
-def insert_batches(table, fields, rows):
-    for offset in range(0, len(rows), 250):
-        values = ',\n'.join('(' + ','.join(literal(row[k]) for k in fields) + ')'
-                            for row in rows[offset:offset + 250])
-        yield f"INSERT INTO {table} ({','.join(fields)}) VALUES\n{values};\n"
-
-
-def seed_sql(patients, images):
-    pfields = ','.join(PATIENT_FIELDS)
-    ifields = ','.join(IMAGE_FIELDS)
-    actual_images = "SELECT p.patient_code,i.img_type,i.slice_index,i.file_path,i.description,i.image_metadata FROM patient_image i JOIN patient p ON p.id=i.patient_id WHERE p.dataset_version='" + VERSION + "'"
-    yield "-- Generated from project40_manifest.csv. Run after database/schema.sql.\nBEGIN;\nSET LOCAL standard_conforming_strings = on;\n"
-    yield f'CREATE TEMP TABLE seed_patient ON COMMIT DROP AS SELECT {pfields} FROM patient WITH NO DATA;\n'
-    yield f'CREATE TEMP TABLE seed_image ON COMMIT DROP AS {actual_images} WITH NO DATA;\n'
-    yield from insert_batches('seed_patient', PATIENT_FIELDS, patients)
-    yield from insert_batches('seed_image', IMAGE_FIELDS, images)
-    yield f'INSERT INTO patient ({pfields}) SELECT {pfields} FROM seed_patient ON CONFLICT DO NOTHING;\n'
-    yield "INSERT INTO patient_image (patient_id,img_type,slice_index,file_path,description,image_metadata) SELECT p.id,s.img_type,s.slice_index,s.file_path,s.description,s.image_metadata FROM seed_image s JOIN patient p ON p.patient_code=s.patient_code ON CONFLICT DO NOTHING;\n"
-    # Compare both ways: a repeat import must match exactly, not silently overwrite changes.
-    actual_patients = f"SELECT {pfields} FROM patient WHERE dataset_version='{VERSION}'"
-    yield f"""DO $verify$
-BEGIN
-    IF EXISTS ((SELECT {pfields} FROM seed_patient EXCEPT {actual_patients})
-               UNION ALL ({actual_patients} EXCEPT SELECT {pfields} FROM seed_patient)) THEN
-        RAISE EXCEPTION 'Patient seed conflicts with existing data; transaction rolled back.';
-    END IF;
-    IF EXISTS ((SELECT {ifields} FROM seed_image EXCEPT {actual_images})
-               UNION ALL ({actual_images} EXCEPT SELECT {ifields} FROM seed_image)) THEN
-        RAISE EXCEPTION 'Image seed conflicts with existing data; transaction rolled back.';
-    END IF;
-END;
-$verify$;
-COMMIT;
-"""
-
-
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--check', action='store_true', help='Validate source files without writing outputs.')
@@ -201,11 +154,11 @@ def main():
                'reference_masks': sum(r['img_type'] == 'kidney_reference_mask' for r in images),
                'patient_pools': dict(Counter(p['kidney_pool'] for p in patients)),
                'slice_pools': dict(Counter(i['image_metadata']['source_pool'] for i in images if i['img_type'] == 'kidney_ct')),
-               'gender': 'Unspecified; SQL NULL for all patients',
+               'gender': 'Unspecified; JSON null for all patients',
                'pairing': 'Synthetic educational pairing of independent sources',
                'sources_sha256': {p.as_posix(): digest(ROOT / p) for p in (MANIFEST, DIABETES)}}
     if not args.check:
-        output = ROOT / 'data/patients'
+        output = ROOT / 'backend/data'
         output.mkdir(parents=True, exist_ok=True)
         (output / 'patients.json').write_text(json.dumps(patients, indent=2) + '\n', encoding='utf-8')
         # One image object per line keeps a full-image catalogue reviewable in Git.
@@ -217,8 +170,6 @@ def main():
             writer = csv.DictWriter(handle, fieldnames=list(mapping[0]))
             writer.writeheader()
             writer.writerows(mapping)
-        with (ROOT / 'database/seed_patients.sql').open('w', encoding='utf-8', newline='\n') as handle:
-            handle.writelines(seed_sql(patients, images))
     print(json.dumps(summary, indent=2))
 
 

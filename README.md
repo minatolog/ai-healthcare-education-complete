@@ -31,6 +31,7 @@ Through guided activities, students will learn how AI models make predictions, h
 
 ```text
 frontend/     Frontend application
+backend/      Local JSON patient API and kidney model module
 services/     Backend and AI-related services
 data/         Example and synthetic datasets
 docs/         Requirements, meetings, testing and workshop documentation
@@ -39,7 +40,9 @@ tests/        Project tests
 
 ## Technology Stack
 
-The final technology stack is still under discussion and will be confirmed after team discussion and client consultation.
+The patient preview uses React, TypeScript and Vite, with a Python standard-library HTTP API backed by JSON files. No SQL database is required for the patient pages.
+
+See [the English setup guide](docs/JSON_PATIENT_SETUP.md) to start the backend and frontend, inspect all 40 patients, and browse each patient's CT slices.
 
 ## Team
 
@@ -51,4 +54,4 @@ Raymond Louie
 
 ## Status
 
-Initial project setup and requirements analysis.
+The diabetes and kidney patient pages read the stored teaching dataset. Model training, evaluation and prediction in the frontend remain a labeled workflow demonstration.

@@ -2,7 +2,7 @@
 import copy
 import unittest
 
-from build_patient_seed import ROOT, MANIFEST, build, diabetes_records, read_csv, validate_manifest
+from build_patient_data import ROOT, MANIFEST, build, diabetes_records, read_csv, validate_manifest
 
 
 class PatientDataTests(unittest.TestCase):

@@ -1,57 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
+import { HOME_ROUTE, pathForRoute, routeFromPath, type AppRoute, type Mode, type ScreenId } from './routes'
 
-// ── Types ──────────────────────────────────────────────────────
-type Mode = 'diabetes' | 'kidney'
-type ScreenId = 1 | 2 | 3 | 4 | 5 | 6 | 7
-
-interface Patient {
-  id: number
-  name: string
-  age: number
-  sex: 'M' | 'F'
-}
-
-// ── Patient roster ─────────────────────────────────────────────
-const ALL_PATIENTS: Patient[] = [
-  { id: 1,  name: 'Emily Carter',     age: 42, sex: 'F' },
-  { id: 2,  name: 'James Okonkwo',    age: 58, sex: 'M' },
-  { id: 3,  name: 'Sarah Chen',       age: 35, sex: 'F' },
-  { id: 4,  name: 'Michael Torres',   age: 67, sex: 'M' },
-  { id: 5,  name: 'Priya Patel',      age: 51, sex: 'F' },
-  { id: 6,  name: 'David Kim',        age: 44, sex: 'M' },
-  { id: 7,  name: 'Fatima Hassan',    age: 39, sex: 'F' },
-  { id: 8,  name: 'Robert Johnson',   age: 72, sex: 'M' },
-  { id: 9,  name: 'Mei Lin',          age: 46, sex: 'F' },
-  { id: 10, name: 'Carlos Rodriguez', age: 53, sex: 'M' },
-  { id: 11, name: 'Amara Diallo',     age: 29, sex: 'F' },
-  { id: 12, name: 'Thomas Hughes',    age: 61, sex: 'M' },
-  { id: 13, name: 'Yuki Tanaka',      age: 38, sex: 'F' },
-  { id: 14, name: 'Lakshmi Nair',     age: 55, sex: 'F' },
-  { id: 15, name: 'Marcus Williams',  age: 48, sex: 'M' },
-  { id: 16, name: 'Sophie Martin',    age: 33, sex: 'F' },
-  { id: 17, name: 'Hassan Al-Rashid', age: 64, sex: 'M' },
-  { id: 18, name: 'Emma Johansson',   age: 41, sex: 'F' },
-  { id: 19, name: 'Benjamin Osei',    age: 57, sex: 'M' },
-  { id: 20, name: 'Natasha Petrova',  age: 45, sex: 'F' },
-  { id: 21, name: 'Diego Fernandez',  age: 50, sex: 'M' },
-  { id: 22, name: 'Aisha Mohammed',   age: 36, sex: 'F' },
-  { id: 23, name: "Patrick O'Brien",  age: 69, sex: 'M' },
-  { id: 24, name: 'Lin Wei',          age: 43, sex: 'F' },
-  { id: 25, name: 'Ingrid Andersen',  age: 52, sex: 'F' },
-  { id: 26, name: 'Kwame Mensah',     age: 47, sex: 'M' },
-  { id: 27, name: 'Isabella Costa',   age: 31, sex: 'F' },
-  { id: 28, name: 'Viktor Novak',     age: 66, sex: 'M' },
-  { id: 29, name: 'Zara Malik',       age: 40, sex: 'F' },
-  { id: 30, name: 'Samuel Adeyemi',   age: 59, sex: 'M' },
-]
-
-const NEW_PATIENTS: Patient[] = [
-  { id: 31, name: 'Maya Thompson', age: 34, sex: 'F' },
-  { id: 32, name: 'Omar El-Sayed', age: 62, sex: 'M' },
-  { id: 33, name: 'Lucia Bianchi', age: 49, sex: 'F' },
-  { id: 34, name: 'Noah Williams', age: 56, sex: 'M' },
-  { id: 35, name: 'Anika Sharma', age: 41, sex: 'F' },
-]
+import { usePatients, getBloodTests, type Patient } from './patients'
+import KidneyCTViewer from './KidneyCTViewer'
 
 // ── Avatar ─────────────────────────────────────────────────────
 const SKINS = ['#FDDBB4','#F5C89A','#D4956A','#C68642','#8D5524','#6B3A2A']
@@ -179,10 +131,10 @@ function BackButton({ onClick }: { onClick: () => void }) {
 }
 
 function DiseaseStatusBadge({ patient, mode }: { patient: Patient; mode: Mode }) {
-  const positive = hasPrediction(patient, mode)
+  const positive = mode === 'diabetes' && patient.label === 'diabetes_positive'
   const label = mode === 'diabetes'
     ? (positive ? 'Diabetes' : 'No Diabetes')
-    : (positive ? 'Kidney Tumour' : 'No Kidney Tumour')
+    : `${patient.slice_count} CT slices · ${patient.pool}`
   return (
     <span className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${
       positive ? 'bg-red-50 text-red-500 border border-red-100' : 'bg-blue-50 text-blue-600 border border-blue-100'
@@ -382,7 +334,8 @@ function KidneyIcon() {
 }
 
 // ── Screen 2 — Select Training Patients ───────────────────────
-function Screen2({ trainingIds, mode, onToggle, onRandomSelect, onNext, onBack }: {
+function Screen2({ patients, trainingIds, mode, onToggle, onRandomSelect, onNext, onBack }: {
+  patients: Patient[]
   trainingIds: Set<number>
   mode: Mode
   onToggle: (id: number) => void
@@ -405,14 +358,16 @@ function Screen2({ trainingIds, mode, onToggle, onRandomSelect, onNext, onBack }
         <p className="text-slate-500 max-w-xl mx-auto mb-3">Select exactly <strong className="text-blue-600">20 patients</strong> to create the Training Dataset.</p>
         <div className="inline-flex items-start gap-2 bg-blue-50 border border-blue-100 rounded-lg px-4 py-2 text-sm text-blue-700 max-w-3xl text-left">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#2563EB" strokeWidth="1.4" /><path d="M7 5v2.5l1.5 1" stroke="#2563EB" strokeWidth="1.4" strokeLinecap="round" /></svg>
-          The 20 patients you select will be used to train the AI model. The remaining 10 patients will automatically become the Evaluation Dataset and will be used to evaluate how well your trained model performs on unseen data.
+          {mode === 'kidney'
+            ? 'Browse all 40 CT cases. The manifest fixes 20 training, 10 validation and 10 test patients. Only training cases can be selected.'
+            : 'Browse all 40 teaching patients. Select 20 of the first 30 for training; the remaining 10 are used for evaluation. P031–P040 are held out for prediction.'}
         </div>
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-sm font-semibold">
-          <span className="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg">30 Dataset Patients</span>
+          <span className="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg">40 Dataset Patients</span>
           <span className="text-slate-400">→</span>
           <span className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-2 rounded-lg">20 Training Patients</span>
           <span className="text-slate-400">+</span>
-          <span className="bg-orange-50 border border-orange-200 text-orange-700 px-4 py-2 rounded-lg">10 Evaluation Patients</span>
+          <span className="bg-orange-50 border border-orange-200 text-orange-700 px-4 py-2 rounded-lg">10 Evaluation Patients + 10 Test Patients</span>
         </div>
         <button
           type="button"
@@ -422,31 +377,22 @@ function Screen2({ trainingIds, mode, onToggle, onRandomSelect, onNext, onBack }
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M2 4h2.2c3.8 0 3.8 8 7.6 8H14M11 9l3 3-3 3M2 12h2.2c1.2 0 2-.8 2.7-1.9M9 5.9C9.7 4.8 10.5 4 11.8 4H14M11 1l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          Randomly Select 20 Patients
+          {mode === 'kidney' ? 'Select 20 Training Cases' : 'Randomly Select 20 Patients'}
         </button>
       </div>
 
       {/* Patient grid */}
-      <div className="grid grid-cols-5 gap-3 mb-28">
-        {ALL_PATIENTS.map(p => {
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-28">
+        {patients.map(p => {
           const selected = trainingIds.has(p.id)
-          const disabled = !selected && count >= MAX
+          const eligible = mode === 'kidney' ? p.pool === 'train' : p.pool === 'development'
+          const disabled = !eligible || (!selected && count >= MAX)
           return (
             <div
               key={p.id}
-              onClick={() => !disabled && onToggle(p.id)}
-              role="button"
-              tabIndex={disabled ? -1 : 0}
-              aria-disabled={disabled}
-              onKeyDown={event => {
-                if (!disabled && (event.key === 'Enter' || event.key === ' ')) {
-                  event.preventDefault()
-                  onToggle(p.id)
-                }
-              }}
               className={`relative bg-white rounded-xl border-2 p-3 pb-9 flex flex-col items-center gap-2 transition-all duration-200 focus:outline-none ${
                 selected ? 'patient-card-selected-train' :
-                disabled ? 'opacity-40 cursor-not-allowed border-slate-200' :
+                disabled ? 'cursor-default border-slate-200' :
                 'border-slate-200 hover:border-blue-200 hover:shadow-md hover:-translate-y-0.5 cursor-pointer'
               }`}
             >
@@ -455,12 +401,17 @@ function Screen2({ trainingIds, mode, onToggle, onRandomSelect, onNext, onBack }
                   <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M 1.5 5 L 4 7.5 L 8.5 2.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </div>
               )}
+              <button type="button" disabled={disabled} aria-pressed={selected}
+                aria-label={`Select ${p.name} for training`}
+                onClick={() => onToggle(p.id)}
+                className="flex w-full flex-col items-center gap-2 rounded-lg focus-visible:outline-2 focus-visible:outline-blue-600 disabled:cursor-default">
               <PatientAvatar id={p.id} size={52} />
               <div className="text-center">
                 <div className="text-xs font-semibold text-slate-800 leading-tight">{p.name}</div>
-                <div className="text-xs text-slate-400 mt-0.5" style={{ fontFamily: 'DM Mono, monospace' }}>Age {p.age}</div>
+                <div className="text-xs text-slate-400 mt-0.5" style={{ fontFamily: 'DM Mono, monospace' }}>{mode === 'diabetes' ? `Age ${p.age}` : p.case_id}</div>
                 <DiseaseStatusBadge patient={p} mode={mode} />
               </div>
+              </button>
               <button
                 type="button"
                 title="View patient data"
@@ -531,7 +482,7 @@ function makeTrainingLogs(mode: Mode) {
         'Loading blood test dataset…',
         '20 patient records loaded.',
         'Extracting numerical features…',
-        'Features: Glucose, HbA1c, Insulin, Cholesterol, Triglycerides, HDL, LDL',
+        'Features: Age, Glucose, HbA1c, BMI, Systolic BP, Family History',
         'Normalising numerical features…',
         'Preparing binary labels…',
         'Initialising linear binary classifier…',
@@ -833,7 +784,7 @@ function EvaluationDataScreen({ patients, mode, completed, onComplete, onBack }:
                 <PatientAvatar id={patient.id} size={52} />
                 <div className="text-center">
                   <div className="text-xs font-semibold text-slate-800 leading-tight">{patient.name}</div>
-                  <div className="text-xs text-slate-400 mt-0.5 font-mono">Age {patient.age}</div>
+                  <div className="text-xs text-slate-400 mt-0.5 font-mono">{mode === 'diabetes' ? `Age ${patient.age}` : patient.case_id}</div>
                   <DiseaseStatusBadge patient={patient} mode={mode} />
                 </div>
                 <ViewDataButton patient={patient} onView={setViewingPatient} />
@@ -960,7 +911,7 @@ function EvaluationResultsScreen({ patients, mode, onNext, onBack }: { patients:
 }
 
 // ── Screen 6 — Select New Test Patient ────────────────────────
-function SelectTestPatientScreen({ mode, testId, onSelect, onNext, onBack }: { mode: Mode; testId: number | null; onSelect: (id: number) => void; onNext: () => void; onBack: () => void }) {
+function SelectTestPatientScreen({ patients, mode, testId, onSelect, onNext, onBack }: { patients: Patient[]; mode: Mode; testId: number | null; onSelect: (id: number) => void; onNext: () => void; onBack: () => void }) {
   const [viewingPatient, setViewingPatient] = useState<Patient | null>(null)
   return (
     <div className="max-w-7xl mx-auto px-6 py-6 animate-fade-in">
@@ -971,15 +922,15 @@ function SelectTestPatientScreen({ mode, testId, onSelect, onNext, onBack }: { m
         <p className="text-slate-500 max-w-2xl mx-auto mb-3">Now that the model has been trained and evaluated, choose one new patient to see how the AI makes a prediction for an individual case.</p>
         <div className="inline-flex items-center gap-2 bg-red-50 border border-red-100 rounded-lg px-4 py-2 text-sm text-red-700">These are new patient cases. They were not used in either the Training Dataset or the Evaluation Dataset.</div>
       </div>
-      <div className="flex items-center gap-3 mb-5 max-w-3xl mx-auto"><div className="flex-1 h-px bg-red-100" /><div className="bg-red-50 border border-red-100 rounded-full px-4 py-1.5 text-xs font-semibold text-red-700">New Patient Cases — 5 Patients</div><div className="flex-1 h-px bg-red-100" /></div>
+      <div className="flex items-center gap-3 mb-5 max-w-3xl mx-auto"><div className="flex-1 h-px bg-red-100" /><div className="bg-red-50 border border-red-100 rounded-full px-4 py-1.5 text-xs font-semibold text-red-700">Held-out Cases — {patients.length} Patients</div><div className="flex-1 h-px bg-red-100" /></div>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8 max-w-4xl mx-auto">
-        {NEW_PATIENTS.map(patient => {
+        {patients.map(patient => {
           const selected = testId === patient.id
           return (
             <div key={patient.id} role="button" tabIndex={0} onClick={() => onSelect(patient.id)} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onSelect(patient.id) } }} className={`relative bg-white rounded-xl border-2 p-3 pb-9 flex flex-col items-center gap-2 transition-all cursor-pointer focus:outline-none ${selected ? 'patient-card-selected-test' : 'border-slate-200 hover:border-red-200 hover:shadow-md hover:-translate-y-0.5'}`}>
               {selected && <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-red-600 rounded-full flex items-center justify-center checkmark-anim"><span className="text-white text-xs">✓</span></div>}
               <PatientAvatar id={patient.id} size={52} />
-              <div className="text-center"><div className="text-xs font-semibold text-slate-800">{patient.name}</div><div className="text-xs text-slate-400 mt-0.5 font-mono">Age {patient.age}</div></div>
+              <div className="text-center"><div className="text-xs font-semibold text-slate-800">{patient.name}</div><div className="text-xs text-slate-400 mt-0.5 font-mono">{mode === 'diabetes' ? `Age ${patient.age}` : patient.case_id}</div></div>
               <ViewDataButton patient={patient} onView={setViewingPatient} />
             </div>
           )
@@ -995,20 +946,7 @@ function SelectTestPatientScreen({ mode, testId, onSelect, onNext, onBack }: { m
   )
 }
 
-// ── Patient data generation ────────────────────────────────────
-function getBloodTests(patient: Patient) {
-  const seed = patient.id
-  return {
-    'Fasting Blood Glucose': `${85 + (seed * 11) % 90} mg/dL`,
-    HbA1c: `${(5.1 + ((seed * 7) % 31) / 10).toFixed(1)}%`,
-    Insulin: `${10 + (seed * 5) % 25} μU/mL`,
-    Cholesterol: `${165 + (seed * 9) % 70} mg/dL`,
-    Triglycerides: `${90 + (seed * 13) % 100} mg/dL`,
-    HDL: `${38 + (seed * 7) % 27} mg/dL`,
-    LDL: `${80 + (seed * 11) % 75} mg/dL`,
-  }
-}
-
+// ── Stored patient data ─────────────────────────────────────
 function hasPrediction(p: Patient, mode: Mode) {
   return mode === 'diabetes' ? p.id % 3 !== 1 : p.id % 3 !== 0
 }
@@ -1017,16 +955,16 @@ function getConfidence(p: Patient) {
   return 68 + (p.id * 7) % 25
 }
 
-function PatientProfile({ patient, test = false }: { patient: Patient; test?: boolean }) {
+function PatientProfile({ patient, mode, test = false }: { patient: Patient; mode: Mode; test?: boolean }) {
   return (
     <div className={`flex items-center gap-4 p-4 rounded-xl border ${test ? 'bg-red-50 border-red-100' : 'bg-blue-50 border-blue-100'}`}>
       <PatientAvatar id={patient.id} size={64} ring={test ? '#DC2626' : '#2563EB'} />
       <div>
         <h3 style={{ fontFamily: 'Outfit, sans-serif' }} className="font-bold text-slate-900 text-lg">{patient.name}</h3>
         <div className="flex flex-wrap items-center gap-2 mt-1 text-sm text-slate-500">
-          <span className="font-mono">Age {patient.age}</span>
+          <span className="font-mono">{mode === 'diabetes' ? `Age ${patient.age}` : patient.case_id}</span>
           <span>·</span>
-          <span>{patient.sex === 'F' ? 'Female' : 'Male'}</span>
+          <span>{patient.patient_code}</span>
           {test && <span className="bg-red-100 text-red-700 px-2 py-0.5 rounded-full text-xs font-medium">Test Patient</span>}
         </div>
       </div>
@@ -1034,7 +972,7 @@ function PatientProfile({ patient, test = false }: { patient: Patient; test?: bo
   )
 }
 
-function ModeData({ patient, mode, analysing = false }: { patient: Patient; mode: Mode; analysing?: boolean }) {
+function ModeData({ patient, mode }: { patient: Patient; mode: Mode; analysing?: boolean }) {
   if (mode === 'kidney') {
     return (
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
@@ -1042,8 +980,8 @@ function ModeData({ patient, mode, analysing = false }: { patient: Patient; mode
           <span className="text-xs font-semibold text-slate-700 uppercase tracking-wider">Kidney CT Scan</span>
         </div>
         <div className="p-4">
-          <KidneyCTScan patientId={patient.id} analysing={analysing} />
-          <p className="text-xs text-slate-500 mt-3">Input image used by the computer vision model</p>
+          <KidneyCTViewer key={patient.patient_code} patient={patient} />
+          <p className="text-xs text-slate-500 mt-3">KiTS19 CT images grouped by the project40 manifest. Names are fictional teaching identities.</p>
         </div>
       </div>
     )
@@ -1051,7 +989,7 @@ function ModeData({ patient, mode, analysing = false }: { patient: Patient; mode
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       <div className="px-4 py-3 bg-slate-50 border-b border-slate-200">
-        <span className="text-xs font-semibold text-slate-700 uppercase tracking-wider">Blood Test Data</span>
+        <span className="text-xs font-semibold text-slate-700 uppercase tracking-wider">Diabetes Tabular Data</span>
       </div>
       <div className="divide-y divide-slate-100">
         {Object.entries(getBloodTests(patient)).map(([label, value]) => (
@@ -1061,21 +999,39 @@ function ModeData({ patient, mode, analysing = false }: { patient: Patient; mode
           </div>
         ))}
       </div>
-      <p className="px-4 py-3 bg-blue-50 text-xs text-blue-700 border-t border-blue-100">Input data used by the linear classification model</p>
+      <p className="px-4 py-3 bg-blue-50 text-xs text-blue-700 border-t border-blue-100">Original synthetic diabetes data. The reference label is the target, not an input feature.</p>
     </div>
   )
 }
 
 function PatientDataModal({ patient, mode, onClose }: { patient: Patient; mode: Mode; onClose: () => void }) {
+  const dialogRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => event.key === 'Escape' && onClose()
+    const previousFocus = document.activeElement as HTMLElement | null
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    dialogRef.current?.querySelector<HTMLButtonElement>('button')?.focus()
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose()
+      if (event.key !== 'Tab') return
+      const controls = dialogRef.current?.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled)')
+      if (!controls?.length) return
+      const first = controls[0], last = controls[controls.length - 1]
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus() }
+      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus() }
+    }
     window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+      document.body.style.overflow = previousOverflow
+      previousFocus?.focus()
+    }
   }, [onClose])
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 bg-slate-950/45 p-4 flex items-center justify-center" onMouseDown={onClose}>
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={`Patient data for ${patient.name}`}
@@ -1085,10 +1041,10 @@ function PatientDataModal({ patient, mode, onClose }: { patient: Patient; mode: 
         <button type="button" onClick={onClose} aria-label="Close patient data" className="absolute top-4 right-4 w-9 h-9 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
         </button>
-        <div className="pr-12 mb-5"><PatientProfile patient={patient} /></div>
+        <div className="pr-12 mb-5"><PatientProfile patient={patient} mode={mode} /></div>
         <ModeData patient={patient} mode={mode} />
       </div>
-    </div>
+    </div>, document.body
   )
 }
 
@@ -1096,60 +1052,8 @@ function PatientDataModal({ patient, mode, onClose }: { patient: Patient; mode: 
 function PatientDataPanel({ patient, mode, analysing = false }: { patient: Patient; mode: Mode; analysing?: boolean }) {
   return (
     <div className="space-y-5">
-      <PatientProfile patient={patient} test />
+      <PatientProfile patient={patient} mode={mode} test />
       <ModeData patient={patient} mode={mode} analysing={analysing} />
-    </div>
-  )
-}
-
-function KidneyCTScan({ patientId, analysing = false }: { patientId: number; analysing?: boolean }) {
-  const hasTumor = patientId % 3 !== 0
-  const tumorX = 120 + (patientId * 17) % 40
-  const tumorY = 80 + (patientId * 11) % 30
-  const tumorR = 8 + (patientId * 5) % 10
-
-  return (
-    <div className="relative bg-slate-900 rounded-xl overflow-hidden" style={{ aspectRatio: '4/3' }}>
-      <svg width="100%" viewBox="0 0 280 210" className="w-full" style={{ background: '#0F172A' }}>
-        {/* CT scan background */}
-        <ellipse cx="140" cy="105" rx="120" ry="90" fill="#1E293B" />
-        {/* Body tissue */}
-        <ellipse cx="140" cy="105" rx="85" ry="65" fill="#334155" opacity="0.6" />
-        {/* Spine */}
-        <ellipse cx="140" cy="105" rx="12" ry="20" fill="#475569" />
-        {/* Left kidney */}
-        <path d="M 90 85 C 80 85 72 95 72 105 C 72 118 80 130 90 130 C 96 130 100 126 100 120 C 100 115 97 113 96 108 C 95 102 96 97 100 95 C 100 89 96 85 90 85Z" fill="#4A5568" />
-        {/* Right kidney */}
-        <path d="M 190 85 C 200 85 208 95 208 105 C 208 118 200 130 190 130 C 184 130 180 126 180 120 C 180 115 183 113 184 108 C 185 102 184 97 180 95 C 180 89 184 85 190 85Z" fill="#4A5568" />
-        {/* Kidney interiors */}
-        <path d="M 90 90 C 82 90 76 99 76 108 C 76 118 82 127 90 127 C 94 127 97 124 97 119 C 97 114 95 112 94 108 C 93 103 94 98 97 96 C 97 92 94 90 90 90Z" fill="#60A5FA" opacity="0.3" />
-        <path d="M 190 90 C 198 90 204 99 204 108 C 204 118 198 127 190 127 C 186 127 183 124 183 119 C 183 114 185 112 186 108 C 187 103 186 98 183 96 C 183 92 186 90 190 90Z" fill="#60A5FA" opacity="0.3" />
-
-        {/* Tumor */}
-        {hasTumor && (
-          <g>
-            <circle cx={tumorX} cy={tumorY + 15} r={tumorR + 3} fill="#CBD5E1" opacity="0.25" />
-            <circle cx={tumorX} cy={tumorY + 15} r={tumorR} fill="#94A3B8" opacity="0.75" />
-            <circle cx={tumorX - 2} cy={tumorY + 13} r={tumorR * 0.4} fill="#E2E8F0" opacity="0.4" />
-          </g>
-        )}
-
-        {/* Scan lines */}
-        {[...Array(8)].map((_, i) => (
-          <line key={i} x1="20" y1={30 + i * 22} x2="260" y2={30 + i * 22} stroke="#1E40AF" strokeWidth="0.3" opacity="0.2" />
-        ))}
-
-        {/* Labels */}
-        <text x="10" y="18" fill="#64748B" fontSize="8" fontFamily="DM Mono, monospace">CT AXIAL</text>
-        <text x="230" y="18" fill="#64748B" fontSize="8" fontFamily="DM Mono, monospace">R→L</text>
-        <text x="72" y="145" fill="#94A3B8" fontSize="7" fontFamily="Inter, sans-serif">L Kidney</text>
-        <text x="178" y="145" fill="#94A3B8" fontSize="7" fontFamily="Inter, sans-serif">R Kidney</text>
-      </svg>
-      {analysing && <div className="ct-scan-line absolute left-0 right-0 h-0.5 bg-cyan-300 shadow-[0_0_12px_rgba(103,232,249,0.9)]" />}
-      <div className="absolute bottom-2 left-3 flex items-center gap-2">
-        <div className="w-2 h-2 rounded-full bg-sky-400"></div>
-        <span className="text-xs text-slate-300 font-mono">Axial slice · Patient {String(patientId).padStart(3, '0')}</span>
-      </div>
     </div>
   )
 }
@@ -1175,148 +1079,10 @@ const MODE_DETECTION_STAGES: Record<Mode, string[]> = {
   ],
 }
 
-interface FeatureContribution {
-  feature: string
-  percentage: number
-  direction: 'positive' | 'negative'
-}
-
-function getDiabetesContributions(patient: Patient): FeatureContribution[] {
-  const values = getBloodTests(patient)
-  const modelFeatures = [
-    { feature: 'Fasting Blood Glucose', reference: 100, scale: 25, coefficient: 1.4 },
-    { feature: 'HbA1c', reference: 5.7, scale: 1, coefficient: 1.7 },
-    { feature: 'Insulin', reference: 18, scale: 8, coefficient: 0.45 },
-    { feature: 'Cholesterol', reference: 190, scale: 35, coefficient: 0.25 },
-    { feature: 'Triglycerides', reference: 140, scale: 45, coefficient: 0.4 },
-    { feature: 'HDL', reference: 50, scale: 12, coefficient: -0.6 },
-    { feature: 'LDL', reference: 110, scale: 30, coefficient: 0.45 },
-  ]
-  const calculated = modelFeatures.map(item => {
-    const patientValue = Number.parseFloat(values[item.feature as keyof typeof values])
-    const signedInfluence = item.coefficient * ((patientValue - item.reference) / item.scale)
-    return { ...item, signedInfluence, magnitude: Math.abs(signedInfluence) }
-  })
-  const totalMagnitude = calculated.reduce((sum, item) => sum + item.magnitude, 0)
-  const contributions = calculated.map(item => ({
-    feature: item.feature,
-    percentage: Math.round((item.magnitude / totalMagnitude) * 100),
-    direction: (item.signedInfluence >= 0 ? 'positive' : 'negative') as 'positive' | 'negative',
-  }))
-  const roundingDifference = 100 - contributions.reduce((sum, item) => sum + item.percentage, 0)
-  const strongestIndex = calculated.reduce(
-    (strongest, item, index, items) => item.magnitude > items[strongest].magnitude ? index : strongest,
-    0,
-  )
-  contributions[strongestIndex].percentage += roundingDifference
-  return contributions.sort((a, b) => b.percentage - a.percentage)
-}
-
-function DiabetesExplainability({ patient }: { patient: Patient }) {
-  const contributions = getDiabetesContributions(patient)
-  const rankDescriptions = ['Strongest influence', 'Second strongest influence', 'Third strongest influence']
-  return (
-    <>
-      <div className="mb-5">
-        <h4 className="text-sm font-bold text-slate-800 mb-3">Top Factors in This Prediction</h4>
-        <div className="grid grid-cols-3 gap-2">
-          {contributions.slice(0, 3).map((item, index) => (
-            <div key={item.feature} className="rounded-xl border border-blue-100 bg-blue-50 p-3">
-              <div className="w-6 h-6 rounded-full bg-white border border-blue-200 text-blue-700 flex items-center justify-center text-xs font-bold mb-2">#{index + 1}</div>
-              <div className="text-xs font-bold text-slate-800 leading-tight min-h-8">{item.feature}</div>
-              <div className="text-2xl font-bold text-blue-600 mt-1">{item.percentage}%</div>
-              <div className="text-[10px] text-slate-500 mt-1">{rankDescriptions[index]}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="mb-5">
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="text-sm font-bold text-slate-800">Relative Feature Contribution</h4>
-          <span className="text-[10px] text-slate-400">Total: 100%</span>
-        </div>
-        <div className="space-y-3">
-          {contributions.map(item => {
-            const towardsDiabetes = item.direction === 'positive'
-            return (
-              <div key={item.feature}>
-                <div className="flex items-start justify-between gap-3 mb-1">
-                  <div>
-                    <div className="text-xs font-semibold text-slate-700">{item.feature}</div>
-                    <div className={`text-[10px] font-medium ${towardsDiabetes ? 'text-red-500' : 'text-blue-600'}`}>
-                      {towardsDiabetes ? '↑ Towards Diabetes' : '↓ Towards No Diabetes'}
-                    </div>
-                  </div>
-                  <span className="text-sm font-bold text-slate-800">{item.percentage}%</span>
-                </div>
-                <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full ${towardsDiabetes ? 'bg-red-500' : 'bg-blue-600'}`}
-                    style={{ width: `${item.percentage}%` }}
-                  />
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    </>
-  )
-}
-
-function KidneyExplainability({ patient }: { patient: Patient }) {
-  const primaryAttention = 40 + (patient.id * 7) % 13
-  const rightKidney = patient.id % 2 === 0
-  const primaryX = rightKidney ? '68%' : '32%'
-  return (
-    <div className="mb-5">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <h4 className="text-sm font-bold text-slate-800">CT Image Attention Map</h4>
-        <span className="bg-violet-50 border border-violet-100 text-violet-700 rounded-full px-2 py-1 text-[10px] font-semibold">Educational AI visualization</span>
-      </div>
-      <div className="relative rounded-xl overflow-hidden">
-        <KidneyCTScan patientId={patient.id} />
-        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="absolute w-24 h-24 rounded-full bg-red-500/45 blur-xl" style={{ left: primaryX, top: '48%', transform: 'translate(-50%, -50%)' }} />
-          <div className="absolute w-16 h-16 rounded-full bg-orange-400/40 blur-lg" style={{ left: rightKidney ? '58%' : '42%', top: '55%', transform: 'translate(-50%, -50%)' }} />
-          <div className="absolute w-12 h-12 rounded-full bg-yellow-300/35 blur-md" style={{ left: rightKidney ? '76%' : '24%', top: '38%', transform: 'translate(-50%, -50%)' }} />
-        </div>
-      </div>
-      <div className="flex items-center gap-3 mt-3">
-        <span className="text-[10px] text-slate-500">Low influence</span>
-        <div className="h-2 flex-1 rounded-full bg-gradient-to-r from-blue-400 via-yellow-300 to-red-500" />
-        <span className="text-[10px] text-slate-500">High influence</span>
-      </div>
-      <div className="mt-3 rounded-lg bg-slate-50 border border-slate-100 px-3 py-2">
-        <div className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Most Influential Region</div>
-        <div className="text-sm font-semibold text-slate-800 mt-0.5">{rightKidney ? 'Right' : 'Left'} Kidney Region – {primaryAttention}% of highlighted model attention</div>
-      </div>
-      <p className="text-xs text-slate-500 leading-relaxed mt-3">The colours show where this demonstration model focused most strongly. A highlighted region is not necessarily a tumour or a medically validated lesion.</p>
-    </div>
-  )
-}
-
-function PredictionExplainability({ patient, mode }: { patient: Patient; mode: Mode }) {
-  return (
-    <section className="rounded-xl border border-slate-200 p-5 mb-5">
-      <span className="inline-flex bg-blue-50 border border-blue-100 text-blue-700 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider mb-3">AI Decision Explanation</span>
-      <h3 className="text-lg font-bold text-slate-900 mb-1">What Influenced This Prediction?</h3>
-      <p className="text-xs text-slate-500 leading-relaxed mb-5">
-        {mode === 'diabetes'
-          ? "See which patient data had the strongest influence on the AI's decision."
-          : "See which parts of the CT image had the strongest influence on the AI's decision."}
-      </p>
-      {mode === 'diabetes' ? <DiabetesExplainability patient={patient} /> : <KidneyExplainability patient={patient} />}
-      <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-xs text-blue-900 leading-relaxed">
-        <div className="font-bold mb-1">How should I read this?</div>
-        <p>{mode === 'diabetes'
-          ? 'AI does not make its decision from just one blood test. It combines information from several features. A higher contribution percentage means that this feature had a stronger influence on this particular prediction.'
-          : 'The attention map shows which image regions had more influence on this particular prediction. Warmer colours mean the model paid more attention to that area.'}</p>
-        <p className="mt-2 font-medium">Contribution is not the same as medical importance. It only explains how this AI model used the data to make this prediction.</p>
-      </div>
-    </section>
-  )
+function PredictionExplainability({ patient: _patient, mode: _mode }: { patient: Patient; mode: Mode }) {
+  return <div className="rounded-xl border border-blue-100 bg-blue-50 p-4 mb-5 text-sm text-blue-800">
+    Model explanations are not connected yet. No feature contributions or CT attention map are available for these stored records.
+  </div>
 }
 
 function Screen5({ patient, mode, onTestAnother, onRestart, onBack }: {
@@ -1495,18 +1261,90 @@ function AIReadyIcon() {
 }
 
 // ── Main App ───────────────────────────────────────────────────
+const WORKFLOW_STORAGE_KEY = 'healthcare-education-workflow-json-v2'
+
+function readSavedWorkflow() {
+  try {
+    const saved = JSON.parse(window.sessionStorage.getItem(WORKFLOW_STORAGE_KEY) ?? '{}')
+    if (saved.mode !== routeFromPath(window.location.pathname)?.mode) throw new Error('Different module')
+    const validIds = new Set(Array.from({ length: 40 }, (_, index) => index + 1))
+    const trainingIds = Array.isArray(saved.trainingIds)
+      ? saved.trainingIds.filter((id: unknown) => typeof id === 'number' && validIds.has(id)).slice(0, 20)
+      : []
+    const testId = validIds.has(saved.testId) ? saved.testId as number : null
+    return {
+      trainingIds: new Set<number>(trainingIds),
+      testId,
+      trainingComplete: saved.trainingComplete === true,
+      evaluationComplete: saved.evaluationComplete === true,
+      trainingLogCount: Number.isInteger(saved.trainingLogCount) && saved.trainingLogCount >= 0
+        ? saved.trainingLogCount as number : 0,
+    }
+  } catch {
+    return { trainingIds: new Set<number>(), testId: null, trainingComplete: false,
+      evaluationComplete: false, trainingLogCount: 0 }
+  }
+}
+
 export default function App() {
-  const [screen, setScreen] = useState<ScreenId>(1)
-  const [mode, setMode] = useState<Mode | null>(null)
-  const [trainingIds, setTrainingIds] = useState<Set<number>>(new Set())
-  const [testId, setTestId] = useState<number | null>(null)
-  const [trainingComplete, setTrainingComplete] = useState(false)
-  const [evaluationComplete, setEvaluationComplete] = useState(false)
-  const [trainingLogCount, setTrainingLogCount] = useState(0)
+  const [route, setRoute] = useState<AppRoute>(() => {
+    const initialRoute = routeFromPath(window.location.pathname)
+    if (!initialRoute) window.history.replaceState(null, '', '/')
+    return initialRoute ?? HOME_ROUTE
+  })
+  const [savedWorkflow] = useState(readSavedWorkflow)
+  const [storedTrainingIds, setTrainingIds] = useState(savedWorkflow.trainingIds)
+  const [testId, setTestId] = useState(savedWorkflow.testId)
+  const [trainingComplete, setTrainingComplete] = useState(savedWorkflow.trainingComplete)
+  const [evaluationComplete, setEvaluationComplete] = useState(savedWorkflow.evaluationComplete)
+  const [trainingLogCount, setTrainingLogCount] = useState(savedWorkflow.trainingLogCount)
+  const { screen, mode } = route
+  const { patients, error, retry } = usePatients(mode)
+  const eligiblePatients = patients.filter(p => mode === 'kidney' ? p.pool === 'train' : p.pool === 'development')
+  const trainingIds = new Set([...storedTrainingIds].filter(id => eligiblePatients.some(p => p.id === id)))
+  const newPatients = patients.filter(p => p.pool === 'test')
+  const previousMode = useRef(mode)
+  useEffect(() => {
+    if (previousMode.current !== mode) {
+      setTrainingIds(new Set())
+      setTestId(null)
+      setTrainingComplete(false)
+      setEvaluationComplete(false)
+      setTrainingLogCount(0)
+      previousMode.current = mode
+    }
+  }, [mode])
+
+  useEffect(() => {
+    const onPopState = () => {
+      const nextRoute = routeFromPath(window.location.pathname)
+      if (!nextRoute) window.history.replaceState(null, '', '/')
+      setRoute(nextRoute ?? HOME_ROUTE)
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [])
+
+  useEffect(() => {
+    try {
+      window.sessionStorage.setItem(WORKFLOW_STORAGE_KEY, JSON.stringify({
+        mode, trainingIds: [...storedTrainingIds], testId, trainingComplete, evaluationComplete, trainingLogCount,
+      }))
+    } catch {
+      // The routes still work when browser storage is unavailable.
+    }
+  }, [mode, storedTrainingIds, testId, trainingComplete, evaluationComplete, trainingLogCount])
+
+  const navigateTo = (nextScreen: ScreenId, nextMode: Mode | null = mode, patientId: number | null = null) => {
+    const nextRoute: AppRoute = { screen: nextScreen, mode: nextScreen === 1 ? null : nextMode, testId: patientId }
+    const nextPath = pathForRoute(nextRoute)
+    if (window.location.pathname !== nextPath) window.history.pushState(null, '', nextPath)
+    setRoute(nextRoute)
+    window.scrollTo(0, 0)
+  }
 
   const resetWorkflow = () => {
-    setScreen(1)
-    setMode(null)
+    navigateTo(1)
     setTrainingIds(new Set())
     setTestId(null)
     setTrainingComplete(false)
@@ -1516,20 +1354,20 @@ export default function App() {
 
   const handleSelectMode = (m: Mode) => {
     if (mode === m) {
-      setScreen(2)
+      navigateTo(2, m)
       return
     }
-    setMode(m)
     setTestId(null)
     setTrainingComplete(false)
     setEvaluationComplete(false)
     setTrainingLogCount(0)
-    setScreen(2)
+    navigateTo(2, m)
   }
 
   const handleToggleTraining = (id: number) => {
-    setTrainingIds(prev => {
-      const next = new Set(prev)
+    if (!eligiblePatients.some(p => p.id === id)) return
+    setTrainingIds(() => {
+      const next = new Set(trainingIds)
       if (next.has(id)) next.delete(id)
       else if (next.size < 20) next.add(id)
       return next
@@ -1541,14 +1379,14 @@ export default function App() {
   }
 
   const handleRandomTraining = () => {
-    const shuffledIds = ALL_PATIENTS.map(patient => patient.id)
+    const shuffledIds = eligiblePatients.map(patient => patient.id)
     for (let index = shuffledIds.length - 1; index > 0; index--) {
       const swapIndex = Math.floor(Math.random() * (index + 1))
       ;[shuffledIds[index], shuffledIds[swapIndex]] = [shuffledIds[swapIndex], shuffledIds[index]]
     }
     const repeatsCurrentSelection =
       trainingIds.size === 20 && shuffledIds.slice(0, 20).every(id => trainingIds.has(id))
-    if (repeatsCurrentSelection) {
+    if (repeatsCurrentSelection && shuffledIds.length > 20) {
       ;[shuffledIds[0], shuffledIds[20]] = [shuffledIds[20], shuffledIds[0]]
     }
     setTrainingIds(new Set(shuffledIds.slice(0, 20)))
@@ -1562,21 +1400,32 @@ export default function App() {
     setTestId(id)
   }
 
-  const evaluationPatients = ALL_PATIENTS.filter(patient => !trainingIds.has(patient.id))
-  const testPatient = testId ? NEW_PATIENTS.find(patient => patient.id === testId) ?? null : null
+  const evaluationPatients = patients.filter(patient => mode === 'kidney' ? patient.pool === 'validation' : patient.pool === 'development' && !trainingIds.has(patient.id))
+  const testPatient = route.testId ? newPatients.find(patient => patient.id === route.testId) ?? null : null
+
+  if (mode && !patients.length) return (
+    <div className="min-h-screen bg-slate-50"><Header onHome={() => navigateTo(1)} />
+      <div className="max-w-xl mx-auto my-24 p-8 rounded-2xl border border-slate-200 bg-white text-center">
+        {error ? <><p role="alert" className="text-red-700 mb-4">{error} Start the patient API and try again.</p><button className="bg-blue-600 text-white rounded-lg px-5 py-2" onClick={retry}>Retry</button></> : <p role="status">Loading patient data…</p>}
+      </div>
+    </div>
+  )
 
   return (
     <div className="min-h-screen" style={{ background: '#F8FAFC' }}>
-      <Header onHome={() => setScreen(1)} />
+      <Header onHome={() => navigateTo(1)} />
+      {screen >= 3 && <p className="bg-amber-50 border-b border-amber-200 text-amber-900 text-center text-sm p-3">Workflow demo: training and predictions are simulated. Patient records and CT images come from the stored dataset.</p>}
+      {screen === 7 && !testPatient && <div role="alert" className="p-12 text-center">This patient is not in the held-out test pool. <button className="text-blue-600 underline" onClick={() => navigateTo(6)}>Choose a test patient</button></div>}
       {screen === 1 && <Screen1 onSelect={handleSelectMode} />}
       {screen === 2 && (
         <Screen2
+          patients={patients}
           trainingIds={trainingIds}
           mode={mode!}
           onToggle={handleToggleTraining}
           onRandomSelect={handleRandomTraining}
-          onNext={() => setScreen(3)}
-          onBack={() => setScreen(1)}
+          onNext={() => navigateTo(3)}
+          onBack={() => navigateTo(1)}
         />
       )}
       {screen === 3 && mode && (
@@ -1586,8 +1435,8 @@ export default function App() {
           initialVisibleCount={trainingLogCount}
           onProgress={setTrainingLogCount}
           onTrainingComplete={() => setTrainingComplete(true)}
-          onContinue={() => setScreen(4)}
-          onBack={() => setScreen(2)}
+          onContinue={() => navigateTo(4)}
+          onBack={() => navigateTo(2)}
         />
       )}
       {screen === 4 && mode && (
@@ -1595,34 +1444,35 @@ export default function App() {
           patients={evaluationPatients}
           mode={mode}
           completed={evaluationComplete}
-          onComplete={() => { setEvaluationComplete(true); setScreen(5) }}
-          onBack={() => setScreen(3)}
+          onComplete={() => { setEvaluationComplete(true); navigateTo(5) }}
+          onBack={() => navigateTo(3)}
         />
       )}
       {screen === 5 && mode && (
         <EvaluationResultsScreen
           patients={evaluationPatients}
           mode={mode}
-          onNext={() => setScreen(6)}
-          onBack={() => setScreen(4)}
+          onNext={() => navigateTo(6)}
+          onBack={() => navigateTo(4)}
         />
       )}
       {screen === 6 && mode && (
         <SelectTestPatientScreen
+          patients={newPatients}
           mode={mode}
           testId={testId}
           onSelect={handleSelectTest}
-          onNext={() => setScreen(7)}
-          onBack={() => setScreen(5)}
+          onNext={() => navigateTo(7, mode, testId)}
+          onBack={() => navigateTo(5)}
         />
       )}
       {screen === 7 && testPatient && mode && (
         <Screen5
           patient={testPatient}
           mode={mode}
-          onTestAnother={() => { setTestId(null); setScreen(6) }}
+          onTestAnother={() => { setTestId(null); navigateTo(6) }}
           onRestart={resetWorkflow}
-          onBack={() => setScreen(6)}
+          onBack={() => navigateTo(6)}
         />
       )}
     </div>

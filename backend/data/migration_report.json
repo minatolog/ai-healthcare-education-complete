@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "patients": 40,
+  "image_records": 7514,
+  "checks": [
+    "All patient and image fields equal the legacy seed JSON",
+    "Regenerated SQL exactly equals the legacy SQL seed before removal",
+    "Original names, unspecified gender, values, pools and provenance preserved",
+    "No training runs were present in the seed"
+  ],
+  "legacy_sha256": {
+    "database/schema.sql": "dc51a19ab18ab4f05fedbfb20355ae73601c2d9a1ab818ed8bc738d2bba7f1ba",
+    "database/seed_patients.sql": "a21f1c9b2659de39cecc7df1b2899837ced61106893b6fc988dabbbce3e3a98a",
+    "data/patients/patients.json": "f02c1b5c24892f7ac4b093bc7aa51d7db9eb2748b3622eac94f30efb4cc5ae48",
+    "data/patients/patient_images.json": "d72513825797dfb21a35235375c8f21e5662e5aead81b1e35caf431de0640d55"
+  }
+}

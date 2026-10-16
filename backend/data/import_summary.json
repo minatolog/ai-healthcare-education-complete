@@ -13,7 +13,7 @@
     "validation": 1156,
     "test": 530
   },
-  "gender": "Unspecified; SQL NULL for all patients",
+  "gender": "Unspecified; JSON null for all patients",
   "pairing": "Synthetic educational pairing of independent sources",
   "sources_sha256": {
     "data/kidney/project40_manifest.csv": "eaa0056555d8b24b9f0af0bf4c08a228f80bbc6eb5340ea3d79df965fac3ac70",

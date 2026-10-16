@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "test:patients": "node --test test/patient-data.test.mjs",
     "preview": "vite preview",
     "format": "oxfmt"
   },
