@@ -32,7 +32,7 @@ build/
 *.tmp
 *.bak
 
-# Local PostgreSQL verification clusters (not dataset files)
+# Local scratch files and generated previews
 .local/
 
 # Figma Make generated files
