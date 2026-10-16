@@ -21,7 +21,7 @@ export function pathForRoute(route: AppRoute): string {
   if (route.screen === 1) return '/'
   if (!route.mode) throw new Error('A disease mode is required for this page')
   if (route.screen === 7) {
-    if (route.testId === null || route.testId < 31 || route.testId > 35) {
+    if (route.testId === null || !Number.isInteger(route.testId) || route.testId < 1 || route.testId > 40) {
       throw new Error('A valid prediction patient is required')
     }
     return `/${route.mode}/prediction/${route.testId}`
@@ -39,7 +39,7 @@ export function routeFromPath(pathname: string): AppRoute | null {
     const entry = Object.entries(SCREEN_PATHS).find(([, path]) => path === page)
     return entry ? { screen: Number(entry[0]) as ScreenId, mode, testId: null } : null
   }
-  if (segments.length === 3 && page === 'prediction' && /^(3[1-5])$/.test(patientId)) {
+  if (segments.length === 3 && page === 'prediction' && /^(?:[1-9]|[1-3]\d|40)$/.test(patientId)) {
     return { screen: 7, mode, testId: Number(patientId) }
   }
   return null
