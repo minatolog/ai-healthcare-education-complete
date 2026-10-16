@@ -3,7 +3,12 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
 
-import siteConfiguration from './.figma/make/site.json'
+import { existsSync, readFileSync } from 'node:fs'
+
+const sitePath = path.resolve(__dirname, '.figma/make/site.json')
+const siteConfiguration = existsSync(sitePath)
+  ? JSON.parse(readFileSync(sitePath, 'utf-8'))
+  : { title: 'Interactive AI for Healthcare Education', language: 'en' }
 
 
 // Vite config — https://vitejs.dev/config/
@@ -31,6 +36,7 @@ react(),
       },
     },
     server: {
+      proxy: { '/api': 'http://127.0.0.1:8000' },
       host: process.env.FIGMA_DEV_SERVER_HOST || '0.0.0.0',
       port: parseInt(process.env.PORT || '8443'),
       strictPort: true,
@@ -41,6 +47,7 @@ react(),
       },
     },
     preview: {
+      proxy: { '/api': 'http://127.0.0.1:8000' },
       host: process.env.FIGMA_DEV_SERVER_HOST || '0.0.0.0',
       port: parseInt(process.env.PORT || '8443'),
     },
