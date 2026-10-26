@@ -9,7 +9,7 @@
 - **推荐：** [下载 02_main 完整包](https://github.com/minatolog/ai-healthcare-education/releases/download/02-main-v1/02_main-complete.zip)，解压后同时拥有源码、肾脏权重、3,757 张 CT 和 3,757 张参考掩码。
 - **使用 Git：** 克隆仓库后，按下面步骤安装依赖，再运行 `python scripts/prepare_data.py`。该命令从同仓库 Release 下载 CT/掩码，并校验压缩包和每张图像的 SHA-256。现有数据完整时不会重复下载。
 
-肾脏权重 `artifacts/kidney/kidney_unet.pt` 和评估记录直接包含在源码仓库中。体积较大的 CT/掩码放在版本固定的 Release 附件；源码 ZIP 本身不包含这 7,514 张 PNG。
+肾脏权重 `artifacts/kidney/kidney_unet.pt` 和评估记录直接包含在源码仓库中。体积较大的 CT/掩码、完整 PNG 审计记录、切片总清单和图像 JSON 索引放在版本固定的 Release 附件；源码 ZIP 本身不包含这些大文件，数据准备命令会一起恢复。
 
 ## 当前能做什么
 

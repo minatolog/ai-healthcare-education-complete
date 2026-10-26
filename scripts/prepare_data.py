@@ -25,6 +25,8 @@ def expected_images(root):
             expected['data/kidney/' + name] = checksum
     if len(expected) != 7514:
         raise ValueError('The reviewed checksum manifest must contain exactly 7,514 PNGs.')
+    distribution = json.loads((root / 'docs/distribution.json').read_text())
+    expected.update(distribution.get('extra_files', {}))
     return expected
 
 
@@ -50,7 +52,7 @@ def restore(root, archive=None):
         with ZipFile(bundle) as zip_file:
             names = zip_file.namelist()
             if len(names) != len(expected) or set(names) != set(expected):
-                raise ValueError('Archive must contain exactly the reviewed CT and mask paths.')
+                raise ValueError('Archive must contain exactly the reviewed CT, mask and metadata paths.')
             for name in names:
                 data = zip_file.read(name)
                 if hashlib.sha256(data).hexdigest() != expected[name]:
@@ -58,7 +60,7 @@ def restore(root, archive=None):
                 target = root / name
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_bytes(data)
-    print('Restored all 7,514 verified PNGs.')
+    print('Restored all 7,514 verified PNGs and the pinned metadata.')
 
 
 if __name__ == '__main__':
