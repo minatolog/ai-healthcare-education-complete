@@ -35,9 +35,19 @@ build/
 # Local scratch files and generated previews
 .local/
 
+# Include the reviewed website checkpoint; keep new experiments local
+artifacts/kidney/*
+!artifacts/kidney/kidney_unet.pt
+!artifacts/kidney/kidney_unet.metrics.json
+!artifacts/kidney/README.md
+
 # Figma Make generated files
 frontend/.figma/
 
 # AI development tool files
 frontend/AGENTS.md
 frontend/CLAUDE.md
+
+# GitHub distribution restores reviewed PNGs from the versioned release
+/data/kidney/data2d/images/*.png
+/data/kidney/data2d/masks/*.png

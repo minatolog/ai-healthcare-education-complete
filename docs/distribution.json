@@ -1,0 +1,8 @@
+{
+  "source_folder": "02_main",
+  "url": "https://github.com/minatolog/ai-healthcare-education/releases/download/02-main-v1/kidney-data.zip",
+  "sha256": "bcac9b6731b8baf3355ab23812027f9ff8641fe442d78290112133106e738c96",
+  "png_count": 7514,
+  "ct_count": 3757,
+  "mask_count": 3757
+}

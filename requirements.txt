@@ -1,0 +1,5 @@
+-r services/diabetes_model/requirements.txt
+torch==2.14.1
+Pillow==13.0.0
+numpy==2.5.4
+certifi==2026.10.23

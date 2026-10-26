@@ -1,0 +1,322 @@
+{
+  "model_version": "kidney_unet_teaching_v1",
+  "input_size": 128,
+  "class_names": [
+    "background",
+    "kidney",
+    "tumour"
+  ],
+  "device": "mps",
+  "epochs": 12,
+  "batch_size": 16,
+  "learning_rate": 0.001,
+  "tumour_loss_weight": 3.0,
+  "split": {
+    "train": [
+      "case_00000",
+      "case_00013",
+      "case_00018",
+      "case_00023",
+      "case_00028",
+      "case_00042",
+      "case_00045",
+      "case_00061",
+      "case_00070",
+      "case_00078",
+      "case_00085",
+      "case_00087",
+      "case_00109",
+      "case_00114",
+      "case_00135",
+      "case_00145",
+      "case_00154",
+      "case_00173",
+      "case_00199",
+      "case_00209"
+    ],
+    "validation": [
+      "case_00010",
+      "case_00011",
+      "case_00059",
+      "case_00076",
+      "case_00108",
+      "case_00156",
+      "case_00160",
+      "case_00168",
+      "case_00177",
+      "case_00185"
+    ],
+    "test": [
+      "case_00019",
+      "case_00046",
+      "case_00055",
+      "case_00057",
+      "case_00077",
+      "case_00099",
+      "case_00149",
+      "case_00170",
+      "case_00184",
+      "case_00206"
+    ],
+    "train_slice_count": 2071,
+    "validation_slice_count": 1156,
+    "test_slice_count": 530
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.5105,
+      "validation_kidney_dice": 0.1974,
+      "validation_tumour_dice": 0.0878
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.1148,
+      "validation_kidney_dice": 0.6909,
+      "validation_tumour_dice": 0.0987
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.0532,
+      "validation_kidney_dice": 0.822,
+      "validation_tumour_dice": 0.1002
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.0303,
+      "validation_kidney_dice": 0.8108,
+      "validation_tumour_dice": 0.104
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.0209,
+      "validation_kidney_dice": 0.7696,
+      "validation_tumour_dice": 0.079
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.0165,
+      "validation_kidney_dice": 0.8378,
+      "validation_tumour_dice": 0.0957
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.0118,
+      "validation_kidney_dice": 0.8451,
+      "validation_tumour_dice": 0.0501
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.0103,
+      "validation_kidney_dice": 0.7671,
+      "validation_tumour_dice": 0.089
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.0083,
+      "validation_kidney_dice": 0.8687,
+      "validation_tumour_dice": 0.1023
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.0073,
+      "validation_kidney_dice": 0.8525,
+      "validation_tumour_dice": 0.1542
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.0093,
+      "validation_kidney_dice": 0.8569,
+      "validation_tumour_dice": 0.0981
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.0087,
+      "validation_kidney_dice": 0.8649,
+      "validation_tumour_dice": 0.1122
+    }
+  ],
+  "selected_epoch": 10,
+  "selected_validation_tumour_dice": 0.1542,
+  "validation": {
+    "case_count": 10,
+    "patient_mean_kidney_dice": 0.8525,
+    "patient_mean_tumour_dice": 0.1542,
+    "pooled_kidney_dice": 0.835,
+    "pooled_tumour_dice": 0.1603,
+    "cases": [
+      {
+        "case_id": "case_00010",
+        "slice_count": 43,
+        "kidney_dice": 0.9014,
+        "tumour_dice": 0.0,
+        "tumour_pixels_in_reference": 543,
+        "tumour_pixels_predicted": 64
+      },
+      {
+        "case_id": "case_00011",
+        "slice_count": 32,
+        "kidney_dice": 0.9008,
+        "tumour_dice": 0.3833,
+        "tumour_pixels_in_reference": 1431,
+        "tumour_pixels_predicted": 849
+      },
+      {
+        "case_id": "case_00059",
+        "slice_count": 359,
+        "kidney_dice": 0.9027,
+        "tumour_dice": 0.0,
+        "tumour_pixels_in_reference": 3405,
+        "tumour_pixels_predicted": 13458
+      },
+      {
+        "case_id": "case_00076",
+        "slice_count": 26,
+        "kidney_dice": 0.936,
+        "tumour_dice": 0.0082,
+        "tumour_pixels_in_reference": 125,
+        "tumour_pixels_predicted": 363
+      },
+      {
+        "case_id": "case_00108",
+        "slice_count": 28,
+        "kidney_dice": 0.8927,
+        "tumour_dice": 0.7078,
+        "tumour_pixels_in_reference": 4319,
+        "tumour_pixels_predicted": 4460
+      },
+      {
+        "case_id": "case_00156",
+        "slice_count": 372,
+        "kidney_dice": 0.9323,
+        "tumour_dice": 0.0,
+        "tumour_pixels_in_reference": 398,
+        "tumour_pixels_predicted": 1729
+      },
+      {
+        "case_id": "case_00160",
+        "slice_count": 132,
+        "kidney_dice": 0.6273,
+        "tumour_dice": 0.0523,
+        "tumour_pixels_in_reference": 10109,
+        "tumour_pixels_predicted": 13752
+      },
+      {
+        "case_id": "case_00168",
+        "slice_count": 38,
+        "kidney_dice": 0.7204,
+        "tumour_dice": 0.0,
+        "tumour_pixels_in_reference": 701,
+        "tumour_pixels_predicted": 162
+      },
+      {
+        "case_id": "case_00177",
+        "slice_count": 38,
+        "kidney_dice": 0.8289,
+        "tumour_dice": 0.0724,
+        "tumour_pixels_in_reference": 828,
+        "tumour_pixels_predicted": 2544
+      },
+      {
+        "case_id": "case_00185",
+        "slice_count": 88,
+        "kidney_dice": 0.8828,
+        "tumour_dice": 0.3178,
+        "tumour_pixels_in_reference": 1373,
+        "tumour_pixels_predicted": 4424
+      }
+    ]
+  },
+  "test": {
+    "case_count": 10,
+    "patient_mean_kidney_dice": 0.8543,
+    "patient_mean_tumour_dice": 0.4006,
+    "pooled_kidney_dice": 0.8548,
+    "pooled_tumour_dice": 0.5543,
+    "cases": [
+      {
+        "case_id": "case_00019",
+        "slice_count": 49,
+        "kidney_dice": 0.9572,
+        "tumour_dice": 0.0,
+        "tumour_pixels_in_reference": 36,
+        "tumour_pixels_predicted": 73
+      },
+      {
+        "case_id": "case_00046",
+        "slice_count": 68,
+        "kidney_dice": 0.9331,
+        "tumour_dice": 0.7985,
+        "tumour_pixels_in_reference": 967,
+        "tumour_pixels_predicted": 914
+      },
+      {
+        "case_id": "case_00055",
+        "slice_count": 44,
+        "kidney_dice": 0.8055,
+        "tumour_dice": 0.8044,
+        "tumour_pixels_in_reference": 8038,
+        "tumour_pixels_predicted": 6020
+      },
+      {
+        "case_id": "case_00057",
+        "slice_count": 45,
+        "kidney_dice": 0.8004,
+        "tumour_dice": 0.6078,
+        "tumour_pixels_in_reference": 3450,
+        "tumour_pixels_predicted": 3121
+      },
+      {
+        "case_id": "case_00077",
+        "slice_count": 44,
+        "kidney_dice": 0.9118,
+        "tumour_dice": 0.0,
+        "tumour_pixels_in_reference": 170,
+        "tumour_pixels_predicted": 328
+      },
+      {
+        "case_id": "case_00099",
+        "slice_count": 38,
+        "kidney_dice": 0.823,
+        "tumour_dice": 0.6564,
+        "tumour_pixels_in_reference": 2791,
+        "tumour_pixels_predicted": 4272
+      },
+      {
+        "case_id": "case_00149",
+        "slice_count": 62,
+        "kidney_dice": 0.8501,
+        "tumour_dice": 0.1562,
+        "tumour_pixels_in_reference": 7495,
+        "tumour_pixels_predicted": 2681
+      },
+      {
+        "case_id": "case_00170",
+        "slice_count": 108,
+        "kidney_dice": 0.8463,
+        "tumour_dice": 0.4195,
+        "tumour_pixels_in_reference": 777,
+        "tumour_pixels_predicted": 720
+      },
+      {
+        "case_id": "case_00184",
+        "slice_count": 45,
+        "kidney_dice": 0.7381,
+        "tumour_dice": 0.5591,
+        "tumour_pixels_in_reference": 4165,
+        "tumour_pixels_predicted": 3776
+      },
+      {
+        "case_id": "case_00206",
+        "slice_count": 27,
+        "kidney_dice": 0.8777,
+        "tumour_dice": 0.0044,
+        "tumour_pixels_in_reference": 542,
+        "tumour_pixels_predicted": 358
+      }
+    ]
+  },
+  "educational_only": true,
+  "elapsed_seconds": 96.9,
+  "checkpoint": "artifacts/kidney/kidney_unet.pt"
+}

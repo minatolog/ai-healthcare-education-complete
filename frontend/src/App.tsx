@@ -4,6 +4,21 @@ import { HOME_ROUTE, pathForRoute, routeFromPath, type AppRoute, type Mode, type
 
 import { usePatients, getBloodTests, type Patient } from './patients'
 import KidneyCTViewer from './KidneyCTViewer'
+import {
+  evaluationPatientCodes,
+  isKidneyPrediction,
+  isKidneySession,
+  ModelApiError,
+  overlayUrl,
+  predictPatient,
+  trainModel,
+  type AnyPrediction,
+  type KidneyPrediction,
+  type KidneySession,
+  type ModelSession,
+  type PredictionResult,
+  type TrainingPoint,
+} from './api'
 
 // ── Avatar ─────────────────────────────────────────────────────
 const SKINS = ['#FDDBB4','#F5C89A','#D4956A','#C68642','#8D5524','#6B3A2A']
@@ -228,7 +243,7 @@ function Screen1({ onSelect }: { onSelect: (mode: Mode) => void }) {
             <DiabetesIcon />
           </div>
           <h3 style={{ fontFamily: 'Outfit, sans-serif' }} className="text-xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">Diabetes AI Detection</h3>
-          <p className="text-slate-500 text-sm leading-relaxed mb-5">Learn how blood-test values become numerical features for a linear model that predicts diabetes.</p>
+          <p className="text-slate-500 text-sm leading-relaxed mb-5">Learn how a Random Forest uses six clinical features to predict synthetic diabetes labels.</p>
           <div className="flex items-center text-blue-600 text-sm font-semibold group-hover:gap-2 transition-all gap-1">
             Start Learning
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="group-hover:translate-x-1 transition-transform"><path d="M 3 8 H 13 M 9 4 L 13 8 L 9 12" stroke="#2563EB" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -476,57 +491,85 @@ function Screen2({ patients, trainingIds, mode, onToggle, onRandomSelect, onNext
 }
 
 // ── Screen 3 — Model training console ─────────────────────────
-function makeTrainingLogs(mode: Mode) {
-  const startup = mode === 'diabetes'
-    ? [
-        'Loading blood test dataset…',
-        '20 patient records loaded.',
-        'Extracting numerical features…',
-        'Features: Age, Glucose, HbA1c, BMI, Systolic BP, Family History',
-        'Normalising numerical features…',
-        'Preparing binary labels…',
-        'Initialising linear binary classifier…',
-        'Starting model training…',
-      ]
-    : [
-        'Loading kidney CT dataset…',
-        '20 patient CT datasets loaded.',
-        'Reading CT images…',
-        'Resizing CT images…',
-        'Normalising image intensity…',
-        'Preparing tumour / non-tumour labels…',
-        'Initialising computer vision model…',
-        'Starting model training…',
-      ]
-  const epochs = Array.from({ length: 20 }, (_, index) => {
-    const epoch = index + 1
-    const startLoss = mode === 'diabetes' ? 0.6842 : 0.7214
-    const endLoss = mode === 'diabetes' ? 0.2147 : 0.1842
-    const loss = startLoss - ((startLoss - endLoss) * index) / 19
-    const accuracy = 0.65 + (0.95 - 0.65) * index / 19
-    return `Epoch ${epoch}/20  loss: ${loss.toFixed(4)} - accuracy: ${accuracy.toFixed(4)}`
-  })
+function formatDice(value: number | null | undefined) {
+  return value === null || value === undefined ? 'n/a' : value.toFixed(4)
+}
+
+function makeStartupLogs(mode: Mode, session: ModelSession | null, selectedCount: number) {
+  if (!session) {
+    return [
+      'Connecting to the local model service…',
+      `Sending ${selectedCount} selected ${mode === 'kidney' ? 'CT cases' : 'training patients'}…`,
+      'Waiting for the model on the server…',
+    ]
+  }
+  if (isKidneySession(session)) {
+    const selection = session.selection
+    return [
+      'Loading the reviewed PNG CT handoff…',
+      `Training cases: ${selection.training_size} · held-out cases: ${selection.evaluation_size}`,
+      `Training slices: ${selection.training_slice_count ?? '—'} · held-out slices: ${selection.evaluation_slice_count ?? '—'}`,
+      `Building a 3-class U-Net (${(session.model.class_names ?? []).join(' / ')}) at ${session.model.input_size}×${session.model.input_size}`,
+      `Device: ${session.model.device} · ${session.model.epochs} epochs · replaying the shipped checkpoint's recorded run`,
+    ]
+  }
+  const points = session.training_curve.points
+  const maxTrees = points.length ? points[points.length - 1].trees_built : 0
+  return [
+    'Loading the 40-patient synthetic diabetes cohort…',
+    `Validated ${session.selection.training_size} training patients.`,
+    `Reserved ${session.selection.evaluation_size} evaluation patients: ${session.split.evaluation.join(', ')}`,
+    `Held out ${session.selection.held_out_size} prediction patients: ${session.split.held_out.join(', ')}`,
+    `Features: ${session.model.feature_names.join(', ')}`,
+    'Building trees with class_weight=balanced, max_depth=3, min_samples_leaf=2',
+    `Tree checkpoints from 5 to ${maxTrees}`,
+  ]
+}
+
+function makeTrainingLogs(mode: Mode, session: ModelSession | null, selectedCount: number) {
+  const startup = makeStartupLogs(mode, session, selectedCount)
+  if (!session) return startup
+
+  if (isKidneySession(session)) {
+    const checkpoints = session.training_curve.points.map(point =>
+      `Epoch ${point.epoch}/${session.model.epochs}  loss: ${point.train_loss.toFixed(4)} - kidney Dice: ${formatDice(point.validation_kidney_dice)} - tumour Dice: ${formatDice(point.validation_tumour_dice)}`,
+    )
+    const metrics = session.evaluation.metrics
+    return [
+      ...startup,
+      ...checkpoints,
+      'Selecting the epoch with the best validation tumour Dice…',
+      `✓ Training complete — epoch ${session.model.selected_epoch} kept`,
+      `✓ Held-out test: kidney Dice ${formatDice(metrics.kidney_dice)} · tumour Dice ${formatDice(metrics.tumour_dice)}`,
+    ]
+  }
+
+  const points = session.training_curve.points
+  const maxTrees = points.length ? points[points.length - 1].trees_built : 0
+  const checkpoints = points.map((point: TrainingPoint) =>
+    `Trees ${point.trees_built}/${maxTrees}  training accuracy: ${point.train_accuracy.toFixed(4)} - evaluation accuracy: ${point.validation_accuracy.toFixed(4)}`,
+  )
   return [
     ...startup,
-    ...epochs,
-    'Finalising trained model parameters…',
-    '✓ Training complete',
-    mode === 'diabetes' ? '✓ Model saved successfully' : '✓ Computer vision model saved successfully',
+    ...checkpoints,
+    'Selecting the smallest tree count with the best evaluation accuracy…',
+    `✓ Training complete — ${session.model.best_tree_count} trees selected`,
+    `✓ Evaluation accuracy: ${(session.model.best_evaluation_accuracy * 100).toFixed(1)}%`,
   ]
 }
 
 const TRAINING_CONCEPTS = [
   {
-    term: 'Epoch',
-    title: 'Epoch – One Learning Round',
-    explanation: 'An epoch means the AI has gone through all 20 training patients once. If we train for 20 epochs, the AI studies the same training dataset 20 times to improve its learning.',
-    example: 'Epoch 5/20 means the AI has completed 5 out of 20 learning rounds.',
+    term: 'Tree',
+    title: 'Tree – One Pattern-Finding Decision Maker',
+    explanation: 'This model is a Random Forest, so it is built from many small decision trees. Each new tree is added and then the model is checked again on the training and evaluation patients.',
+    example: 'Trees 15/100 means the forest currently contains 15 decision trees.',
   },
   {
-    term: 'Loss',
-    title: 'Loss – How Wrong Is the AI?',
-    explanation: "Loss measures how far the AI's predictions are from the correct answers. A smaller loss usually means the AI is learning to make better predictions.",
-    example: 'Loss: 0.80 → 0.30 means the AI is making fewer prediction errors according to its loss function.',
+    term: 'Model Selection',
+    title: 'Model Selection – How Many Trees?',
+    explanation: 'After each checkpoint the evaluation accuracy is recorded. The smallest forest size that reaches the best evaluation accuracy is kept, so the model is chosen by testing, not by guessing.',
+    example: 'If 45 trees score best on the evaluation patients, the model keeps 45 trees.',
   },
   {
     term: 'Accuracy',
@@ -582,38 +625,44 @@ function TrainingEducation() {
   )
 }
 
-function Screen3({ mode, completed, initialVisibleCount, onProgress, onTrainingComplete, onContinue, onBack }: {
+function Screen3({ mode, session, loading, error, unavailable, selectedCount, completed, initialVisibleCount, onProgress, onTrainingComplete, onContinue, onBack, onRetry }: {
   mode: Mode
+  session: ModelSession | null
+  loading: boolean
+  error: string
+  unavailable: boolean
+  selectedCount: number
   completed: boolean
   initialVisibleCount: number
   onProgress: (count: number) => void
   onTrainingComplete: () => void
   onContinue: () => void
   onBack: () => void
+  onRetry: () => void
 }) {
-  const logs = makeTrainingLogs(mode)
+  const logs = makeTrainingLogs(mode, session, selectedCount)
   const [visibleCount, setVisibleCount] = useState(completed ? logs.length : initialVisibleCount)
   const consoleRef = useRef<HTMLDivElement>(null)
-  const done = visibleCount === logs.length
+  const done = !loading && !error && session !== null && visibleCount >= logs.length
+  const canContinue = done || unavailable
 
   useEffect(() => {
     if (completed) {
       setVisibleCount(logs.length)
       return
     }
+    if (!logs.length) return
     const timer = window.setInterval(() => {
-      setVisibleCount(count => {
-        if (count >= logs.length) {
-          window.clearInterval(timer)
-          return count
-        }
-        const nextCount = count + 1
-        onProgress(nextCount)
-        return nextCount
-      })
+      setVisibleCount(count => (count >= logs.length ? count : count + 1))
     }, 180)
     return () => window.clearInterval(timer)
   }, [mode, logs.length, completed])
+
+  useEffect(() => {
+    if (completed) return
+    onProgress(visibleCount)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visibleCount, completed])
 
   useEffect(() => {
     if (consoleRef.current) consoleRef.current.scrollTop = consoleRef.current.scrollHeight
@@ -629,21 +678,33 @@ function Screen3({ mode, completed, initialVisibleCount, onProgress, onTrainingC
       <div className="mb-4"><BackButton onClick={onBack} /></div>
       <div className="text-center mb-8">
         <h1 style={{ fontFamily: 'Outfit, sans-serif' }} className="text-3xl font-bold text-slate-900 mb-2">AI Model Training Console</h1>
-        <p className="text-slate-500">Watch each step as the model learns from your 20 selected patients.</p>
+        <p className="text-slate-500">{mode === 'kidney' ? 'Replay the included U-Net’s recorded training history. No retraining runs in this page.' : 'Review the measured Random Forest checkpoints returned by the backend.'}</p>
       </div>
 
-      <div className="bg-blue-50 border border-blue-100 text-blue-800 rounded-xl px-5 py-4 mb-5 text-sm">
-        <strong>The AI model is learning only from the 20 Training Dataset patients.</strong> The 10 Evaluation Dataset patients remain unseen during training.
+      <div className={`border rounded-xl px-5 py-4 mb-5 text-sm ${mode === 'diabetes' ? 'bg-blue-50 border-blue-100 text-blue-800' : 'bg-slate-100 border-slate-200 text-slate-700'}`}>
+        {mode === 'kidney' ? 'The existing U-Net was fitted on the locked 20 training cases. Ten validation cases selected its epoch; the ten final-test cases were separate.' : 'The Random Forest fits 20 selected patients and uses 10 validation patients to choose its tree count. P031–P040 are kept for final testing.'}
       </div>
+
+      {error && (
+        <div className={`rounded-xl border px-5 py-4 mb-5 text-sm ${unavailable ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-red-50 border-red-200 text-red-800'}`} role="alert">
+          <div className="font-semibold mb-1">
+            {unavailable ? 'The model service is not connected for this module' : 'Model training failed'}
+          </div>
+          <p className="leading-relaxed">{error}</p>
+          {!unavailable && <button type="button" onClick={onRetry} className="mt-3 bg-red-600 text-white rounded-lg px-4 py-2 text-xs font-semibold">Retry training</button>}
+        </div>
+      )}
 
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-5">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-px bg-slate-200 border-b border-slate-200">
           {[
-            ['Model', mode === 'diabetes' ? 'Linear Binary Classifier' : 'Computer Vision Classifier'],
+            ['Model', mode === 'diabetes' ? 'Random Forest Classifier' : 'U-Net Segmentation'],
             ['Input', mode === 'diabetes' ? 'Blood Test Features' : 'Kidney CT Images'],
-            ['Training Dataset', '20 patients'],
-            ['Evaluation Dataset', '10 reserved · unseen'],
-            ['Task', mode === 'diabetes' ? 'Diabetes Classification' : 'Tumour Image Classification'],
+            ['Training Dataset', `${session?.selection.training_size ?? 20} patients`],
+            ['Evaluation Dataset', `${session?.selection.evaluation_size ?? 10} reserved · unseen`],
+            mode === 'diabetes'
+              ? ['Selected Trees', session && !isKidneySession(session) ? String(session.model.best_tree_count) : '—']
+              : ['Selected Epoch', session && isKidneySession(session) ? String(session.model.selected_epoch) : '—'],
           ].map(([label, value]) => (
             <div key={label} className="bg-white p-4">
               <div className="text-xs text-slate-400 mb-1">{label}</div>
@@ -665,8 +726,8 @@ function Screen3({ mode, completed, initialVisibleCount, onProgress, onTrainingC
               key={index}
               className={
                 line.startsWith('✓') ? 'text-emerald-400' :
-                line.startsWith('Epoch') ? 'text-sky-300' :
-                line.startsWith('Features:') ? 'text-amber-300' :
+                line.startsWith('Trees ') ? 'text-sky-300' :
+                line.startsWith('Features:') || line.startsWith('Tree checkpoints') ? 'text-amber-300' :
                 'text-slate-300'
               }
             >
@@ -677,28 +738,53 @@ function Screen3({ mode, completed, initialVisibleCount, onProgress, onTrainingC
         </div>
       </div>
 
-      <TrainingEducation />
+      {mode === 'diabetes'
+        ? <TrainingEducation />
+        : (
+          <section className="mb-5 bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+            <h2 className="text-lg font-bold text-slate-900 mb-2">How the kidney model learns</h2>
+            <p className="text-sm text-slate-600 leading-relaxed">
+              This activity uses an already trained U-Net, a small neural network that labels every pixel of a CT slice as
+              background, kidney or tumour. During offline training, each epoch was scored on ten separate validation cases with{' '}
+              <strong>Dice</strong> — the overlap between the predicted region and the reference region, where 1.0 is a
+              perfect match. The epoch with the best tumour Dice on the validation cases is kept.
+            </p>
+            <p className="text-xs text-slate-500 mt-3">
+              All ten held-out cases contain a tumour, so "detected / not detected" is not a useful score here — the Dice
+              values are the meaningful measure. The teaching checkpoint is included. Optional retraining uses{' '}
+              <span className="font-mono">python backend/train_kidney_model.py</span>.
+            </p>
+          </section>
+        )}
 
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className={`w-3 h-3 rounded-full ${done ? 'bg-emerald-500' : 'bg-blue-500 animate-pulse'}`} />
+          <span className={`w-3 h-3 rounded-full ${done ? 'bg-emerald-500' : error ? 'bg-amber-500' : 'bg-blue-500 animate-pulse'}`} />
           <div>
-            <div className={`text-sm font-semibold ${done ? 'text-emerald-700' : 'text-blue-700'}`}>
-              {done ? 'AI Model Training Complete' : 'Training in progress…'}
+            <div className={`text-sm font-semibold ${done ? 'text-emerald-700' : error ? 'text-amber-700' : 'text-blue-700'}`}>
+              {done ? (mode === 'kidney' ? 'Recorded Training Loaded' : 'AI Model Training Complete') : error ? 'Model results unavailable' : (mode === 'kidney' ? 'Loading Recorded Training…' : 'Training in progress…')}
             </div>
             <div className="text-xs text-slate-400">
-              {done ? 'The trained model is ready for the reserved Evaluation Dataset.' : 'Logs are updating automatically.'}
+              {done
+                ? (isKidneySession(session)
+                  ? `Loaded recorded metrics — U-Net epoch ${session.model.selected_epoch} kept for evaluation.`
+                  : `Trained on the server — ${session?.model.best_tree_count} trees kept for evaluation.`)
+                : error
+                  ? 'You can still browse the stored patient dataset.'
+                  : (mode === 'kidney'
+                    ? 'The backend is loading the U-Net checkpoint for this activity.'
+                    : 'The backend is fitting a Random Forest for your selection.')}
             </div>
           </div>
         </div>
         <button
           onClick={onContinue}
-          disabled={!done}
+          disabled={!canContinue}
           className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all ${
-            done ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md' : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+            canContinue ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md' : 'bg-slate-100 text-slate-400 cursor-not-allowed'
           }`}
         >
-          Continue to Evaluation
+          {done ? 'Continue to Evaluation' : 'Continue without a model'}
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M 3 8 H 13 M 9 4 L 13 8 L 9 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </button>
       </div>
@@ -735,8 +821,8 @@ function EvaluationDataScreen({ patients, mode, completed, onComplete, onBack }:
   const [evaluating, setEvaluating] = useState(false)
   const [currentPatient, setCurrentPatient] = useState(-1)
   const evaluationMessages = mode === 'diabetes'
-    ? ['Reading blood test values…', 'Normalising numerical features…', 'Running linear classifier…', 'Generating prediction…']
-    : ['Loading kidney CT scan…', 'Preprocessing CT image…', 'Extracting visual features…', 'Running computer vision model…', 'Generating prediction…']
+    ? ['Reviewing clinical features…', 'Reviewing Random Forest output…', 'Comparing known labels…', 'Displaying recorded metrics…']
+    : ['Reviewing CT case identities…', 'Reading checkpoint evaluation…', 'Comparing reference masks…', 'Displaying recorded Dice…']
 
   useEffect(() => {
     if (!evaluating) return
@@ -764,10 +850,10 @@ function EvaluationDataScreen({ patients, mode, completed, onComplete, onBack }:
       <div className="mb-4"><BackButton onClick={onBack} /></div>
       <div className="text-center mb-6">
         <h1 className="text-3xl font-bold text-slate-900 mb-2">Evaluate Your AI Model</h1>
-        <p className="text-slate-500">The remaining 10 patients form the Evaluation Dataset.</p>
+        <p className="text-slate-500">These 10 patients match the evaluation report shown in the next step.</p>
       </div>
       <div className="bg-orange-50 border border-orange-200 rounded-xl px-5 py-4 mb-6 text-sm text-orange-900 leading-relaxed">
-        <strong>These patients were not used during model training.</strong> The trained model will make predictions for all 10 patients, then compare them with their known correct labels to measure performance on unseen data.
+        <strong>These patients were not used to fit the model.</strong> {mode === 'kidney' ? 'This screen reviews the checkpoint’s recorded held-out test report; it does not rerun testing.' : 'These validation patients helped select the tree count; their results are not an independent final-test score.'}
       </div>
 
       {!evaluating ? (
@@ -793,7 +879,7 @@ function EvaluationDataScreen({ patients, mode, completed, onComplete, onBack }:
           </div>
           <div className="text-center">
             <button onClick={() => completed ? onComplete() : (setEvaluating(true), setCurrentPatient(0))} className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg transition-all active:scale-95">
-              {completed ? 'View Evaluation Results' : 'Start Model Evaluation'}
+              {completed ? 'View Evaluation Results' : 'Review Evaluation Results'}
               <span aria-hidden="true">→</span>
             </button>
           </div>
@@ -806,7 +892,7 @@ function EvaluationDataScreen({ patients, mode, completed, onComplete, onBack }:
               <div className="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin" />
               <AIReadyIcon />
             </div>
-            <h2 className="text-xl font-bold text-slate-900 mb-2">Evaluating model on unseen data…</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Reviewing recorded evaluation…</h2>
             <div className="text-3xl font-bold text-blue-600 mb-3">Patient {Math.min(currentPatient + 1, 10)} of 10</div>
             <p className="font-mono text-xs text-slate-500">{currentPatient >= patients.length ? 'Prediction complete ✓' : evaluationMessages[currentPatient % evaluationMessages.length]}</p>
           </div>
@@ -832,40 +918,165 @@ function EvaluationDataScreen({ patients, mode, completed, onComplete, onBack }:
 }
 
 // ── Screen 5 — Evaluation Results ─────────────────────────────
-function getEvaluationRows(patients: Patient[], mode: Mode) {
-  return patients.map((patient, index) => {
-    const actualPositive = hasPrediction(patient, mode)
-    const correct = index !== 1 && index !== 7
-    const predictedPositive = correct ? actualPositive : !actualPositive
-    const positiveLabel = mode === 'diabetes' ? 'Diabetes' : 'Kidney Tumour'
-    const negativeLabel = mode === 'diabetes' ? 'No Diabetes' : 'No Kidney Tumour'
-    return {
-      patient,
-      correct,
-      actual: actualPositive ? positiveLabel : negativeLabel,
-      prediction: predictedPositive ? positiveLabel : negativeLabel,
-    }
-  })
-}
+function KidneyEvaluationResults({ session, patients, onNext, onBack }: {
+  session: KidneySession
+  patients: Patient[]
+  onNext: () => void
+  onBack: () => void
+}) {
+  const metrics = session.evaluation.metrics
+  const byCode = new Map(patients.map(patient => [patient.patient_code, patient]))
+  const dice = (value: number | null) => (value === null ? 'n/a' : value.toFixed(3))
+  const tumourCases = session.evaluation.predictions.filter(row => row.actual_label === 1).length
 
-function EvaluationResultsScreen({ patients, mode, onNext, onBack }: { patients: Patient[]; mode: Mode; onNext: () => void; onBack: () => void }) {
-  const rows = getEvaluationRows(patients, mode)
   return (
     <div className="max-w-6xl mx-auto px-6 py-6 animate-fade-in">
       <ProgressSteps current={4} />
       <div className="mb-4"><BackButton onClick={onBack} /></div>
       <div className="text-center mb-7">
         <h1 className="text-3xl font-bold text-slate-900 mb-2">Model Evaluation Results</h1>
-        <p className="text-slate-500 max-w-2xl mx-auto">Your trained AI model has been evaluated using 10 unseen patients that were not included in the Training Dataset.</p>
-        <span className="inline-block mt-3 bg-slate-100 text-slate-500 rounded-full px-3 py-1 text-xs font-medium">Demonstration evaluation results</span>
+        <p className="text-slate-500 max-w-2xl mx-auto">
+          The U-Net was scored on {session.evaluation.sample_count} held-out CT cases that were never used for training.
+        </p>
+        <span className="inline-block mt-3 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-full px-3 py-1 text-xs font-medium">
+          Recorded held-out evaluation for the included U-Net checkpoint
+        </span>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
         {[
-          ['Evaluation Patients', '10', 'text-slate-800'],
-          ['Correct Predictions', '8 / 10', 'text-emerald-600'],
-          ['Incorrect Predictions', '2 / 10', 'text-red-600'],
-          ['Accuracy', '80%', 'text-blue-600'],
+          ['Held-out Cases', String(session.evaluation.sample_count), 'text-slate-800'],
+          ['Kidney Dice', dice(metrics.kidney_dice), 'text-blue-600'],
+          ['Tumour Dice', dice(metrics.tumour_dice), 'text-red-600'],
+          ['Case Labels Matched', `${metrics.correct} / ${metrics.total}`, 'text-emerald-600'],
+        ].map(([label, value, color]) => (
+          <div key={label} className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 text-center">
+            <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{label}</div>
+            <div className={`text-3xl font-bold ${color}`}>{value}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-7">
+        <div className="px-5 py-4 bg-slate-50 border-b border-slate-200">
+          <h2 className="text-lg font-bold text-slate-900">Per-case overlap with the reference mask</h2>
+        </div>
+        <div className="divide-y divide-slate-100">
+          {session.evaluation.predictions.map(row => {
+            const patient = byCode.get(row.patient_id)
+            return (
+              <div key={row.case_id} className="grid grid-cols-[minmax(10rem,1.6fr)_1fr_1fr_1fr_auto] gap-4 items-center px-5 py-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <PatientAvatar id={patient?.id ?? 0} size={42} />
+                  <div className="min-w-0">
+                    <div className="font-semibold text-sm text-slate-800 truncate">{patient?.name ?? row.patient_id}</div>
+                    <div className="text-[11px] text-slate-400 font-mono">{row.patient_id} · {row.case_id}</div>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-slate-400">Reference</div>
+                  <div className="text-sm font-medium text-slate-700">{row.actual_label === 1 ? 'Tumour' : 'No tumour'}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-slate-400">Model</div>
+                  <div className="text-sm font-medium text-slate-700">{row.predicted_label === 1 ? 'Tumour' : 'No tumour'}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-slate-400">Dice (kidney / tumour)</div>
+                  <div className="text-sm font-mono text-slate-700">{dice(row.kidney_dice)} / {dice(row.tumour_dice)}</div>
+                </div>
+                <span className={`min-w-24 text-center rounded-full px-3 py-1.5 text-xs font-bold ${row.correct ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+                  {row.correct ? '✓ Matched' : '✕ Different'}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 mb-7">
+        <h2 className="text-lg font-bold text-blue-900 mb-2">Reading these numbers</h2>
+        <p className="text-sm text-blue-800 leading-relaxed">
+          Dice measures how much the predicted kidney and tumour regions overlap the reference mask: 1.0 is a perfect
+          match, 0.0 is no overlap. Kidney segmentation is much easier than tumour segmentation because tumours are small
+          and vary in appearance, which is why the tumour score is lower.
+        </p>
+        <p className="mt-3 text-xs text-blue-800">
+          All {tumourCases} held-out cases contain a tumour, so the {metrics.correct}/{metrics.total} label agreement is not a
+          meaningful detector score. It is a 40-case teaching subset, not clinical validation.
+        </p>
+      </div>
+
+      <div className="text-center">
+        <button onClick={onNext} className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-9 py-3.5 rounded-xl font-bold shadow-md transition-colors">Next <span aria-hidden="true">→</span></button>
+      </div>
+    </div>
+  )
+}
+
+function EvaluationResultsScreen({ patients, mode, session, onNext, onBack }: {
+  patients: Patient[]
+  mode: Mode
+  session: ModelSession | null
+  onNext: () => void
+  onBack: () => void
+}) {
+  if (isKidneySession(session)) {
+    return <KidneyEvaluationResults session={session} patients={patients} onNext={onNext} onBack={onBack} />
+  }
+  const evaluation = session?.evaluation ?? null
+  const metrics = evaluation?.metrics ?? null
+  const positiveLabel = mode === 'diabetes' ? 'Diabetes' : 'Kidney Tumour'
+  const negativeLabel = mode === 'diabetes' ? 'No Diabetes' : 'No Kidney Tumour'
+  const byCode = new Map(patients.map(patient => [patient.patient_code, patient]))
+  const rows = evaluation
+    ? evaluation.predictions.map(prediction => ({
+        prediction,
+        patient: byCode.get(prediction.patient_id) ?? null,
+      }))
+    : []
+  const total = evaluation?.sample_count ?? 0
+  const correct = evaluation ? evaluation.predictions.filter(row => row.correct).length : 0
+  const accuracyText = metrics ? `${(metrics.accuracy * 100).toFixed(1)}%` : '—'
+
+  if (!evaluation) {
+    return (
+      <div className="max-w-6xl mx-auto px-6 py-6 animate-fade-in">
+        <ProgressSteps current={4} />
+        <div className="mb-4"><BackButton onClick={onBack} /></div>
+        <div className="text-center mb-7">
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Model Evaluation Results</h1>
+        </div>
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 max-w-2xl mx-auto text-sm text-amber-900" role="status">
+          <p className="font-semibold mb-2">No model results are available for this module.</p>
+          <p className="leading-relaxed">
+            The {mode === 'kidney' ? 'kidney segmentation' : 'diabetes'} model did not run, so there are no predictions or metrics to report.
+            Go back to the training step to read the reason, or continue to browse the stored patient dataset.
+          </p>
+        </div>
+        <div className="text-center mt-7">
+          <button onClick={onNext} className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-9 py-3.5 rounded-xl font-bold shadow-md transition-colors">Continue <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto px-6 py-6 animate-fade-in">
+      <ProgressSteps current={4} />
+      <div className="mb-4"><BackButton onClick={onBack} /></div>
+      <div className="text-center mb-7">
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">Model Evaluation Results</h1>
+        <p className="text-slate-500 max-w-2xl mx-auto">Your trained model has been evaluated using {total} unseen patients that were not included in the Training Dataset.</p>
+        <span className="inline-block mt-3 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-full px-3 py-1 text-xs font-medium">Live output from the local Random Forest model</span>
+      </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
+        {[
+          ['Evaluation Patients', String(total), 'text-slate-800'],
+          ['Correct Predictions', `${correct} / ${total}`, 'text-emerald-600'],
+          ['Incorrect Predictions', `${total - correct} / ${total}`, 'text-red-600'],
+          ['Accuracy', accuracyText, 'text-blue-600'],
         ].map(([label, value, color]) => (
           <div key={label} className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 text-center">
             <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{label}</div>
@@ -879,15 +1090,22 @@ function EvaluationResultsScreen({ patients, mode, onNext, onBack }: { patients:
           <h2 className="text-lg font-bold text-slate-900">Actual Labels vs AI Predictions</h2>
         </div>
         <div className="divide-y divide-slate-100">
-          {rows.map(({ patient, actual, prediction, correct }) => (
-            <div key={patient.id} className="grid grid-cols-[minmax(10rem,1.4fr)_1fr_1fr_auto] gap-4 items-center px-5 py-4">
+          {rows.map(({ patient, prediction }) => (
+            <div key={prediction.patient_id} className="grid grid-cols-[minmax(10rem,1.4fr)_1fr_1fr_auto] gap-4 items-center px-5 py-4">
               <div className="flex items-center gap-3 min-w-0">
-                <PatientAvatar id={patient.id} size={42} />
-                <span className="font-semibold text-sm text-slate-800 truncate">{patient.name}</span>
+                <PatientAvatar id={patient?.id ?? 0} size={42} />
+                <div className="min-w-0">
+                  <div className="font-semibold text-sm text-slate-800 truncate">{patient?.name ?? prediction.patient_id}</div>
+                  <div className="text-[11px] text-slate-400 font-mono">{prediction.patient_id}</div>
+                </div>
               </div>
-              <div><div className="text-xs text-slate-400">Actual</div><div className="text-sm font-medium text-slate-700">{actual}</div></div>
-              <div><div className="text-xs text-slate-400">AI Prediction</div><div className="text-sm font-medium text-slate-700">{prediction}</div></div>
-              <span className={`min-w-24 text-center rounded-full px-3 py-1.5 text-xs font-bold ${correct ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>{correct ? '✓ Correct' : '✕ Incorrect'}</span>
+              <div><div className="text-xs text-slate-400">Actual</div><div className="text-sm font-medium text-slate-700">{prediction.actual_label === 1 ? positiveLabel : negativeLabel}</div></div>
+              <div>
+                <div className="text-xs text-slate-400">AI Prediction</div>
+                <div className="text-sm font-medium text-slate-700">{prediction.predicted_label === 1 ? positiveLabel : negativeLabel}</div>
+                <div className="text-[11px] text-slate-400 font-mono">score {(prediction.estimated_diabetes_probability * 100).toFixed(1)}%</div>
+              </div>
+              <span className={`min-w-24 text-center rounded-full px-3 py-1.5 text-xs font-bold ${prediction.correct ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>{prediction.correct ? '✓ Correct' : '✕ Incorrect'}</span>
             </div>
           ))}
         </div>
@@ -897,13 +1115,26 @@ function EvaluationResultsScreen({ patients, mode, onNext, onBack }: { patients:
         <h2 className="text-lg font-bold text-blue-900 mb-2">Why do we evaluate the model?</h2>
         <p className="text-sm text-blue-800 leading-relaxed mb-5">Evaluation Data helps us measure how well the trained model performs on patients it has never seen before. Comparing the AI predictions with the known correct labels gives us an estimate of the model’s performance.</p>
         <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-semibold text-slate-700">
-          <span className="bg-white border border-blue-200 rounded-lg px-3 py-2">10 Unseen Patients</span><span>→</span>
+          <span className="bg-white border border-blue-200 rounded-lg px-3 py-2">{total} Unseen Patients</span><span>→</span>
           <span className="bg-white border border-blue-200 rounded-lg px-3 py-2">Trained AI Model</span><span>→</span>
           <span className="bg-white border border-blue-200 rounded-lg px-3 py-2">AI Predictions</span><span>+</span>
           <span className="bg-white border border-blue-200 rounded-lg px-3 py-2">Actual Labels</span><span>→</span>
-          <span className="bg-blue-600 text-white rounded-lg px-3 py-2">Compare → 80% Accuracy</span>
+          <span className="bg-blue-600 text-white rounded-lg px-3 py-2">Compare → {accuracyText} Accuracy</span>
         </div>
-        <div className="text-center mt-4 font-mono text-sm text-blue-900">8 correct predictions ÷ 10 evaluation patients = 80% accuracy</div>
+        <div className="text-center mt-4 font-mono text-sm text-blue-900">{correct} correct predictions ÷ {total} evaluation patients = {accuracyText} accuracy</div>
+        <p className="mt-4 text-center text-xs text-blue-800">
+          These {total} patients never entered training, but they did guide how many trees the forest keeps — so treat this as a classroom check, not an independent benchmark.
+        </p>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-7">
+        <h2 className="text-lg font-bold text-slate-900 mb-2">Held-out check</h2>
+        <p className="text-sm text-slate-600 leading-relaxed">
+          The {session!.split.held_out.length} held-out teaching patients ({session!.split.held_out.join(', ')}) were never used for training or for model selection.
+          The same fitted model scores <strong className="text-slate-900">{(session!.held_out_evaluation.metrics.accuracy * 100).toFixed(1)}%</strong> accuracy on them
+          ({session!.held_out_evaluation.predictions.filter(row => row.correct).length}/{session!.held_out_evaluation.sample_count} correct).
+          With only {session!.held_out_evaluation.sample_count} synthetic patients, a few answers move this number a long way.
+        </p>
       </div>
       <div className="text-center"><button onClick={onNext} className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-9 py-3.5 rounded-xl font-bold shadow-md transition-colors">Next <span aria-hidden="true">→</span></button></div>
     </div>
@@ -918,9 +1149,9 @@ function SelectTestPatientScreen({ patients, mode, testId, onSelect, onNext, onB
       <ProgressSteps current={5} />
       <div className="mb-4"><BackButton onClick={onBack} /></div>
       <div className="text-center mb-6">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Choose a New Patient for AI Prediction</h1>
-        <p className="text-slate-500 max-w-2xl mx-auto mb-3">Now that the model has been trained and evaluated, choose one new patient to see how the AI makes a prediction for an individual case.</p>
-        <div className="inline-flex items-center gap-2 bg-red-50 border border-red-100 rounded-lg px-4 py-2 text-sm text-red-700">These are new patient cases. They were not used in either the Training Dataset or the Evaluation Dataset.</div>
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">Choose a Held-out Patient for AI Prediction</h1>
+        <p className="text-slate-500 max-w-2xl mx-auto mb-3">Choose one held-out patient to run an individual prediction with the current model.</p>
+        <div className="inline-flex items-center gap-2 bg-red-50 border border-red-100 rounded-lg px-4 py-2 text-sm text-red-700">{mode === 'kidney' ? 'These are the same ten test cases shown in the recorded evaluation. This request runs fresh inference; it is not a new independent test.' : 'These patients were not used for fitting or validation-based model selection.'}</div>
       </div>
       <div className="flex items-center gap-3 mb-5 max-w-3xl mx-auto"><div className="flex-1 h-px bg-red-100" /><div className="bg-red-50 border border-red-100 rounded-full px-4 py-1.5 text-xs font-semibold text-red-700">Held-out Cases — {patients.length} Patients</div><div className="flex-1 h-px bg-red-100" /></div>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8 max-w-4xl mx-auto">
@@ -947,13 +1178,6 @@ function SelectTestPatientScreen({ patients, mode, testId, onSelect, onNext, onB
 }
 
 // ── Stored patient data ─────────────────────────────────────
-function hasPrediction(p: Patient, mode: Mode) {
-  return mode === 'diabetes' ? p.id % 3 !== 1 : p.id % 3 !== 0
-}
-
-function getConfidence(p: Patient) {
-  return 68 + (p.id * 7) % 25
-}
 
 function PatientProfile({ patient, mode, test = false }: { patient: Patient; mode: Mode; test?: boolean }) {
   return (
@@ -1059,30 +1283,111 @@ function PatientDataPanel({ patient, mode, analysing = false }: { patient: Patie
 }
 
 // ── Screens 6 & 7 — One stable detection interface ────────────
-type DetectionState = 'ready' | 'analysing' | 'result'
+type DetectionState = 'ready' | 'analysing' | 'result' | 'unavailable'
 
 const MODE_DETECTION_STAGES: Record<Mode, string[]> = {
   diabetes: [
-    'Reading blood test values…',
-    'Normalising numerical features…',
-    'Feeding features into linear classifier…',
-    'Calculating classification score…',
-    'Generating binary prediction…',
+    'Sending this patient\'s blood test values to the backend…',
+    'Loading the Random Forest trained in your session…',
+    'Scoring the six numerical features…',
+    'Comparing the score with the 0.5 decision threshold…',
+    'Returning the prediction and local explanation…',
   ],
   kidney: [
     'Loading CT scan…',
     'Preprocessing CT image…',
     'Extracting visual features…',
-    'Running computer vision model…',
+    'Running the segmentation model…',
     'Calculating tumour probability…',
     'Generating prediction…',
   ],
 }
 
-function PredictionExplainability({ patient: _patient, mode: _mode }: { patient: Patient; mode: Mode }) {
-  return <div className="rounded-xl border border-blue-100 bg-blue-50 p-4 mb-5 text-sm text-blue-800">
-    Model explanations are not connected yet. No feature contributions or CT attention map are available for these stored records.
-  </div>
+function KidneySegmentationPanel({ prediction }: { prediction: KidneyPrediction }) {
+  const top = prediction.tumour_slices[0]
+  return (
+    <div className="rounded-xl border border-blue-100 bg-white shadow-sm overflow-hidden">
+      <div className="px-4 py-3 bg-blue-50 border-b border-blue-100">
+        <h3 className="text-sm font-bold text-blue-900">Model segmentation</h3>
+        <p className="text-xs text-blue-700 mt-0.5">
+          Predicted kidney (green) and tumour (red) regions on the most affected slice.
+        </p>
+      </div>
+      {top ? (
+        <div className="p-4">
+          <img
+            src={overlayUrl(prediction.patient_id, top.z)}
+            alt={`Predicted segmentation overlay for ${prediction.case_id} slice ${top.z}`}
+            className="w-full rounded-lg border border-slate-200 bg-slate-950"
+          />
+          <p className="mt-3 text-xs text-slate-500 font-mono">
+            {prediction.case_id} · slice z={top.z} · tumour covers {(top.tumour_pixel_fraction * 100).toFixed(2)}% of the slice
+          </p>
+          <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+            {[
+              ['Slices analysed', String(prediction.slice_count)],
+              ['Slices with tumour', String(prediction.tumour_slice_count)],
+              ['Highest tumour probability', `${(prediction.estimated_tumour_probability * 100).toFixed(1)}%`],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded-lg bg-slate-50 border border-slate-200 px-2 py-2">
+                <div className="text-[10px] uppercase tracking-wider text-slate-400">{label}</div>
+                <div className="text-sm font-bold text-slate-800">{value}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="p-4 text-sm text-slate-600">
+          No slice in this case was predicted to contain tumour tissue, so there is no overlay to display.
+        </div>
+      )}
+      <p className="px-4 py-3 bg-slate-50 border-t border-slate-100 text-[11px] text-slate-500 leading-relaxed">
+        Trained on 20 teaching cases at {prediction.selected_epoch ? `epoch ${prediction.selected_epoch}` : 'the selected epoch'};
+        measured on 256×256 CT slices. Educational only — not a medical diagnosis.
+      </p>
+    </div>
+  )
+}
+
+function PredictionExplainability({ prediction }: { prediction: PredictionResult }) {
+  if (!prediction.feature_effects.length) {
+    return <div className="rounded-xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-800">
+      {prediction.note ?? 'No local explanation is available for this prediction.'}
+    </div>
+  }
+  const largest = Math.max(...prediction.feature_effects.map(effect => Math.abs(effect.probability_change)), 0.0001)
+  return (
+    <div className="rounded-xl border border-blue-100 bg-white shadow-sm overflow-hidden">
+      <div className="px-4 py-3 bg-blue-50 border-b border-blue-100">
+        <h3 className="text-sm font-bold text-blue-900">What moved this prediction?</h3>
+        <p className="text-xs text-blue-700 mt-0.5">Each bar swaps one value back to the training-set reference and measures the change in the model score.</p>
+      </div>
+      <div className="divide-y divide-slate-100">
+        {prediction.feature_effects.map(effect => {
+          const width = Math.max((Math.abs(effect.probability_change) / largest) * 100, 2)
+          const raises = effect.direction === 'increased_score'
+          const neutral = effect.direction === 'no_change'
+          return (
+            <div key={effect.feature_name} className="px-4 py-3">
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="text-sm font-medium text-slate-800">{effect.display_name}</span>
+                <span className={`text-xs font-mono font-semibold ${neutral ? 'text-slate-400' : raises ? 'text-red-600' : 'text-emerald-600'}`}>
+                  {effect.probability_change >= 0 ? '+' : ''}{(effect.probability_change * 100).toFixed(1)} pts
+                </span>
+              </div>
+              <div className="mt-1.5 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                <div className={`h-full rounded-full ${neutral ? 'bg-slate-300' : raises ? 'bg-red-400' : 'bg-emerald-400'}`} style={{ width: `${width}%` }} />
+              </div>
+              <div className="mt-1 text-[11px] text-slate-400 font-mono">patient {effect.patient_value} · reference {effect.reference_value}</div>
+            </div>
+          )
+        })}
+      </div>
+      <p className="px-4 py-3 bg-slate-50 border-t border-slate-100 text-[11px] text-slate-500 leading-relaxed">
+        One-feature-at-a-time sensitivity against the training reference. Effects are not additive and do not prove causation or clinical importance.
+      </p>
+    </div>
+  )
 }
 
 function Screen5({ patient, mode, onTestAnother, onRestart, onBack }: {
@@ -1094,9 +1399,17 @@ function Screen5({ patient, mode, onTestAnother, onRestart, onBack }: {
 }) {
   const [detectionState, setDetectionState] = useState<DetectionState>('ready')
   const [stage, setStage] = useState(-1)
+  const [prediction, setPrediction] = useState<AnyPrediction | null>(null)
+  const [failure, setFailure] = useState('')
   const stages = MODE_DETECTION_STAGES[mode]
-  const positive = hasPrediction(patient, mode)
-  const confidence = getConfidence(patient)
+  const kidneyResult = isKidneyPrediction(prediction) ? prediction : null
+  const diabetesResult = prediction && !isKidneyPrediction(prediction) ? prediction : null
+  const positive = prediction ? prediction.predicted_label === 1 : false
+  const score = diabetesResult
+    ? diabetesResult.estimated_diabetes_probability
+    : kidneyResult
+      ? kidneyResult.estimated_tumour_probability
+      : 0
   const resultLabel = mode === 'diabetes'
     ? (positive ? 'Diabetes Detected' : 'No Diabetes Detected')
     : (positive ? 'Kidney Tumour Detected' : 'No Kidney Tumour Detected')
@@ -1104,6 +1417,13 @@ function Screen5({ patient, mode, onTestAnother, onRestart, onBack }: {
   const handleDetect = () => {
     setDetectionState('analysing')
     setStage(0)
+    setPrediction(null)
+    setFailure('')
+    predictPatient(mode, patient.patient_code)
+      .then(result => setPrediction(result))
+      .catch((error: unknown) => setFailure(
+        error instanceof ModelApiError ? error.message : 'The model service returned an unexpected response.',
+      ))
   }
 
   useEffect(() => {
@@ -1122,9 +1442,12 @@ function Screen5({ patient, mode, onTestAnother, onRestart, onBack }: {
 
   useEffect(() => {
     if (detectionState !== 'analysing' || stage !== stages.length) return
-    const timer = window.setTimeout(() => setDetectionState('result'), 450)
-    return () => window.clearTimeout(timer)
-  }, [detectionState, stage, stages.length])
+    if (prediction) {
+      const timer = window.setTimeout(() => setDetectionState('result'), 450)
+      return () => window.clearTimeout(timer)
+    }
+    if (failure) setDetectionState('unavailable')
+  }, [detectionState, stage, stages.length, prediction, failure])
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-6 animate-fade-in">
@@ -1139,9 +1462,14 @@ function Screen5({ patient, mode, onTestAnother, onRestart, onBack }: {
             </span>
           </div>
           <PatientDataPanel patient={patient} mode={mode} analysing={detectionState === 'analysing'} />
-          {detectionState === 'result' && (
+          {detectionState === 'result' && diabetesResult && (
             <div className="mt-5">
-              <PredictionExplainability patient={patient} mode={mode} />
+              <PredictionExplainability prediction={diabetesResult} />
+            </div>
+          )}
+          {detectionState === 'result' && kidneyResult && (
+            <div className="mt-5">
+              <KidneySegmentationPanel prediction={kidneyResult} />
             </div>
           )}
         </section>
@@ -1152,7 +1480,7 @@ function Screen5({ patient, mode, onTestAnother, onRestart, onBack }: {
               {detectionState === 'result' ? 'AI Prediction Result' : detectionState === 'analysing' ? 'AI Analysing' : 'AI Detection'}
             </h2>
             <span className="text-xs font-mono text-slate-400">
-              {mode === 'diabetes' ? 'LINEAR MODEL' : 'VISION MODEL'}
+              {mode === 'diabetes' ? 'RANDOM FOREST' : 'U-NET'}
             </span>
           </div>
           <div className={`bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col transition-all duration-300 ${detectionState === 'result' ? 'lg:min-h-[31rem]' : 'min-h-[31rem]'}`}>
@@ -1160,7 +1488,7 @@ function Screen5({ patient, mode, onTestAnother, onRestart, onBack }: {
               <div className="flex flex-col h-full animate-fade-in">
                 <div className="bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl border border-blue-100 p-7 text-center mb-5">
                   <div className="w-20 h-20 rounded-full bg-white border border-blue-200 shadow-sm flex items-center justify-center mx-auto mb-4"><AIReadyIcon /></div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-2">Your {mode === 'diabetes' ? 'linear classification' : 'computer vision'} model is ready.</h3>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">Your {mode === 'diabetes' ? 'Random Forest' : 'segmentation'} model is ready.</h3>
                   <p className="text-sm text-slate-500 leading-relaxed">
                     {mode === 'diabetes'
                       ? "The model will use only this patient's seven numerical blood-test features."
@@ -1211,29 +1539,85 @@ function Screen5({ patient, mode, onTestAnother, onRestart, onBack }: {
               </div>
             )}
 
-            {detectionState === 'result' && (
+            {detectionState === 'result' && diabetesResult && (
               <div className="flex flex-col h-full animate-scale-in">
                 <div className={`rounded-2xl border-2 p-6 text-center ${positive ? 'bg-red-50 border-red-200' : 'bg-emerald-50 border-emerald-200'}`}>
                   <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Predicted Outcome</div>
                   <div className={`text-2xl font-extrabold ${positive ? 'text-red-700' : 'text-emerald-700'}`}>{resultLabel}</div>
-                  <div className="text-sm text-slate-500 mt-2">Binary classification result</div>
+                  <div className="text-sm text-slate-500 mt-2">Decision threshold {diabetesResult.prediction_threshold ?? 0.5} · {diabetesResult.best_tree_count} trees</div>
                 </div>
                 <div className="my-5 rounded-xl border border-slate-200 p-5">
                   <div className="flex items-end justify-between mb-3">
                     <div>
-                      <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Prediction Confidence</div>
-                      <div className="text-xs text-slate-400 mt-1">Demonstration model output</div>
+                      <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Model-Estimated Diabetes Score</div>
+                      <div className="text-xs text-slate-400 mt-1">
+                        {diabetesResult.source === 'session_model' ? 'From the model trained in this session' : 'From the committed demonstration model'}
+                      </div>
                     </div>
-                    <div className="text-3xl font-bold text-blue-600">{confidence}%</div>
+                    <div className="text-3xl font-bold text-blue-600">{(score * 100).toFixed(1)}%</div>
                   </div>
-                  <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-blue-600 rounded-full confidence-bar" style={{ width: `${confidence}%` }} /></div>
+                  <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-blue-600 rounded-full confidence-bar" style={{ width: `${Math.min(score * 100, 100)}%` }} /></div>
+                  <div className="mt-3 text-xs text-slate-500">
+                    Reference label in the dataset: <strong className={diabetesResult.actual_label === 1 ? 'text-red-600' : 'text-emerald-600'}>
+                      {diabetesResult.actual_label === 1 ? 'Diabetes' : 'No Diabetes'}
+                    </strong> — the model {diabetesResult.actual_label === diabetesResult.predicted_label ? 'matched' : 'did not match'} it.
+                  </div>
                 </div>
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-800 leading-relaxed mb-5">
-                  <strong>Educational prototype:</strong> This result was generated from {mode === 'diabetes' ? 'blood-test numerical features using a linear binary classifier' : 'a kidney CT image using a computer vision classifier'}. This is an educational prototype and is not a medical diagnosis.
+                  <strong>Educational prototype:</strong> this score was produced by the Random Forest fitted on the server from this session's 20 training patients. It is a model-estimated educational score, not a calibrated clinical risk or a medical diagnosis.
                 </div>
                 <div className="mt-auto hidden lg:flex gap-3">
                   <button onClick={onTestAnother} className="flex-1 border-2 border-red-200 text-red-600 hover:bg-red-50 px-3 py-3 rounded-xl font-semibold text-sm transition-colors">Test Another</button>
                   <button onClick={onRestart} className="flex-1 bg-slate-800 hover:bg-slate-900 text-white px-3 py-3 rounded-xl font-semibold text-sm transition-colors">Start Over</button>
+                </div>
+              </div>
+            )}
+
+            {detectionState === 'result' && kidneyResult && (
+              <div className="flex flex-col h-full animate-scale-in">
+                <div className={`rounded-2xl border-2 p-6 text-center ${positive ? 'bg-red-50 border-red-200' : 'bg-emerald-50 border-emerald-200'}`}>
+                  <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Predicted Outcome</div>
+                  <div className={`text-2xl font-extrabold ${positive ? 'text-red-700' : 'text-emerald-700'}`}>{resultLabel}</div>
+                  <div className="text-sm text-slate-500 mt-2">Epoch {kidneyResult.selected_epoch} · {kidneyResult.slice_count} CT slices analysed</div>
+                </div>
+                <div className="my-5 rounded-xl border border-slate-200 p-5">
+                  <div className="flex items-end justify-between mb-3">
+                    <div>
+                      <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Highest Tumour Probability</div>
+                      <div className="text-xs text-slate-400 mt-1">Largest softmax score across every pixel and slice</div>
+                    </div>
+                    <div className="text-3xl font-bold text-blue-600">{(score * 100).toFixed(1)}%</div>
+                  </div>
+                  <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-blue-600 rounded-full confidence-bar" style={{ width: `${Math.min(score * 100, 100)}%` }} /></div>
+                  <div className="mt-3 text-xs text-slate-500">
+                    The model marked <strong className="text-slate-800">{kidneyResult.tumour_slice_count}</strong> of {kidneyResult.slice_count} slices as containing tumour
+                    ({(kidneyResult.tumour_slice_ratio * 100).toFixed(0)}%).
+                    {kidneyResult.reference_tumour_slice_count !== undefined && (
+                      <> The reference mask marks {kidneyResult.reference_tumour_slice_count} slices — this case {kidneyResult.actual_label === 1 ? 'does' : 'does not'} contain tumour.</>
+                    )}
+                  </div>
+                </div>
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-800 leading-relaxed mb-5">
+                  <strong>Educational prototype:</strong> this segmentation came from the local U-Net checkpoint trained on 20 teaching cases. It is not a medical diagnosis.
+                </div>
+                <div className="mt-auto hidden lg:flex gap-3">
+                  <button onClick={onTestAnother} className="flex-1 border-2 border-red-200 text-red-600 hover:bg-red-50 px-3 py-3 rounded-xl font-semibold text-sm transition-colors">Test Another</button>
+                  <button onClick={onRestart} className="flex-1 bg-slate-800 hover:bg-slate-900 text-white px-3 py-3 rounded-xl font-semibold text-sm transition-colors">Start Over</button>
+                </div>
+              </div>
+            )}
+
+            {detectionState === 'unavailable' && (
+              <div className="flex flex-col h-full animate-fade-in">
+                <div className="rounded-2xl border-2 border-amber-200 bg-amber-50 p-6">
+                  <div className="text-xs font-semibold uppercase tracking-wider text-amber-700 mb-2">Prediction unavailable</div>
+                  <h3 className="text-lg font-bold text-amber-900 mb-2">The {mode === 'kidney' ? 'kidney segmentation' : 'diabetes'} model did not run.</h3>
+                  <p className="text-sm text-amber-800 leading-relaxed" role="alert">{failure}</p>
+                  <p className="text-xs text-amber-700 mt-3">No prediction is shown because the backend could not produce one. The stored patient data on the left is unchanged.</p>
+                </div>
+                <div className="mt-auto pt-5 flex gap-3">
+                  <button onClick={handleDetect} className="flex-1 border-2 border-amber-300 text-amber-700 hover:bg-amber-50 px-3 py-3 rounded-xl font-semibold text-sm transition-colors">Try again</button>
+                  <button onClick={onBack} className="flex-1 bg-slate-800 hover:bg-slate-900 text-white px-3 py-3 rounded-xl font-semibold text-sm transition-colors">Back</button>
                 </div>
               </div>
             )}
@@ -1298,10 +1682,16 @@ export default function App() {
   const [trainingComplete, setTrainingComplete] = useState(savedWorkflow.trainingComplete)
   const [evaluationComplete, setEvaluationComplete] = useState(savedWorkflow.evaluationComplete)
   const [trainingLogCount, setTrainingLogCount] = useState(savedWorkflow.trainingLogCount)
+  const [session, setSession] = useState<ModelSession | null>(null)
+  const [trainingError, setTrainingError] = useState('')
+  const [trainingUnavailable, setTrainingUnavailable] = useState(false)
+  const [trainingLoading, setTrainingLoading] = useState(false)
+  const [trainingAttempt, setTrainingAttempt] = useState(0)
   const { screen, mode } = route
   const { patients, error, retry } = usePatients(mode)
   const eligiblePatients = patients.filter(p => mode === 'kidney' ? p.pool === 'train' : p.pool === 'development')
   const trainingIds = new Set([...storedTrainingIds].filter(id => eligiblePatients.some(p => p.id === id)))
+  const trainingKey = [...trainingIds].sort((a, b) => a - b).join(',')
   const newPatients = patients.filter(p => p.pool === 'test')
   const previousMode = useRef(mode)
   useEffect(() => {
@@ -1311,9 +1701,45 @@ export default function App() {
       setTrainingComplete(false)
       setEvaluationComplete(false)
       setTrainingLogCount(0)
+      setSession(null)
+      setTrainingError('')
+      setTrainingUnavailable(false)
       previousMode.current = mode
     }
   }, [mode])
+
+  // Train on the server whenever the workflow reaches the training screen.
+  useEffect(() => {
+    if (screen !== 3 || !mode) return
+    const ids = trainingKey ? trainingKey.split(',').map(Number) : []
+    if (ids.length !== 20) return
+    const codes = ids.map(id => `P${String(id).padStart(3, '0')}`)
+    const signature = codes.join(',')
+    if (session && session.selection.training_patient_ids.join(',') === signature) return
+
+    let cancelled = false
+    setTrainingLoading(true)
+    setTrainingError('')
+    setTrainingUnavailable(false)
+    setTrainingComplete(false)
+    setTrainingLogCount(0)
+    trainModel(mode, codes)
+      .then(result => {
+        if (cancelled) return
+        setSession(result)
+      })
+      .catch((reason: unknown) => {
+        if (cancelled) return
+        setSession(null)
+        setTrainingUnavailable(reason instanceof ModelApiError && reason.unavailable)
+        setTrainingError(reason instanceof Error ? reason.message : 'The model service could not train this selection.')
+      })
+      .finally(() => {
+        if (!cancelled) setTrainingLoading(false)
+      })
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen, mode, trainingKey, trainingAttempt])
 
   useEffect(() => {
     const onPopState = () => {
@@ -1343,6 +1769,19 @@ export default function App() {
     window.scrollTo(0, 0)
   }
 
+  // Keep the workflow consistent after a reload: the fitted model lives on the server.
+  useEffect(() => {
+    if (!mode) return
+    if (screen === 3 && trainingIds.size !== 20) {
+      navigateTo(2)
+      return
+    }
+    if (screen >= 4 && !session && !trainingUnavailable) {
+      navigateTo(trainingIds.size === 20 ? 3 : 2)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen, mode, session, trainingIds.size])
+
   const resetWorkflow = () => {
     navigateTo(1)
     setTrainingIds(new Set())
@@ -1350,6 +1789,9 @@ export default function App() {
     setTrainingComplete(false)
     setEvaluationComplete(false)
     setTrainingLogCount(0)
+    setSession(null)
+    setTrainingError('')
+    setTrainingUnavailable(false)
   }
 
   const handleSelectMode = (m: Mode) => {
@@ -1361,6 +1803,9 @@ export default function App() {
     setTrainingComplete(false)
     setEvaluationComplete(false)
     setTrainingLogCount(0)
+    setSession(null)
+    setTrainingError('')
+    setTrainingUnavailable(false)
     navigateTo(2, m)
   }
 
@@ -1376,6 +1821,8 @@ export default function App() {
     setEvaluationComplete(false)
     setTrainingLogCount(0)
     setTestId(null)
+    setSession(null)
+    setTrainingError('')
   }
 
   const handleRandomTraining = () => {
@@ -1394,13 +1841,17 @@ export default function App() {
     setEvaluationComplete(false)
     setTrainingLogCount(0)
     setTestId(null)
+    setSession(null)
+    setTrainingError('')
   }
 
   const handleSelectTest = (id: number) => {
     setTestId(id)
   }
 
-  const evaluationPatients = patients.filter(patient => mode === 'kidney' ? patient.pool === 'validation' : patient.pool === 'development' && !trainingIds.has(patient.id))
+  const evaluationPatients = session
+    ? patients.filter(patient => evaluationPatientCodes(session).includes(patient.patient_code))
+    : []
   const testPatient = route.testId ? newPatients.find(patient => patient.id === route.testId) ?? null : null
 
   if (mode && !patients.length) return (
@@ -1414,7 +1865,13 @@ export default function App() {
   return (
     <div className="min-h-screen" style={{ background: '#F8FAFC' }}>
       <Header onHome={() => navigateTo(1)} />
-      {screen >= 3 && <p className="bg-amber-50 border-b border-amber-200 text-amber-900 text-center text-sm p-3">Workflow demo: training and predictions are simulated. Patient records and CT images come from the stored dataset.</p>}
+      {screen >= 3 && (
+        <p className="text-center text-sm p-3 border-b bg-emerald-50 border-emerald-200 text-emerald-900">
+          {mode === 'diabetes'
+            ? 'Training and predictions run the real Random Forest in the local Python backend. All patients are fictional and results are for education only.'
+            : 'This activity replays recorded U-Net training and evaluation. Patient predictions run the included checkpoint on the backend. Educational only.'}
+        </p>
+      )}
       {screen === 7 && !testPatient && <div role="alert" className="p-12 text-center">This patient is not in the held-out test pool. <button className="text-blue-600 underline" onClick={() => navigateTo(6)}>Choose a test patient</button></div>}
       {screen === 1 && <Screen1 onSelect={handleSelectMode} />}
       {screen === 2 && (
@@ -1431,12 +1888,18 @@ export default function App() {
       {screen === 3 && mode && (
         <Screen3
           mode={mode}
+          session={session}
+          loading={trainingLoading}
+          error={trainingError}
+          unavailable={trainingUnavailable}
+          selectedCount={trainingIds.size}
           completed={trainingComplete}
           initialVisibleCount={trainingLogCount}
           onProgress={setTrainingLogCount}
           onTrainingComplete={() => setTrainingComplete(true)}
           onContinue={() => navigateTo(4)}
           onBack={() => navigateTo(2)}
+          onRetry={() => setTrainingAttempt(value => value + 1)}
         />
       )}
       {screen === 4 && mode && (
@@ -1450,8 +1913,9 @@ export default function App() {
       )}
       {screen === 5 && mode && (
         <EvaluationResultsScreen
-          patients={evaluationPatients}
+          patients={patients}
           mode={mode}
+          session={session}
           onNext={() => navigateTo(6)}
           onBack={() => navigateTo(4)}
         />

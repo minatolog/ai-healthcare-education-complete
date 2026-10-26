@@ -43,3 +43,16 @@ test('unknown and malformed patient routes are rejected', () => {
     assert.throws(() => pathForRoute({ screen: 7, mode: 'kidney', testId: id }))
   }
 })
+
+test('kidney evaluation cards use exactly the cases in the test report', async () => {
+  const { evaluationPatientCodes } = await import('../src/api.ts')
+  const reportedCodes = patients.filter(p => p.kidney_pool === 'test').map(p => p.patient_code)
+  const session = { mode: 'kidney', evaluation: { predictions: reportedCodes.map(patient_id => ({patient_id})) } }
+  assert.deepEqual(evaluationPatientCodes(session), reportedCodes)
+  assert.ok(reportedCodes.every(code => patients.find(p => p.patient_code === code).kidney_pool !== 'validation'))
+})
+
+test('diabetes evaluation cards retain the model-selection group', async () => {
+  const { evaluationPatientCodes } = await import('../src/api.ts')
+  assert.deepEqual(evaluationPatientCodes({mode:'diabetes',split:{evaluation:['P021','P022']}}), ['P021','P022'])
+})
