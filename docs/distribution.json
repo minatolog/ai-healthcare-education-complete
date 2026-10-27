@@ -1,6 +1,5 @@
 {
   "source_folder": "02_main",
-  "url": "https://github.com/minatolog/ai-healthcare-education/releases/download/02-main-v1/kidney-data.zip",
   "sha256": "076bf6b035ddfaa19f2be6ec853358e34a8d70141ddce3b375abdf61157f4aff",
   "png_count": 7514,
   "ct_count": 3757,
@@ -9,5 +8,6 @@
     "backend/data/patient_images.json": "46425760e8954b1ab3aa899975f0a4e3b30d70896553694205b5142a62feef7c",
     "data/kidney/data2d/manifest.csv": "998c4769a16f06f81ed1f8920b4893e9445b2b43cf546f455f5c593707d6def2",
     "data/kidney/provenance/png_data_audit.json": "47d3de1d704227e76c06d88141ae13a696a0cb15c02f91127d3f5880707e0801"
-  }
+  },
+  "archive_name": "kidney-data.zip"
 }

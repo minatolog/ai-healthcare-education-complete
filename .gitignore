@@ -47,12 +47,3 @@ frontend/.figma/
 # AI development tool files
 frontend/AGENTS.md
 frontend/CLAUDE.md
-
-# GitHub distribution restores reviewed PNGs from the versioned release
-/data/kidney/data2d/images/*.png
-/data/kidney/data2d/masks/*.png
-
-# Bulky reviewed metadata is restored together with the release PNGs
-/backend/data/patient_images.json
-/data/kidney/data2d/manifest.csv
-/data/kidney/provenance/png_data_audit.json

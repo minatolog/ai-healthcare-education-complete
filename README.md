@@ -1,15 +1,24 @@
 # 医疗 AI 互动教育平台 · 02_main 完整版
 
-此仓库当前版本来自 **`02_main` 项目**，已替换之前误上传的仅糖尿病版本。包含 React 前端、Python 后端、糖尿病随机森林、肾脏教学 U-Net **源码与已训练权重**，以及 40 名教学患者的资料。
+本目录为 **`02_main` 完整项目**。包含 React 前端、Python 后端、糖尿病随机森林、肾脏教学 U-Net **源码与已训练权重**，以及 40 名教学患者的资料。
 
 项目来源：UNSW COMP9900（2026 T3）P02，团队 **9900-H18J-DONUT**。保留原团队文档和数据来源，不代表独立完成整个小组项目。
 
-## 下载完整项目
+## 项目文件与数据
 
-- **推荐：** [下载 02_main 完整包](https://github.com/minatolog/ai-healthcare-education/releases/download/02-main-v1/02_main-complete.zip)，解压后同时拥有源码、肾脏权重、3,757 张 CT 和 3,757 张参考掩码。
-- **使用 Git：** 克隆仓库后，按下面步骤安装依赖，再运行 `python scripts/prepare_data.py`。该命令从同仓库 Release 下载 CT/掩码，并校验压缩包和每张图像的 SHA-256。现有数据完整时不会重复下载。
+使用完整项目目录，保留以下文件：
 
-肾脏权重 `artifacts/kidney/kidney_unet.pt` 和评估记录直接包含在源码仓库中。体积较大的 CT/掩码、完整 PNG 审计记录、切片总清单和图像 JSON 索引放在版本固定的 Release 附件；源码 ZIP 本身不包含这些大文件，数据准备命令会一起恢复。
+- `artifacts/kidney/kidney_unet.pt` 和 `kidney_unet.metrics.json`：已训练的肾脏权重与记录。
+- `data/kidney/data2d/images/`、`masks/`：3,757 张 CT 和 3,757 张参考掩码。
+- CT 清单、审计记录和 `backend/data/patient_images.json`：患者及影像索引。
+
+本版本不依赖 GitHub Release 下载地址，也不会在启动时自动下载数据。运行 `python scripts/prepare_data.py` 可核对本地数据的 SHA-256。若数据缺失，应补齐完整目录；已有 `kidney-data.zip` 时，也可显式指定本地数据包恢复：
+
+```bash
+.venv/bin/python scripts/prepare_data.py --archive /实际路径/kidney-data.zip
+```
+
+手动上传时应保留完整的数据目录和肾脏权重。当前这些文件均受 Git 跟踪；不要只上传前端或源码子目录。
 
 ## 当前能做什么
 
@@ -45,7 +54,7 @@ npx --yes pnpm@10 install --frozen-lockfile
 cd ..
 ```
 
-如果下载的是完整包，数据准备命令只校验本地 PNG，不会下载。
+数据准备命令只校验本地文件；缺失时会给出补齐或使用本地数据包恢复的提示。
 
 Windows PowerShell 中，使用 `py -3.12 -m venv .venv`，将 `.venv/bin/python` 替换为 `.\.venv\Scripts\python.exe`；其余 Python 命令参数相同。
 
@@ -75,7 +84,7 @@ cd frontend
 npm run dev -- --host 127.0.0.1
 ```
 
-前端默认将 `/api` 代理到 `http://127.0.0.1:8004`。如修改后端端口，启动前端前设置 `API_BASE_URL`。不需要 API Key 或数据库。首次依赖安装与 Git 版的数据准备需要联网，数据齐全后可本地运行。
+前端默认将 `/api` 代理到 `http://127.0.0.1:8004`。如修改后端端口，启动前端前设置 `API_BASE_URL`。不需要 API Key 或数据库。首次安装 Python/前端依赖需要联网；患者数据校验和模型运行使用本地文件。
 
 ## 肾脏模型说明
 
@@ -113,7 +122,7 @@ services/diabetes_model/     随机森林训练、评估、解释及模型交付
 artifacts/kidney/            已训练 U-Net 权重与记录（已包含）
 data/kidney/                 CT、参考掩码、清单、校验和及来源说明
 backend/data/                患者与图像 JSON 索引
-scripts/prepare_data.py      下载/恢复并逐文件校验 CT 数据
+scripts/prepare_data.py      校验本地数据，或显式从本地数据包恢复
 docs/                       团队文档、设计记录与本次检查说明
 ```
 
@@ -131,7 +140,7 @@ npm run typecheck
 npm run build
 ```
 
-本次本地验证包括 88 项糖尿病测试、19 项后端/模型测试、6 项前端测试、完整数据校验和生产构建。GitHub Actions 也会准备数据并运行这些主要检查；实际结果请查看 [Actions](https://github.com/minatolog/ai-healthcare-education/actions)。未将原研究模块的全部测试等同于本次网站验收。
+本次本地验证包括 88 项糖尿病测试、5 项离线数据恢复测试、19 项后端/模型测试、6 项前端测试、完整数据校验和生产构建。自动检查配置位于 `.github/workflows/tests.yml`；上传完整项目后，远端结果以该次提交的实际执行记录为准。未将原研究模块的全部测试等同于本次网站验收。
 
 ## API
 
@@ -148,7 +157,7 @@ npm run build
 | POST | `/api/kidney/predict` | `patient_code`：真实 CT 推理 |
 | GET | `/api/kidney/patients/P006/overlay/106.png` | 模型预测叠加图 |
 
-糖尿病训练模型目前保存在后端进程内，供该本地服务后续请求使用，不支持多人隔离会话；重启会清空。肾脏读取固定磁盘权重。GitHub 保存项目与附件，不代表后端已经部署上线，GitHub Pages 不能运行此 Python 服务。
+糖尿病训练模型目前保存在后端进程内，供该本地服务后续请求使用，不支持多人隔离会话；重启会清空。肾脏读取固定磁盘权重。GitHub 保存项目代码和数据，不代表后端已经部署上线，GitHub Pages 不能运行此 Python 服务。
 
 ## 来源与许可
 
